@@ -62,51 +62,61 @@ public class CompilerConfig {
     }
 
     public static Map<String, String> parseArgs(String[] args) {
-
         // default options for config
         var config = getDefault();
-
+    
+        String inputFileName = null;
+    
         for (String arg : args) {
-
+            
+            // Treat argument as input file name if it does not start with '-'
+            if (inputFileName == null && !arg.startsWith("-")) {
+                inputFileName = arg;
+                continue; // Skip to the next argument
+            }
+    
             if (!arg.startsWith("-")) {
                 throw new RuntimeException("Arguments should start with '-'");
             }
-
+    
             String shortOption = arg.substring(1, 2);
             if (!isShortOpt(shortOption)) {
                 throw new RuntimeException("Unrecognized option '-" + shortOption + "'");
             }
-
+    
             String value = "true";
             if (arg.length() > 2) {
                 String equalSign = arg.substring(2, 3);
                 if (equalSign.equals("=")) {
-
                     value = arg.substring(3);
                 }
             }
-
+    
             config.put(getLongOpt(shortOption), value);
         }
-
-        if (!config.containsKey(INPUT_FILE)) {
-
-            throw new RuntimeException("Expected an input file, use '-i=<PATH_TO_FILE>'");
+    
+        // Set input file name if provided
+        if (inputFileName != null) {
+            config.put(INPUT_FILE, inputFileName);
         }
-
+    
+        if (!config.containsKey(INPUT_FILE)) {
+            throw new RuntimeException("Expected an input file");
+        }
+    
         // make sure we save the absolute path of the input file
         var inputFile = new File(config.get(INPUT_FILE));
         if (!inputFile.isFile()) {
             throw new RuntimeException("Could not find input file '" + inputFile + "'");
         }
-
+    
         var absolutePath = inputFile.getAbsolutePath();
         config.put(INPUT_FILE, absolutePath);
-
+    
         // Verify if values are valid
         getOptimize(config);
         getRegisterAllocation(config);
-
+    
         return config;
     }
 

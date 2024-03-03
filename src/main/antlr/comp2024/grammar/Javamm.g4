@@ -4,66 +4,79 @@ grammar Javamm;
     package pt.up.fe.comp2024;
 }
 
-EQUALS : '=';
-SEMI : ';' ;
-LCURLY : '{' ;
-RCURLY : '}' ;
-LPAREN : '(' ;
-RPAREN : ')' ;
-MUL : '*' ;
-ADD : '+' ;
-
-CLASS : 'class' ;
-INT : 'int' ;
-PUBLIC : 'public' ;
-RETURN : 'return' ;
-
-INTEGER : [0-9] ;
-ID : [a-zA-Z]+ ;
-
 WS : [ \t\n\r\f]+ -> skip ;
 
+SINGLE_COMMENT : '//' ~[\r\n]* -> skip ;
+MULTI_COMMENT : '/*' .*? '*/' -> skip ;
+
+INTEGER : '0' | [1-9] [0-9]*;
+ID : [a-zA-Z_$] [a-zA-Z_0-9$]*;
+
 program
-    : classDecl EOF
+    : (importDeclaration)* classDeclaration EOF
     ;
 
-
-classDecl
-    : CLASS name=ID
-        LCURLY
-        methodDecl*
-        RCURLY
+importDeclaration
+    : 'import' value+=ID ('.' value+=ID)* ';' #ImportStatement
     ;
 
-varDecl
-    : type name=ID SEMI
+classDeclaration
+    : 'class' className=ID ('extends' superClassName=ID)? '{' ( varDeclaration )* ( methodDeclaration )* '}' #ClassStatement
     ;
 
 type
-    : name= INT ;
-
-methodDecl locals[boolean isPublic=false]
-    : (PUBLIC {$isPublic=true;})?
-        type name=ID
-        LPAREN param RPAREN
-        LCURLY varDecl* stmt* RCURLY
-    ;
-
-param
-    : type name=ID
-    ;
-
-stmt
-    : expr EQUALS expr SEMI #AssignStmt //
-    | RETURN expr SEMI #ReturnStmt
-    ;
-
-expr
-    : expr op= MUL expr #BinaryExpr //
-    | expr op= ADD expr #BinaryExpr //
-    | value=INTEGER #IntegerLiteral //
-    | name=ID #VarRefExpr //
+    : type '[' ']' #Array
+    | 'int' #IntTypeLabel
+    | 'int' '...' #VarArgsTypeLabel
+    | 'boolean' #BooleanTypeLabel
+    | 'String' #StringTypeLabel
+    | 'double' #DoubleTypeLabel
+    | 'float' #FloatTypeLabel
+    | className=ID #CustomTypeLabel
     ;
 
 
+varDeclaration
+    : type value=ID ('[' ']')? ';' 
+    ;
 
+methodDeclaration
+    : ('public' | 'private' | 'protected')? returnType=type methodName=ID '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' methodBody  #NormalMethodDeclaration
+    | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' methodBody  #MainMethodDeclaration
+    ;
+
+parameter
+    : parameterType=type paramName=ID  #ParameterDefinition
+    ;
+
+methodBody
+    : '{' (varDeclaration | statement | 'return' expression ';' )* '}' 
+    ;
+
+statement
+    : expression ';'
+    | '{' statement* '}'
+    | 'if' '(' expression ')' statement ('else' statement)?
+    | 'while' '(' expression ')' statement
+    | ID '=' expression ';'
+    | ID '[' expression ']' '=' expression ';'
+    ;
+
+expression
+    : '(' expression ')'                                                            #Parenthesis
+    | 'new' 'int' '[' size=expression ']'                                           #NewIntArrayExpression
+    | 'new' classname=ID ('(' (expression (',' expression)*)? ')')?                 #ClassInstantiation
+    | expression '[' index=expression ']'                                           #ArrayAccess
+    | expression '.' value=ID '(' (expression (',' expression)*)? ')'               #FunctionCall
+    | expression '.' 'length'                                                       #ArrayLengthExpression
+    | 'this'                                                                        #ThisReferenceExpression
+    | '!' expression                                                                #NegationExpression
+    | expression (('*' | '/') expression)                                           #MultiplicationDivisionExpression
+    | expression (('+' | '-') expression)                                           #AdditionSubtractionExpression
+    | expression (('<' | '>' | '<=' | '>=' | '==' | '!=' | '+=' | '-=' | '*=' | '/=') expression)  #ComparisonExpression
+    | expression ('&&' | '||') expression                                           #LogicalExpression
+    | INTEGER                                                                       #IntegerLiteral
+    | 'true'                                                                        #TrueLiteral
+    | 'false'                                                                       #FalseLiteral
+    | variable=ID (op=('++' | '--'))?                                               #VariableExpression
+    ;
