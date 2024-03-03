@@ -19,13 +19,15 @@ import pt.up.fe.comp.TestUtils;
 public class GrammarTest {
 
 
-    // TODO: Set name of imports grammar rule
-    private static final String IMPORT = "CHANGE ME! - name of import grammar rule";
-    // TODO: Set name of main method grammar rule
-    private static final String MAIN_METHOD = "CHANGE ME! - name of main method grammar rule";
-    private static final String INSTANCE_METHOD = "methodDecl";
-    private static final String STATEMENT = "stmt";
-    private static final String EXPRESSION = "expr";
+    private static final String IMPORT = "importDeclaration";
+
+    private static final String MAIN_METHOD = "mainMethodDeclaration";
+
+    private static final String INSTANCE_METHOD = "methodDeclaration";
+
+    private static final String STATEMENT = "statement";
+
+    private static final String EXPRESSION = "expression";
 
     @Test
     public void testImportSingle() {

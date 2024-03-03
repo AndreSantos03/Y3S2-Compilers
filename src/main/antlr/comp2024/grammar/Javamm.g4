@@ -13,7 +13,7 @@ INTEGER : '0' | [1-9] [0-9]*;
 ID : [a-zA-Z_$] [a-zA-Z_0-9$]*;
 
 program
-    : (importDeclaration)* classDeclaration EOF
+    : (importDeclaration)* classDeclaration* methodDeclaration? EOF
     ;
 
 importDeclaration
@@ -45,6 +45,7 @@ methodDeclaration
     | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' methodBody  #MainMethodDeclaration
     ;
 
+
 parameter
     : parameterType=type paramName=ID  #ParameterDefinition
     ;
@@ -63,20 +64,21 @@ statement
     ;
 
 expression
-    : '(' expression ')'                                                            #Parenthesis
-    | 'new' 'int' '[' size=expression ']'                                           #NewIntArrayExpression
-    | 'new' classname=ID ('(' (expression (',' expression)*)? ')')?                 #ClassInstantiation
-    | expression '[' index=expression ']'                                           #ArrayAccess
-    | expression '.' value=ID '(' (expression (',' expression)*)? ')'               #FunctionCall
-    | expression '.' 'length'                                                       #ArrayLengthExpression
-    | 'this'                                                                        #ThisReferenceExpression
-    | '!' expression                                                                #NegationExpression
-    | expression (('*' | '/') expression)                                           #MultiplicationDivisionExpression
-    | expression (('+' | '-') expression)                                           #AdditionSubtractionExpression
-    | expression (('<' | '>' | '<=' | '>=' | '==' | '!=' | '+=' | '-=' | '*=' | '/=') expression)  #ComparisonExpression
-    | expression ('&&' | '||') expression                                           #LogicalExpression
-    | INTEGER                                                                       #IntegerLiteral
-    | 'true'                                                                        #TrueLiteral
-    | 'false'                                                                       #FalseLiteral
-    | variable=ID (op=('++' | '--'))?                                               #VariableExpression
+    : '(' expression ')' # Parenthesis
+    | 'new' 'int' '[' size=expression ']' # NewIntArrayExpression
+    | 'new' classname=ID ('(' (expression (',' expression)*)? ')')? # ClassInstantiation
+    | expression '[' index=expression ']' # ArrayAccess
+    | expression '.' value=ID '(' (expression (',' expression)*)? ')' # FunctionCall
+    | expression '.' 'length' # ArrayLengthExpression
+    | '[' expression (',' expression)* ']' # ArrayInitializationExpression
+    | 'this' # ThisReferenceExpression
+    | '!' expression   # NegationExpression
+    | expression (('*' | '/') expression)  # binaryOp
+    | expression (('+' | '-') expression)   # binaryOp
+    | expression (('<' | '>' | '<=' | '>=' | '==' | '!=' | '+=' | '-=' | '*=' | '/=') expression)  # binaryOp
+    | expression ('&&' | '||') expression  # binaryOp
+    | INTEGER   # IntegerLiteral
+    | 'true'   # TrueLiteral
+    | 'false'  # FalseLiteral
+    | variable=ID (op=('++' | '--'))? # VariableExpression
     ;
