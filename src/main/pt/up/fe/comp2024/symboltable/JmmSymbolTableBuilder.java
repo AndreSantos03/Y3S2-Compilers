@@ -7,6 +7,7 @@ import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.TypeUtils;
 import pt.up.fe.specs.util.SpecsCheck;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -37,21 +38,31 @@ public class JmmSymbolTableBuilder {
 
         Map<String, Type> map = new HashMap<>();
 
-        classDecl.getChildren(METHOD_DECL).stream()
-                .forEach(method -> map.put(method.get("name"), new Type(TypeUtils.getIntTypeName(), false)));
+/*         classDecl.getChildren(METHOD_DECL).stream()
+                .forEach(method -> map.put(method.get("name"), new Type(TypeUtils.getIntTypeName(), false))); */
+
+            classDecl.getChildren(METHOD_DECL).forEach(method -> {
+                String methodName = method.get("methodName");
+                Type returnType =new Type(method.get("returnType"),false); 
+                map.put(methodName, returnType);
+            });
+    
 
         return map;
     }
 
     private static Map<String, List<Symbol>> buildParams(JmmNode classDecl) {
-        // TODO: Simple implementation that needs to be expanded
 
         Map<String, List<Symbol>> map = new HashMap<>();
 
+        List <Symbol> paremeters = new ArrayList<>();
+
         var intType = new Type(TypeUtils.getIntTypeName(), false);
 
-        classDecl.getChildren(METHOD_DECL).stream()
-                .forEach(method -> map.put(method.get("name"), Arrays.asList(new Symbol(intType, method.getJmmChild(1).get("name")))));
+        method.get
+
+        /* classDecl.getChildren(METHOD_DECL).stream()
+                .forEach(method -> map.put(method.get("methodName"), Arrays.asList(new Symbol(intType, method.getJmmChild(1).get("name"))))); */
 
         return map;
     }
