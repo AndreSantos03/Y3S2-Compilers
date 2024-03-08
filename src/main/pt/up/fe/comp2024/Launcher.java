@@ -12,6 +12,8 @@ import pt.up.fe.comp2024.parser.JmmParserImpl;
 import pt.up.fe.specs.util.SpecsIo;
 import pt.up.fe.specs.util.SpecsSystem;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Map;
 
 public class Launcher {
@@ -39,7 +41,8 @@ public class Launcher {
 
         // Semantic Analysis stage
         JmmAnalysisImpl sema = new JmmAnalysisImpl();
-        JmmSemanticsResult semanticsResult = sema.semanticAnalysis(parserResult);
+        JmmSemanticsResult semanticsResult = sema.semanticAnalysis(parserResult);        
+
         TestUtils.noErrors(semanticsResult.getReports());
 
         System.out.println(semanticsResult.getSymbolTable().print()); 

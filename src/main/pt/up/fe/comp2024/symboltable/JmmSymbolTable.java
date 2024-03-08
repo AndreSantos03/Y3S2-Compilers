@@ -15,6 +15,7 @@ import java.util.Set;
 public class JmmSymbolTable implements SymbolTable {
 
     private final String className;
+    private final String superClassName;
     private final List<String> methods;
     private final Map<String, Type> returnTypes;
     private final Map<String, List<Symbol>> params;
@@ -22,13 +23,14 @@ public class JmmSymbolTable implements SymbolTable {
     private final Set<String> imports;
 
 
-    public JmmSymbolTable(String className,
+    public JmmSymbolTable(String className, String superClassName,
                           List<String> methods,
                           Map<String, Type> returnTypes,
                           Map<String, List<Symbol>> params,
                           Map<String, List<Symbol>> locals,
                           Set<String> imports) {
         this.className = className;
+        this.superClassName = superClassName;
         this.methods = methods;
         this.returnTypes = returnTypes;
         this.params = params;
@@ -49,7 +51,7 @@ public class JmmSymbolTable implements SymbolTable {
 
     @Override
     public String getSuper() {
-        return null;
+        return superClassName;
     }
 
     @Override
@@ -64,16 +66,31 @@ public class JmmSymbolTable implements SymbolTable {
 
     @Override
     public Type getReturnType(String methodSignature) {
-        return new Type(TypeUtils.getIntTypeName(), false);
+        Type returnType = returnTypes.get(methodSignature);
+        if (returnType == null) {
+            // Return a default type or throw an exception if needed
+            return new Type("void", false); // Assuming a default return type of void
+        }
+        return returnType;
     }
 
     @Override
     public List<Symbol> getParameters(String methodSignature) {
-        return Collections.unmodifiableList(params.get(methodSignature));
+        List<Symbol> parameters = params.get(methodSignature);
+        if (parameters == null) {
+            // Return an empty list or throw an exception if needed
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(parameters);
     }
 
     @Override
     public List<Symbol> getLocalVariables(String methodSignature) {
-        return Collections.unmodifiableList(locals.get(methodSignature));
+        List<Symbol> localVariables = locals.get(methodSignature);
+        if (localVariables == null) {
+            // Return an empty list or throw an exception if needed
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(localVariables);
     }
 }

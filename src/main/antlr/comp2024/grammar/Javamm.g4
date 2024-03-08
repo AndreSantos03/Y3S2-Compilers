@@ -21,37 +21,36 @@ importDeclaration
     ;
 
 classDeclaration
-    : 'class' className=ID ('extends' superClassName=ID)? '{' ( varDeclaration )* ( methodDeclaration )* '}' #CLASS_DECL
+    : 'class' className=ID ('extends' superClassName=ID)? '{' ( fieldDeclaration )* ( methodDeclaration )* '}' #ClassDecl
     ;
 
 type
-    : type '[' ']' #ARRAY_TYPE
-    | 'int' #INT_TYPE
-    | 'int' '...' #INT_VARARGS_TYPE
-    | 'boolean' #BOOLEAN_TYPE
-    | 'String' #STRING_TYPE
-    | 'double' #DOUBLE_TYPE
-    | 'float' #FLOAT_TYPE
-    | className=ID #CUSTOM_TYPE
+    : type '[' ']' 
+    | typeName='int'
+    | typeName='int' '...'
+    | typeName='boolean'
+    | typeName='String'
+    | typeName='double'
+    | typeName='float'
+    | typeName=ID 
     ;
 
-
-varDeclaration
-    : type value=ID ('[' ']')? ';' 
+fieldDeclaration
+    : type fieldName=ID ('[' ']')? ';' 
     ;
 
 methodDeclaration
-    : ('public' | 'private' | 'protected')? returnType=type methodName=ID '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' methodBody  #METHOD_DECL
-    | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' methodBody  #METHOD_DECL
+    : ('public' | 'private' | 'protected')? returnType=type methodName=ID '(' (argument)* (',' argument)* ')' methodBody  #MethodDecl
+    | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' methodBody  #MainMethodDecl
     ;
 
-
-parameter
-    : parameterType=type paramName=ID  #PARAM
+argument
+    : type argName=ID  #argumentDecl
     ;
 
+    
 methodBody
-    : '{' (varDeclaration | statement | 'return' expression ';' )* '}' 
+    : '{' (fieldDeclaration | statement | 'return' expression ';' )* '}' 
     ;
 
 statement
@@ -64,22 +63,21 @@ statement
     ;
 
 expression
-    : '(' expression ')' # Parenthesis
+    : '(' expression ')' # ParenthesisExpression
     | 'new' 'int' '[' size=expression ']' # NewIntArrayExpression
-    | 'new' classname=ID ('(' (expression (',' expression)*)? ')')? # ClassInstantiation
-    | expression '[' index=expression ']' # ArrayAccess
-    | expression '.' value=ID '(' (expression (',' expression)*)? ')' # FunctionCall
+    | 'new' classname=ID ('(' (expression (',' expression)*)? ')')? # ClassInstantiationExpression
+    | expression '[' index=expression ']' # ArrayAccessExpression
+    | expression '.' value=ID '(' (expression (',' expression)*)? ')' # FunctionCallExpression
     | expression '.' 'length' # ArrayLengthExpression
     | '[' expression (',' expression)* ']' # ArrayInitializationExpression
     | 'this' # ThisReferenceExpression
     | '!' expression   # NegationExpression
-    | expression (('*' | '/') expression)  # BINARY_EXPR
-    | expression (('+' | '-') expression)   # BINARY_EXPR
-    | expression (('<' | '>' | '<=' | '>=' | '==' | '!=' | '+=' | '-=' | '*=' | '/=') expression)  # BINARY_EXPR
-    | expression ('&&' | '||') expression  # BINARY_EXPR
-    | INTEGER   # INTEGER_LITERAL
-    | 'true'   # INTEGER_LITERAL
-    | 'false'  # INTEGER_LITERAL
-    | variable=ID (op=('++' | '--'))? # VAR_REF_EXPR
+    | expression (('*' | '/') expression)  # BinaryExpression
+    | expression (('+' | '-') expression)   # BinaryExpression
+    | expression (('<' | '>' | '<=' | '>=' | '==' | '!=' | '+=' | '-=' | '*=' | '/=') expression)  # BinaryExpression
+    | expression ('&&' | '||') expression  # BinaryExpression
+    | INTEGER   # IntegerLiteral
+    | 'true'   # BooleanLiteral
+    | 'false'  # BooleanLiteral
+    | variable=ID (op=('++' | '--'))? # VariableReferenceExpression
     ;
-

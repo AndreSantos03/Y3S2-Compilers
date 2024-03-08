@@ -14,8 +14,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Optional;
 
-import static pt.up.fe.comp2024.ast.Kind.METHOD_DECL;
+
 
 
 
@@ -32,15 +33,19 @@ public class JmmSymbolTableBuilder {
         classDecl = root.getChild(imports.size());
         String className = classDecl.get("className");
 
+
+        Optional<String> optionalSuperClassName = classDecl.getOptional("superClassName");
+        String superClassName = optionalSuperClassName.orElse("");
+
+
         List<String> methods = null;
         Map<String, Type> returnTypes = null;
         Map<String, List<Symbol>> params = null;
         Map<String, List<Symbol>> locals = null;
 
         System.out.println("Class name: " + className);
-        if(classDecl.getNumChildren() != 0){
-            System.out.println("daa");
-    
+        System.out.println("SuperClass name: " + superClassName);
+        if(classDecl.getNumChildren() != 0){    
             methods = buildMethods(classDecl);
     
             System.out.println("Methods: " + methods);
@@ -56,7 +61,7 @@ public class JmmSymbolTableBuilder {
             System.out.println("Locals: " + locals);
         }
 
-        return new JmmSymbolTable(className, methods, returnTypes, params, locals, imports);
+        return new JmmSymbolTable(className,superClassName, methods, returnTypes, params, locals, imports);
     }
 
     private static Set<String> buildImports(JmmNode root) {
@@ -78,7 +83,7 @@ public class JmmSymbolTableBuilder {
         Map<String, Type> map = new HashMap<>();
     
         classDecl.getChildren().forEach(method -> {
-            if (method.getKind().equals("METHOD_DECL")) {
+            if (method.getKind().equals("MethodDecl")) {
                 String methodName = method.get("methodName");
                 Type returnType = new Type(method.get("returnType"), false);
                 map.put(methodName, returnType);
@@ -93,18 +98,15 @@ public class JmmSymbolTableBuilder {
         Map<String, List<Symbol>> map = new HashMap<>();
     
         classDecl.getChildren().forEach(method -> {
-            if (method.getKind().equals("METHOD_DECL")) {
+            if (method.getKind().equals("MethodDecl")) {
                 String methodName = method.get("methodName");
                 List<Symbol> parameters = new ArrayList<>();
-    
-                method.getChildren().forEach(parameter -> {
-                    if (parameter.getKind().equals("PARAM")) {
-                        String paramName = parameter.get("paramName");
-                        String paramType = parameter.get("parameterType");
-                        Type type = new Type(paramType, false);
-                        Symbol symbol = new Symbol(type, paramName);
-                        parameters.add(symbol);
-                    }
+                method.getChildren("ArgumentDecl").forEach(argumentNode -> {
+                    String paramName = argumentNode.get("argName");
+                    String paramType = argumentNode.getChild(0).get("typeName");
+                    Type type = new Type(paramType, false);
+                    Symbol symbol = new Symbol(type, paramName);
+                    parameters.add(symbol);
                 });
     
                 map.put(methodName, parameters);
@@ -132,7 +134,7 @@ public class JmmSymbolTableBuilder {
         List<String> methodNames = new ArrayList<>();
 
         classDecl.getChildren().forEach(methodNode -> {
-            if(methodNode.getKind().equals("METHOD_DECL")){
+            if(methodNode.getKind().equals("MethodDecl")){
                 String methodName = methodNode.get("methodName");
                 methodNames.add(methodName);
             }
