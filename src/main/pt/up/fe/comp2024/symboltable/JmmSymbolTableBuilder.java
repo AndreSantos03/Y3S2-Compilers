@@ -38,10 +38,11 @@ public class JmmSymbolTableBuilder {
         String superClassName = optionalSuperClassName.orElse("");
 
 
-        List<String> methods = null;
-        Map<String, Type> returnTypes = null;
-        Map<String, List<Symbol>> params = null;
-        Map<String, List<Symbol>> locals = null;
+        List<String> methods = new ArrayList<>();
+        Map<String, Type> returnTypes = new HashMap<>();
+        Map<String, List<Symbol>> params = new HashMap<>();
+        Map<String, List<Symbol>> locals = new HashMap<>();
+        List<Symbol> fields = new ArrayList<>();
 
         System.out.println("Class name: " + className);
         System.out.println("SuperClass name: " + superClassName);
@@ -59,9 +60,14 @@ public class JmmSymbolTableBuilder {
             locals = buildLocals(classDecl);
     
             System.out.println("Locals: " + locals);
+
+            fields = buildFields(classDecl);
+
+            System.out.println("Fields: " + fields);
+
         }
 
-        return new JmmSymbolTable(className,superClassName, methods, returnTypes, params, locals, imports);
+        return new JmmSymbolTable(className,superClassName, methods, returnTypes, params, locals,fields, imports);
     }
 
     private static Set<String> buildImports(JmmNode root) {
@@ -83,10 +89,16 @@ public class JmmSymbolTableBuilder {
         Map<String, Type> map = new HashMap<>();
     
         classDecl.getChildren().forEach(method -> {
-            if (method.getKind().equals("MethodDecl")) {
+            if (method.getKind().equals("MethDeclaration")|| method.getKind().equals("MainMethodDecl")) {
                 String methodName = method.get("methodName");
-                Type returnType = new Type(method.get("returnType"), false);
-                map.put(methodName, returnType);
+                if(method.getChild(0).getChildren().size() == 0){
+                    Type returnType = new Type(method.getChild(0).get("typeName"), false);
+                    map.put(methodName, returnType);
+                }
+                else{
+                    Type returnType = new Type(method.getChild(0).getChild(0).get("typeName"), true);
+                    map.put(methodName, returnType);
+                }
             }
         });
     
@@ -98,7 +110,7 @@ public class JmmSymbolTableBuilder {
         Map<String, List<Symbol>> map = new HashMap<>();
     
         classDecl.getChildren().forEach(method -> {
-            if (method.getKind().equals("MethodDecl")) {
+            if (method.getKind().equals("MethDeclaration") || method.getKind().equals("MainMethodDecl")) {
                 String methodName = method.get("methodName");
                 List<Symbol> parameters = new ArrayList<>();
                 method.getChildren("ArgumentDecl").forEach(argumentNode -> {
@@ -120,11 +132,15 @@ public class JmmSymbolTableBuilder {
 
     private static Map<String, List<Symbol>> buildLocals(JmmNode classDecl) {
         Map<String, List<Symbol>> map = new HashMap<>();
-    
-        classDecl.getChildren(Kind.METHOD_DECL).forEach(method -> {
-            String methodName = method.get("methodName");
-            List<Symbol> locals = getLocalsList(method);
-            map.put(methodName, locals);
+
+        classDecl.getChildren().forEach(methodNode -> {
+            if(methodNode.getKind().equals("MethDeclaration") || methodNode.getKind().equals("MainMethodDecl")){
+                String methodName = methodNode.get("methodName");
+                List<Symbol> locals = getLocalsList(methodNode);
+                map.put(methodName, locals);
+            }
+        
+
         });
     
         return map;
@@ -134,9 +150,12 @@ public class JmmSymbolTableBuilder {
         List<String> methodNames = new ArrayList<>();
 
         classDecl.getChildren().forEach(methodNode -> {
-            if(methodNode.getKind().equals("MethodDecl")){
+            if(methodNode.getKind().equals("MethDeclaration")){
                 String methodName = methodNode.get("methodName");
                 methodNames.add(methodName);
+            }
+            else if(methodNode.getKind().equals("MainMethDeclaration")){
+                methodNames.add("main");
             }
 
         });
@@ -146,9 +165,11 @@ public class JmmSymbolTableBuilder {
 
     private static List<Symbol> getLocalsList(JmmNode methodDecl) {
         List<Symbol> locals = new ArrayList<>();
-    
-        methodDecl.getChildren().forEach(varDecl -> {
-            if (varDecl.getKind().equals("VAR_REF_EXPR")) {
+        
+/*         methodDecl.getChildren().forEach(varDecl -> {
+            System.out.println("child: "+ varDecl);
+            if (varDecl.getKind().equals("MethodBody")) {
+                System.out.println("varDecl: "+ varDecl);
                 String varName = varDecl.get("value");
                 String varType = varDecl.get("type");
                 Type type = new Type(varType, false);
@@ -156,9 +177,27 @@ public class JmmSymbolTableBuilder {
                 locals.add(symbol);
             }
         });
-    
+     */
         return locals;
     }
-    
+    private static List<Symbol> buildFields(JmmNode classDecl) {
+        List<Symbol> fields = new ArrayList<>();
+
+        classDecl.getChildren().forEach(child -> {
+            if (child.getKind().equals("FieldDeclaration")) {
+                String fieldName = child.get("fieldName");
+                String typeName = (child.getChild(0).get("typeName"));
+
+                Type type = new Type(typeName, false);
+                Symbol symbol = new Symbol(type, fieldName);
+
+                fields.add(symbol);
+            }
+        });
+
+        return fields;
+    }
+
+
 
 }

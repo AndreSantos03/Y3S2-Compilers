@@ -549,7 +549,7 @@ public class JavammParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class MethodDeclContext extends MethodDeclarationContext {
+	public static class MethDeclarationContext extends MethodDeclarationContext {
 		public TypeContext returnType;
 		public Token methodName;
 		public MethodBodyContext methodBody() {
@@ -565,16 +565,16 @@ public class JavammParser extends Parser {
 		public ArgumentContext argument(int i) {
 			return getRuleContext(ArgumentContext.class,i);
 		}
-		public MethodDeclContext(MethodDeclarationContext ctx) { copyFrom(ctx); }
+		public MethDeclarationContext(MethodDeclarationContext ctx) { copyFrom(ctx); }
 	}
 	@SuppressWarnings("CheckReturnValue")
-	public static class MainMethodDeclContext extends MethodDeclarationContext {
+	public static class MainMethDeclarationContext extends MethodDeclarationContext {
 		public Token argName;
 		public MethodBodyContext methodBody() {
 			return getRuleContext(MethodBodyContext.class,0);
 		}
 		public TerminalNode ID() { return getToken(JavammParser.ID, 0); }
-		public MainMethodDeclContext(MethodDeclarationContext ctx) { copyFrom(ctx); }
+		public MainMethDeclarationContext(MethodDeclarationContext ctx) { copyFrom(ctx); }
 	}
 
 	public final MethodDeclarationContext methodDeclaration() throws RecognitionException {
@@ -586,7 +586,7 @@ public class JavammParser extends Parser {
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
 			case 1:
-				_localctx = new MethodDeclContext(_localctx);
+				_localctx = new MethDeclarationContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(97);
@@ -608,9 +608,9 @@ public class JavammParser extends Parser {
 				}
 
 				setState(99);
-				((MethodDeclContext)_localctx).returnType = type(0);
+				((MethDeclarationContext)_localctx).returnType = type(0);
 				setState(100);
-				((MethodDeclContext)_localctx).methodName = match(ID);
+				((MethDeclarationContext)_localctx).methodName = match(ID);
 				setState(101);
 				match(T__18);
 				setState(105);
@@ -650,7 +650,7 @@ public class JavammParser extends Parser {
 				}
 				break;
 			case 2:
-				_localctx = new MainMethodDeclContext(_localctx);
+				_localctx = new MainMethDeclarationContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(118);
@@ -670,7 +670,7 @@ public class JavammParser extends Parser {
 				setState(125);
 				match(T__8);
 				setState(126);
-				((MainMethodDeclContext)_localctx).argName = match(ID);
+				((MainMethDeclarationContext)_localctx).argName = match(ID);
 				setState(127);
 				match(T__20);
 				setState(128);

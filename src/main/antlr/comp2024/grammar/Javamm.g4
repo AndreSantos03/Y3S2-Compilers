@@ -40,8 +40,8 @@ fieldDeclaration
     ;
 
 methodDeclaration
-    : ('public' | 'private' | 'protected')? returnType=type methodName=ID '(' (argument)* (',' argument)* ')' methodBody  #MethodDecl
-    | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' methodBody  #MainMethodDecl
+    : ('public' | 'private' | 'protected')? returnType=type methodName=ID '(' (argument)* (',' argument)* ')' methodBody  #MethDeclaration
+    | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' methodBody  #MainMethDeclaration
     ;
 
 argument
