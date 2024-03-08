@@ -80,7 +80,7 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private String visitReturn(JmmNode node, Void unused) {
 
-        String methodName = node.getAncestor(METHOD_DECL).map(method -> method.get("methodName")).orElseThrow();
+        String methodName = node.getAncestor(METHOD_DECL).map(method -> method.get("name")).orElseThrow();
         Type retType = table.getReturnType(methodName);
 
         StringBuilder code = new StringBuilder();
@@ -107,7 +107,7 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
     private String visitParam(JmmNode node, Void unused) {
 
         var typeCode = OptUtils.toOllirType(node.getJmmChild(0));
-        var id = node.get("paramName");
+        var id = node.get("name");
 
         String code = id + typeCode;
 
@@ -126,7 +126,7 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         }
 
         // name
-        var name = node.get("methodName");
+        var name = node.get("name");
         code.append(name);
 
         // param

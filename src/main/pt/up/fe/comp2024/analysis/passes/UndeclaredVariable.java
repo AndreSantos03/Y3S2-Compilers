@@ -25,7 +25,7 @@ public class UndeclaredVariable extends AnalysisVisitor {
     }
 
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
-        currentMethod = method.get("methodName");
+        currentMethod = method.get("name");
         return null;
     }
 
@@ -33,7 +33,7 @@ public class UndeclaredVariable extends AnalysisVisitor {
         SpecsCheck.checkNotNull(currentMethod, () -> "Expected current method to be set");
 
         // Check if exists a parameter or variable declaration with the same name as the variable reference
-        var varRefName = varRefExpr.get("variable");
+        var varRefName = varRefExpr.get("name");
 
         // Var is a field, return
         if (table.getFields().stream()

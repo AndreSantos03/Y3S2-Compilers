@@ -34,7 +34,7 @@ public class OptUtils {
 
         TYPE.checkOrThrow(typeNode);
 
-        String typeName = typeNode.get("variable");
+        String typeName = typeNode.get("name");
 
         return toOllirType(typeName);
     }
