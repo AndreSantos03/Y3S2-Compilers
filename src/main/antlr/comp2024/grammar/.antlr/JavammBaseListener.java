@@ -43,109 +43,109 @@ public class JavammBaseListener implements JavammListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterClassStatement(JavammParser.ClassStatementContext ctx) { }
+	@Override public void enterCLASS_DECL(JavammParser.CLASS_DECLContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitClassStatement(JavammParser.ClassStatementContext ctx) { }
+	@Override public void exitCLASS_DECL(JavammParser.CLASS_DECLContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArray(JavammParser.ArrayContext ctx) { }
+	@Override public void enterDOUBLE_TYPE(JavammParser.DOUBLE_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArray(JavammParser.ArrayContext ctx) { }
+	@Override public void exitDOUBLE_TYPE(JavammParser.DOUBLE_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDoubleTypeLabel(JavammParser.DoubleTypeLabelContext ctx) { }
+	@Override public void enterSTRING_TYPE(JavammParser.STRING_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDoubleTypeLabel(JavammParser.DoubleTypeLabelContext ctx) { }
+	@Override public void exitSTRING_TYPE(JavammParser.STRING_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStringTypeLabel(JavammParser.StringTypeLabelContext ctx) { }
+	@Override public void enterARRAY_TYPE(JavammParser.ARRAY_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitStringTypeLabel(JavammParser.StringTypeLabelContext ctx) { }
+	@Override public void exitARRAY_TYPE(JavammParser.ARRAY_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVarArgsTypeLabel(JavammParser.VarArgsTypeLabelContext ctx) { }
+	@Override public void enterINT_VARARGS_TYPE(JavammParser.INT_VARARGS_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVarArgsTypeLabel(JavammParser.VarArgsTypeLabelContext ctx) { }
+	@Override public void exitINT_VARARGS_TYPE(JavammParser.INT_VARARGS_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFloatTypeLabel(JavammParser.FloatTypeLabelContext ctx) { }
+	@Override public void enterCUSTOM_TYPE(JavammParser.CUSTOM_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFloatTypeLabel(JavammParser.FloatTypeLabelContext ctx) { }
+	@Override public void exitCUSTOM_TYPE(JavammParser.CUSTOM_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBooleanTypeLabel(JavammParser.BooleanTypeLabelContext ctx) { }
+	@Override public void enterBOOLEAN_TYPE(JavammParser.BOOLEAN_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBooleanTypeLabel(JavammParser.BooleanTypeLabelContext ctx) { }
+	@Override public void exitBOOLEAN_TYPE(JavammParser.BOOLEAN_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIntTypeLabel(JavammParser.IntTypeLabelContext ctx) { }
+	@Override public void enterFLOAT_TYPE(JavammParser.FLOAT_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIntTypeLabel(JavammParser.IntTypeLabelContext ctx) { }
+	@Override public void exitFLOAT_TYPE(JavammParser.FLOAT_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCustomTypeLabel(JavammParser.CustomTypeLabelContext ctx) { }
+	@Override public void enterINT_TYPE(JavammParser.INT_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCustomTypeLabel(JavammParser.CustomTypeLabelContext ctx) { }
+	@Override public void exitINT_TYPE(JavammParser.INT_TYPEContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -163,37 +163,25 @@ public class JavammBaseListener implements JavammListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNormalMethodDeclaration(JavammParser.NormalMethodDeclarationContext ctx) { }
+	@Override public void enterMETHOD_DECL(JavammParser.METHOD_DECLContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNormalMethodDeclaration(JavammParser.NormalMethodDeclarationContext ctx) { }
+	@Override public void exitMETHOD_DECL(JavammParser.METHOD_DECLContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMainMethodDeclaration(JavammParser.MainMethodDeclarationContext ctx) { }
+	@Override public void enterPARAM(JavammParser.PARAMContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMainMethodDeclaration(JavammParser.MainMethodDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterParameterDefinition(JavammParser.ParameterDefinitionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitParameterDefinition(JavammParser.ParameterDefinitionContext ctx) { }
+	@Override public void exitPARAM(JavammParser.PARAMContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -235,13 +223,13 @@ public class JavammBaseListener implements JavammListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBinaryOp(JavammParser.BinaryOpContext ctx) { }
+	@Override public void enterParenthesis(JavammParser.ParenthesisContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBinaryOp(JavammParser.BinaryOpContext ctx) { }
+	@Override public void exitParenthesis(JavammParser.ParenthesisContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -259,42 +247,6 @@ public class JavammBaseListener implements JavammListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVariableExpression(JavammParser.VariableExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitVariableExpression(JavammParser.VariableExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFalseLiteral(JavammParser.FalseLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFalseLiteral(JavammParser.FalseLiteralContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterParenthesis(JavammParser.ParenthesisContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitParenthesis(JavammParser.ParenthesisContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterArrayAccess(JavammParser.ArrayAccessContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -307,13 +259,13 @@ public class JavammBaseListener implements JavammListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTrueLiteral(JavammParser.TrueLiteralContext ctx) { }
+	@Override public void enterBINARY_EXPR(JavammParser.BINARY_EXPRContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTrueLiteral(JavammParser.TrueLiteralContext ctx) { }
+	@Override public void exitBINARY_EXPR(JavammParser.BINARY_EXPRContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -338,6 +290,18 @@ public class JavammBaseListener implements JavammListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitArrayLengthExpression(JavammParser.ArrayLengthExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterINTEGER_LITERAL(JavammParser.INTEGER_LITERALContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitINTEGER_LITERAL(JavammParser.INTEGER_LITERALContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -379,13 +343,13 @@ public class JavammBaseListener implements JavammListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIntegerLiteral(JavammParser.IntegerLiteralContext ctx) { }
+	@Override public void enterVAR_REF_EXPR(JavammParser.VAR_REF_EXPRContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIntegerLiteral(JavammParser.IntegerLiteralContext ctx) { }
+	@Override public void exitVAR_REF_EXPR(JavammParser.VAR_REF_EXPRContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

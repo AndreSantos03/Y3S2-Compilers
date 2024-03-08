@@ -21,18 +21,18 @@ importDeclaration
     ;
 
 classDeclaration
-    : 'class' className=ID ('extends' superClassName=ID)? '{' ( varDeclaration )* ( methodDeclaration )* '}' #ClassStatement
+    : 'class' className=ID ('extends' superClassName=ID)? '{' ( varDeclaration )* ( methodDeclaration )* '}' #CLASS_DECL
     ;
 
 type
-    : type '[' ']' #Array
-    | 'int' #IntTypeLabel
-    | 'int' '...' #VarArgsTypeLabel
-    | 'boolean' #BooleanTypeLabel
-    | 'String' #StringTypeLabel
-    | 'double' #DoubleTypeLabel
-    | 'float' #FloatTypeLabel
-    | className=ID #CustomTypeLabel
+    : type '[' ']' #ARRAY_TYPE
+    | 'int' #INT_TYPE
+    | 'int' '...' #INT_VARARGS_TYPE
+    | 'boolean' #BOOLEAN_TYPE
+    | 'String' #STRING_TYPE
+    | 'double' #DOUBLE_TYPE
+    | 'float' #FLOAT_TYPE
+    | className=ID #CUSTOM_TYPE
     ;
 
 
@@ -41,13 +41,13 @@ varDeclaration
     ;
 
 methodDeclaration
-    : ('public' | 'private' | 'protected')? returnType=type methodName=ID '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' methodBody  #NormalMethodDeclaration
-    | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' methodBody  #MainMethodDeclaration
+    : ('public' | 'private' | 'protected')? returnType=type methodName=ID '(' (parameters+=parameter (',' parameters+=parameter)*)? ')' methodBody  #METHOD_DECL
+    | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' methodBody  #METHOD_DECL
     ;
 
 
 parameter
-    : parameterType=type paramName=ID  #ParameterDefinition
+    : parameterType=type paramName=ID  #PARAM
     ;
 
 methodBody
@@ -73,12 +73,13 @@ expression
     | '[' expression (',' expression)* ']' # ArrayInitializationExpression
     | 'this' # ThisReferenceExpression
     | '!' expression   # NegationExpression
-    | expression (('*' | '/') expression)  # binaryOp
-    | expression (('+' | '-') expression)   # binaryOp
-    | expression (('<' | '>' | '<=' | '>=' | '==' | '!=' | '+=' | '-=' | '*=' | '/=') expression)  # binaryOp
-    | expression ('&&' | '||') expression  # binaryOp
-    | INTEGER   # IntegerLiteral
-    | 'true'   # TrueLiteral
-    | 'false'  # FalseLiteral
-    | variable=ID (op=('++' | '--'))? # VariableExpression
+    | expression (('*' | '/') expression)  # BINARY_EXPR
+    | expression (('+' | '-') expression)   # BINARY_EXPR
+    | expression (('<' | '>' | '<=' | '>=' | '==' | '!=' | '+=' | '-=' | '*=' | '/=') expression)  # BINARY_EXPR
+    | expression ('&&' | '||') expression  # BINARY_EXPR
+    | INTEGER   # INTEGER_LITERAL
+    | 'true'   # INTEGER_LITERAL
+    | 'false'  # INTEGER_LITERAL
+    | variable=ID (op=('++' | '--'))? # VAR_REF_EXPR
     ;
+

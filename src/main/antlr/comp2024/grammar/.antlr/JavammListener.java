@@ -32,113 +32,113 @@ public interface JavammListener extends ParseTreeListener {
 	 */
 	void exitImportStatement(JavammParser.ImportStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ClassStatement}
+	 * Enter a parse tree produced by the {@code CLASS_DECL}
 	 * labeled alternative in {@link JavammParser#classDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterClassStatement(JavammParser.ClassStatementContext ctx);
+	void enterCLASS_DECL(JavammParser.CLASS_DECLContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ClassStatement}
+	 * Exit a parse tree produced by the {@code CLASS_DECL}
 	 * labeled alternative in {@link JavammParser#classDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitClassStatement(JavammParser.ClassStatementContext ctx);
+	void exitCLASS_DECL(JavammParser.CLASS_DECLContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code Array}
+	 * Enter a parse tree produced by the {@code DOUBLE_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterArray(JavammParser.ArrayContext ctx);
+	void enterDOUBLE_TYPE(JavammParser.DOUBLE_TYPEContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code Array}
+	 * Exit a parse tree produced by the {@code DOUBLE_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitArray(JavammParser.ArrayContext ctx);
+	void exitDOUBLE_TYPE(JavammParser.DOUBLE_TYPEContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code DoubleTypeLabel}
+	 * Enter a parse tree produced by the {@code STRING_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterDoubleTypeLabel(JavammParser.DoubleTypeLabelContext ctx);
+	void enterSTRING_TYPE(JavammParser.STRING_TYPEContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code DoubleTypeLabel}
+	 * Exit a parse tree produced by the {@code STRING_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitDoubleTypeLabel(JavammParser.DoubleTypeLabelContext ctx);
+	void exitSTRING_TYPE(JavammParser.STRING_TYPEContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code StringTypeLabel}
+	 * Enter a parse tree produced by the {@code ARRAY_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterStringTypeLabel(JavammParser.StringTypeLabelContext ctx);
+	void enterARRAY_TYPE(JavammParser.ARRAY_TYPEContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code StringTypeLabel}
+	 * Exit a parse tree produced by the {@code ARRAY_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitStringTypeLabel(JavammParser.StringTypeLabelContext ctx);
+	void exitARRAY_TYPE(JavammParser.ARRAY_TYPEContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code VarArgsTypeLabel}
+	 * Enter a parse tree produced by the {@code INT_VARARGS_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterVarArgsTypeLabel(JavammParser.VarArgsTypeLabelContext ctx);
+	void enterINT_VARARGS_TYPE(JavammParser.INT_VARARGS_TYPEContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code VarArgsTypeLabel}
+	 * Exit a parse tree produced by the {@code INT_VARARGS_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitVarArgsTypeLabel(JavammParser.VarArgsTypeLabelContext ctx);
+	void exitINT_VARARGS_TYPE(JavammParser.INT_VARARGS_TYPEContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code FloatTypeLabel}
+	 * Enter a parse tree produced by the {@code CUSTOM_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterFloatTypeLabel(JavammParser.FloatTypeLabelContext ctx);
+	void enterCUSTOM_TYPE(JavammParser.CUSTOM_TYPEContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code FloatTypeLabel}
+	 * Exit a parse tree produced by the {@code CUSTOM_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitFloatTypeLabel(JavammParser.FloatTypeLabelContext ctx);
+	void exitCUSTOM_TYPE(JavammParser.CUSTOM_TYPEContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code BooleanTypeLabel}
+	 * Enter a parse tree produced by the {@code BOOLEAN_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterBooleanTypeLabel(JavammParser.BooleanTypeLabelContext ctx);
+	void enterBOOLEAN_TYPE(JavammParser.BOOLEAN_TYPEContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code BooleanTypeLabel}
+	 * Exit a parse tree produced by the {@code BOOLEAN_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitBooleanTypeLabel(JavammParser.BooleanTypeLabelContext ctx);
+	void exitBOOLEAN_TYPE(JavammParser.BOOLEAN_TYPEContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code IntTypeLabel}
+	 * Enter a parse tree produced by the {@code FLOAT_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterIntTypeLabel(JavammParser.IntTypeLabelContext ctx);
+	void enterFLOAT_TYPE(JavammParser.FLOAT_TYPEContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code IntTypeLabel}
+	 * Exit a parse tree produced by the {@code FLOAT_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitIntTypeLabel(JavammParser.IntTypeLabelContext ctx);
+	void exitFLOAT_TYPE(JavammParser.FLOAT_TYPEContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code CustomTypeLabel}
+	 * Enter a parse tree produced by the {@code INT_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterCustomTypeLabel(JavammParser.CustomTypeLabelContext ctx);
+	void enterINT_TYPE(JavammParser.INT_TYPEContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code CustomTypeLabel}
+	 * Exit a parse tree produced by the {@code INT_TYPE}
 	 * labeled alternative in {@link JavammParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitCustomTypeLabel(JavammParser.CustomTypeLabelContext ctx);
+	void exitINT_TYPE(JavammParser.INT_TYPEContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavammParser#varDeclaration}.
 	 * @param ctx the parse tree
@@ -150,41 +150,29 @@ public interface JavammListener extends ParseTreeListener {
 	 */
 	void exitVarDeclaration(JavammParser.VarDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code NormalMethodDeclaration}
+	 * Enter a parse tree produced by the {@code METHOD_DECL}
 	 * labeled alternative in {@link JavammParser#methodDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterNormalMethodDeclaration(JavammParser.NormalMethodDeclarationContext ctx);
+	void enterMETHOD_DECL(JavammParser.METHOD_DECLContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code NormalMethodDeclaration}
+	 * Exit a parse tree produced by the {@code METHOD_DECL}
 	 * labeled alternative in {@link JavammParser#methodDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitNormalMethodDeclaration(JavammParser.NormalMethodDeclarationContext ctx);
+	void exitMETHOD_DECL(JavammParser.METHOD_DECLContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code MainMethodDeclaration}
-	 * labeled alternative in {@link JavammParser#methodDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterMainMethodDeclaration(JavammParser.MainMethodDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code MainMethodDeclaration}
-	 * labeled alternative in {@link JavammParser#methodDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitMainMethodDeclaration(JavammParser.MainMethodDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code ParameterDefinition}
+	 * Enter a parse tree produced by the {@code PARAM}
 	 * labeled alternative in {@link JavammParser#parameter}.
 	 * @param ctx the parse tree
 	 */
-	void enterParameterDefinition(JavammParser.ParameterDefinitionContext ctx);
+	void enterPARAM(JavammParser.PARAMContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code ParameterDefinition}
+	 * Exit a parse tree produced by the {@code PARAM}
 	 * labeled alternative in {@link JavammParser#parameter}.
 	 * @param ctx the parse tree
 	 */
-	void exitParameterDefinition(JavammParser.ParameterDefinitionContext ctx);
+	void exitPARAM(JavammParser.PARAMContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavammParser#methodBody}.
 	 * @param ctx the parse tree
@@ -218,17 +206,17 @@ public interface JavammListener extends ParseTreeListener {
 	 */
 	void exitThisReferenceExpression(JavammParser.ThisReferenceExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code binaryOp}
+	 * Enter a parse tree produced by the {@code Parenthesis}
 	 * labeled alternative in {@link JavammParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterBinaryOp(JavammParser.BinaryOpContext ctx);
+	void enterParenthesis(JavammParser.ParenthesisContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code binaryOp}
+	 * Exit a parse tree produced by the {@code Parenthesis}
 	 * labeled alternative in {@link JavammParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitBinaryOp(JavammParser.BinaryOpContext ctx);
+	void exitParenthesis(JavammParser.ParenthesisContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ArrayInitializationExpression}
 	 * labeled alternative in {@link JavammParser#expression}.
@@ -242,42 +230,6 @@ public interface JavammListener extends ParseTreeListener {
 	 */
 	void exitArrayInitializationExpression(JavammParser.ArrayInitializationExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code VariableExpression}
-	 * labeled alternative in {@link JavammParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariableExpression(JavammParser.VariableExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code VariableExpression}
-	 * labeled alternative in {@link JavammParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariableExpression(JavammParser.VariableExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code FalseLiteral}
-	 * labeled alternative in {@link JavammParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterFalseLiteral(JavammParser.FalseLiteralContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code FalseLiteral}
-	 * labeled alternative in {@link JavammParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitFalseLiteral(JavammParser.FalseLiteralContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Parenthesis}
-	 * labeled alternative in {@link JavammParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterParenthesis(JavammParser.ParenthesisContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Parenthesis}
-	 * labeled alternative in {@link JavammParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitParenthesis(JavammParser.ParenthesisContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code ArrayAccess}
 	 * labeled alternative in {@link JavammParser#expression}.
 	 * @param ctx the parse tree
@@ -290,17 +242,17 @@ public interface JavammListener extends ParseTreeListener {
 	 */
 	void exitArrayAccess(JavammParser.ArrayAccessContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code TrueLiteral}
+	 * Enter a parse tree produced by the {@code BINARY_EXPR}
 	 * labeled alternative in {@link JavammParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterTrueLiteral(JavammParser.TrueLiteralContext ctx);
+	void enterBINARY_EXPR(JavammParser.BINARY_EXPRContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code TrueLiteral}
+	 * Exit a parse tree produced by the {@code BINARY_EXPR}
 	 * labeled alternative in {@link JavammParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitTrueLiteral(JavammParser.TrueLiteralContext ctx);
+	void exitBINARY_EXPR(JavammParser.BINARY_EXPRContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code ClassInstantiation}
 	 * labeled alternative in {@link JavammParser#expression}.
@@ -325,6 +277,18 @@ public interface JavammListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArrayLengthExpression(JavammParser.ArrayLengthExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code INTEGER_LITERAL}
+	 * labeled alternative in {@link JavammParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterINTEGER_LITERAL(JavammParser.INTEGER_LITERALContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code INTEGER_LITERAL}
+	 * labeled alternative in {@link JavammParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitINTEGER_LITERAL(JavammParser.INTEGER_LITERALContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code FunctionCall}
 	 * labeled alternative in {@link JavammParser#expression}.
@@ -362,15 +326,15 @@ public interface JavammListener extends ParseTreeListener {
 	 */
 	void exitNegationExpression(JavammParser.NegationExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code IntegerLiteral}
+	 * Enter a parse tree produced by the {@code VAR_REF_EXPR}
 	 * labeled alternative in {@link JavammParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterIntegerLiteral(JavammParser.IntegerLiteralContext ctx);
+	void enterVAR_REF_EXPR(JavammParser.VAR_REF_EXPRContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code IntegerLiteral}
+	 * Exit a parse tree produced by the {@code VAR_REF_EXPR}
 	 * labeled alternative in {@link JavammParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitIntegerLiteral(JavammParser.IntegerLiteralContext ctx);
+	void exitVAR_REF_EXPR(JavammParser.VAR_REF_EXPRContext ctx);
 }
