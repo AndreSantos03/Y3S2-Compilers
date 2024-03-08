@@ -71,8 +71,7 @@ public class JmmSymbolTable implements SymbolTable {
     public Type getReturnType(String methodSignature) {
         Type returnType = returnTypes.get(methodSignature);
         if (returnType == null) {
-            // Return a default type or throw an exception if needed
-            return new Type("void", false); // Assuming a default return type of void
+            return new Type("void", false); 
         }
         return returnType;
     }
@@ -81,7 +80,6 @@ public class JmmSymbolTable implements SymbolTable {
     public List<Symbol> getParameters(String methodSignature) {
         List<Symbol> parameters = params.get(methodSignature);
         if (parameters == null) {
-            // Return an empty list or throw an exception if needed
             return Collections.emptyList();
         }
         return Collections.unmodifiableList(parameters);
@@ -91,7 +89,6 @@ public class JmmSymbolTable implements SymbolTable {
     public List<Symbol> getLocalVariables(String methodSignature) {
         List<Symbol> localVariables = locals.get(methodSignature);
         if (localVariables == null) {
-            // Return an empty list or throw an exception if needed
             return Collections.emptyList();
         }
         return Collections.unmodifiableList(localVariables);

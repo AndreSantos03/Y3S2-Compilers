@@ -115,8 +115,16 @@ public class JmmSymbolTableBuilder {
                 List<Symbol> parameters = new ArrayList<>();
                 method.getChildren("ArgumentDecl").forEach(argumentNode -> {
                     String paramName = argumentNode.get("argName");
-                    String paramType = argumentNode.getChild(0).get("typeName");
-                    Type type = new Type(paramType, false);
+                    Type type;
+                    if(argumentNode.getChild(0).getChildren().size() == 0){
+                        String paramType = argumentNode.getChild(0).get("typeName");
+                        type = new Type(paramType, false);
+                    }
+                    else{
+                        String paramType = argumentNode.getChild(0).getChild(0).get("typeName");
+                        type = new Type(paramType, true);
+                    }
+                    
                     Symbol symbol = new Symbol(type, paramName);
                     parameters.add(symbol);
                 });
@@ -166,18 +174,27 @@ public class JmmSymbolTableBuilder {
     private static List<Symbol> getLocalsList(JmmNode methodDecl) {
         List<Symbol> locals = new ArrayList<>();
         
-/*         methodDecl.getChildren().forEach(varDecl -> {
-            System.out.println("child: "+ varDecl);
-            if (varDecl.getKind().equals("MethodBody")) {
-                System.out.println("varDecl: "+ varDecl);
-                String varName = varDecl.get("value");
-                String varType = varDecl.get("type");
-                Type type = new Type(varType, false);
-                Symbol symbol = new Symbol(type, varName);
-                locals.add(symbol);
+        methodDecl.getChildren().forEach(methodBody -> {
+            if (methodBody.getKind().equals("MethodBody")) {
+                methodBody.getChildren("FieldDeclaration").forEach( fieldDec ->{
+                    System.out.println("Child " +fieldDec );
+                    String varName = fieldDec.get("fieldName");
+                    Type type;
+                    if(fieldDec.getChild(0).getChildren().size() == 0){
+                        String typeName = fieldDec.getChild(0).get("typeName");
+                        type = new Type(typeName,false);  
+                    }
+                    else{
+                        String typeName = fieldDec.getChild(0).getChild(0).get("typeName");
+                        type = new Type(typeName,true);  
+                    }
+                    Symbol symbol = new Symbol(type, varName);
+                    locals.add(symbol);
+                });
+
             }
         });
-     */
+    
         return locals;
     }
     private static List<Symbol> buildFields(JmmNode classDecl) {
@@ -186,12 +203,23 @@ public class JmmSymbolTableBuilder {
         classDecl.getChildren().forEach(child -> {
             if (child.getKind().equals("FieldDeclaration")) {
                 String fieldName = child.get("fieldName");
-                String typeName = (child.getChild(0).get("typeName"));
 
-                Type type = new Type(typeName, false);
-                Symbol symbol = new Symbol(type, fieldName);
+                /* String typeName = (child.getChild(0).get("typeName"));
 
-                fields.add(symbol);
+                Type type = new Type(typeName, false); */
+                if(child.getChild(0).getChildren().size() == 0){
+                    String typeName = (child.getChild(0).get("typeName"));
+
+                    Type type = new Type(typeName, false);
+                    Symbol symbol = new Symbol(type, fieldName);
+                    fields.add(symbol);
+                }
+                else{
+                    Type type = new Type(child.getChild(0).getChild(0).get("typeName"), true);
+                    Symbol symbol = new Symbol(type, fieldName);
+                    fields.add(symbol);
+                }
+
             }
         });
 
