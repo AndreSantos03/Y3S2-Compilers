@@ -7,28 +7,30 @@ import java.util.Arrays;
 import java.util.Set;
 
 public enum Kind {
+    PROGRAM,
+    CLASS_DECL,
+    VAR_DECL,
+    TYPE,
+    METHOD_DECL,
+    PARAM,
+    ASSIGN_STMT,
+    RETURN_STMT,
+    BINARY_EXPR,
+    INTEGER_LITERAL,
+    VAR_REF_EXPR;
 
-    PROGRAM("PROGRAM"),
-    CLASS_DECL("CLASS_DECL"),
-    VAR_DECL("VAR_DECL"),
-    TYPE("TYPE"),
-    METHOD_DECL("METHOD_DECL"),
-    PARAM("PARAM"),
-    ASSIGN_STMT("ASSIGN_STMT"),
-    RETURN_STMT("RETURN_STMT"),
-    BINARY_EXPR("BINARY_EXPR"),
-    INTEGER_LITERAL("INTEGER_LITERAL"),
-    VAR_REF_EXPR("VAR_REF_EXPR");
-
-
-    private final String name;
 
     private static final Set<Kind> STATEMENTS = Set.of(ASSIGN_STMT, RETURN_STMT);
     private static final Set<Kind> EXPRESSIONS = Set.of(BINARY_EXPR, INTEGER_LITERAL, VAR_REF_EXPR);
 
+    private final String name;
 
     private Kind(String name) {
         this.name = name;
+    }
+
+    private Kind() {
+        this.name = SpecsStrings.toCamelCase(name(), "_", true);
     }
 
     public static Kind fromString(String kind) {

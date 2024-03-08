@@ -78,7 +78,7 @@ public class JmmSymbolTableBuilder {
         Map<String, Type> map = new HashMap<>();
     
         classDecl.getChildren().forEach(method -> {
-            if (method.getKind().equals(Kind.METHOD_DECL.toString())) {
+            if (method.getKind().equals("METHOD_DECL")) {
                 String methodName = method.get("methodName");
                 Type returnType = new Type(method.get("returnType"), false);
                 map.put(methodName, returnType);
@@ -93,12 +93,12 @@ public class JmmSymbolTableBuilder {
         Map<String, List<Symbol>> map = new HashMap<>();
     
         classDecl.getChildren().forEach(method -> {
-            if (method.getKind().equals(Kind.METHOD_DECL.toString())) {
+            if (method.getKind().equals("METHOD_DECL")) {
                 String methodName = method.get("methodName");
                 List<Symbol> parameters = new ArrayList<>();
     
                 method.getChildren().forEach(parameter -> {
-                    if (parameter.getKind().equals(Kind.PARAM.toString())) {
+                    if (parameter.getKind().equals("PARAM")) {
                         String paramName = parameter.get("paramName");
                         String paramType = parameter.get("parameterType");
                         Type type = new Type(paramType, false);
@@ -132,7 +132,7 @@ public class JmmSymbolTableBuilder {
         List<String> methodNames = new ArrayList<>();
 
         classDecl.getChildren().forEach(methodNode -> {
-            if(methodNode.getKind().equals(Kind.METHOD_DECL.toString())){
+            if(methodNode.getKind().equals("METHOD_DECL")){
                 String methodName = methodNode.get("methodName");
                 methodNames.add(methodName);
             }
@@ -146,7 +146,7 @@ public class JmmSymbolTableBuilder {
         List<Symbol> locals = new ArrayList<>();
     
         methodDecl.getChildren().forEach(varDecl -> {
-            if (varDecl.getKind().equals(Kind.VAR_REF_EXPR.toString())) {
+            if (varDecl.getKind().equals("VAR_REF_EXPR")) {
                 String varName = varDecl.get("value");
                 String varType = varDecl.get("type");
                 Type type = new Type(varType, false);
