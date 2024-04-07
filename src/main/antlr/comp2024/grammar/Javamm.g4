@@ -13,7 +13,7 @@ INTEGER : '0' | [1-9] [0-9]*;
 ID : [a-zA-Z_$] [a-zA-Z_0-9$]*;
 
 program
-    : (importDeclaration)* classDeclaration* methodDeclaration? EOF
+    : (importDeclaration)* classDeclaration methodDeclaration? EOF
     ;
 
 importDeclaration
@@ -30,8 +30,7 @@ type
     | typeName='int' '...'
     | typeName='boolean'
     | typeName='String'
-    | typeName='double'
-    | typeName='float'
+
     | typeName=ID 
     ;
 
@@ -40,8 +39,9 @@ fieldDeclaration
     ;
 
 methodDeclaration
-    : ('public' | 'private' | 'protected')? returnType=type methodName=ID '(' (argument)* (',' argument)* ')' methodBody  #MethDeclaration
-    | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' methodBody  #MainMethDeclaration
+    : ('public')? ('static')? returnType=type methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* 'return' expression ';' '}'  #MethDeclaration
+    | ('public')? ('static')? 'void' methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* '}'  #MethDeclarationVoid
+    | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' '{'(fieldDeclaration | statement )* '}'  #MainMethDeclaration
     ;
 
 argument
@@ -49,14 +49,11 @@ argument
     ;
 
     
-methodBody
-    : '{' (fieldDeclaration | statement | 'return' expression ';' )* '}' 
-    ;
 
 statement
     : expression ';'
     | '{' statement* '}'
-    | 'if' '(' expression ')' statement ('else' statement)?
+    | 'if' '(' expression ')' statement ('else' statement)
     | 'while' '(' expression ')' statement
     | ID '=' expression ';'
     | ID '[' expression ']' '=' expression ';'
@@ -74,7 +71,8 @@ expression
     | '!' expression   # NegationExpression
     | expression (('*' | '/') expression)  # BinaryExpression
     | expression (('+' | '-') expression)   # BinaryExpression
-    | expression (('<' | '>' | '<=' | '>=' | '==' | '!=' | '+=' | '-=' | '*=' | '/=') expression)  # BinaryExpression
+    // | expression (('<' | '>' | '<=' | '>=' | '==' | '!=' | '+=' | '-=' | '*=' | '/=') expression)  # BinaryExpression
+    | expression (('<' | '>' | '==' | '!=') expression)  # BinaryExpression
     | expression ('&&' | '||') expression  # BinaryExpression
     | INTEGER   # IntegerLiteral
     | 'true'   # BooleanLiteral
