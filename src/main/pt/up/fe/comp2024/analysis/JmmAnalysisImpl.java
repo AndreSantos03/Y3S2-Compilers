@@ -11,6 +11,7 @@ import pt.up.fe.comp2024.analysis.passes.UndeclaredVariable;
 import pt.up.fe.comp2024.analysis.passes.Expressions;
 import pt.up.fe.comp2024.analysis.passes.Array;
 import pt.up.fe.comp2024.analysis.passes.Assignemnt;
+import pt.up.fe.comp2024.analysis.passes.Methods;
 import pt.up.fe.comp2024.symboltable.JmmSymbolTableBuilder;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class JmmAnalysisImpl implements JmmAnalysis {
     public JmmAnalysisImpl() {
 
 
-        this.analysisPasses = List.of(new UndeclaredVariable(),new Expressions(),new Array(),new Assignemnt());
+        this.analysisPasses = List.of(new UndeclaredVariable(),new Expressions(),new Array(),new Assignemnt(), new Methods());
     }
 
     @Override

@@ -21,7 +21,7 @@ importDeclaration
     ;
 
 classDeclaration
-    : 'class' className=ID ('extends' superClassName=ID)? '{' ( fieldDeclaration )* ( methodDeclaration )* '}' #ClassDecl
+    : 'public'? 'class' className=ID ('extends' superClassName=ID)? '{' ( fieldDeclaration )* ( methodDeclaration )* '}' #ClassDecl
     ;
 
 type
@@ -39,7 +39,7 @@ fieldDeclaration
     ;
 
 methodDeclaration
-    : ('public')? ('static')? returnType=type methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* returnDeclaration? '}'  #MethDeclaration
+    : ('public')? (isStatic='static')? returnType=type methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* returnDeclaration? '}'  #MethDeclaration
     | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' '{'(fieldDeclaration | statement )* '}'  #MainMethDeclaration
     ;
 
@@ -68,7 +68,7 @@ expression
     | 'new' 'int' '[' size=expression ']' # NewIntArrayExpression
     | 'new' classname=ID ('(' (expression (',' expression)*)? ')')? # ClassInstantiationExpression
     | expression '[' index=expression ']' # ArrayAccessExpression
-    | expression '.' value=ID '(' (expression (',' expression)*)? ')' # FunctionCallExpression
+    | expression '.' value=ID ('(' (expression (',' expression)*)? ')')? # FunctionCallExpression
     | expression '.' 'length' # ArrayLengthExpression
     | '[' expression (',' expression)* ']' # ArrayInitializationExpression
     | 'this' # ThisReferenceExpression
