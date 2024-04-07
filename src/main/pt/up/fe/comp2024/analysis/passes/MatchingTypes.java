@@ -63,6 +63,17 @@ public class MatchingTypes extends AnalysisVisitor {
             rightType= getVariableType(rightOperator.get("variable"),table,currentMethod);
         }
 
+        //ARRAY OPERATIONS
+        if (rightType != null && leftType != null && (rightType.isArray() || leftType.isArray())) {
+            addReport(Report.newError(
+                Stage.SEMANTIC,
+                NodeUtils.getLine(binaryOp),
+                NodeUtils.getColumn(binaryOp),
+                "Cannot perform operation with array type",
+                null)
+            );
+        }
+
         //CONDITIONAL OPERATIONS
         if (conditionalOperators.contains(binaryOp.get("operation"))) {
             if (!leftType.getName().equals("boolean") || !rightType.getName().equals("boolean")) {

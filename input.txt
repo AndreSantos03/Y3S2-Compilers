@@ -1,13 +1,15 @@
-class BoolTimesInt {
+class ArrayPlusInt {
+
     public static void main(String[] args) {
 
     }
 
     public int foo() {
-        int a;
-        boolean b;  
-        a = 10;
-        b = true;
-        return a * 212;
+        int[] a;
+        int b;
+
+        a = new int[2];
+        b = 10;
+        return 12 + b;
     }
 }
