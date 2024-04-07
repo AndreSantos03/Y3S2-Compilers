@@ -1,10 +1,14 @@
-class VarNotDeclared {
-
+class BoolTimesInt {
+    boolean b;  
     public static void main(String[] args) {
 
     }
 
     public int foo() {
-        return x;
+        int a;
+
+        a = 10;
+        b = true;
+        return b * a;
     }
 }

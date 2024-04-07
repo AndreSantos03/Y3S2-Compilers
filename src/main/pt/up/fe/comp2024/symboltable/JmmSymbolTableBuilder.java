@@ -28,7 +28,6 @@ public class JmmSymbolTableBuilder {
         var classDecl = root.getJmmChild(0);
         var imports = buildImports(root);
 
-        System.out.println("Imports name: " + imports);
 
         classDecl = root.getChild(imports.size());
         String className = classDecl.get("className");
@@ -44,26 +43,20 @@ public class JmmSymbolTableBuilder {
         Map<String, List<Symbol>> locals = new HashMap<>();
         List<Symbol> fields = new ArrayList<>();
 
-        System.out.println("Class name: " + className);
-        System.out.println("SuperClass name: " + superClassName);
+
         if(classDecl.getNumChildren() != 0){    
             methods = buildMethods(classDecl);
     
-            System.out.println("Methods: " + methods);
     
             returnTypes = buildReturnTypes(classDecl);
-            System.out.println("Return types: " + returnTypes);
     
             params = buildParams(classDecl);
-            System.out.println("Parameters: " + params);
     
             locals = buildLocals(classDecl);
     
-            System.out.println("Locals: " + locals);
 
             fields = buildFields(classDecl);
 
-            System.out.println("Fields: " + fields);
 
         }
 
@@ -173,10 +166,8 @@ public class JmmSymbolTableBuilder {
 
     private static List<Symbol> getLocalsList(JmmNode methodDecl) {
         List<Symbol> locals = new ArrayList<>();
-        System.out.println("Method declaration: " + methodDecl.getChildren() + "\n" );
 
         methodDecl.getChildren("FieldDeclaration").forEach(fieldDec -> {
-            System.out.println("Field declaration inside: " +fieldDec + "\n" );
             String varName = fieldDec.get("fieldName");
             Type type;
             if(fieldDec.getChild(0).getChildren().size() == 0){
