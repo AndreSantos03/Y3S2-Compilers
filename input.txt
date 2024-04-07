@@ -1,13 +1,15 @@
-class ArrayAccessOnInt {
+class IntPlusObject {
 
     public static void main(String[] args) {
 
     }
 
     public int foo() {
-        int[] a;
-        bool marge;
-        marge = false;
-        return a[12];
+        int a;
+        int b;
+        a = 12;
+        b = a;
+
+        return b;
     }
 }

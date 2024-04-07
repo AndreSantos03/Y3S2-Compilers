@@ -60,9 +60,9 @@ public class MatchingTypes extends AnalysisVisitor {
             if (!leftType.getName().equals("boolean") || !rightType.getName().equals("boolean")) {
                 String errorMessage;
                 if (!leftType.getName().equals("boolean")) {
-                    errorMessage = "Left operator '%s' must be boolean";
+                    errorMessage = "Left operator must be boolean";
                 } else {
-                    errorMessage ="Right operator '%s' must be boolean";
+                    errorMessage ="Right operator must be boolean";
                 }
                 addReport(Report.newError(
                     Stage.SEMANTIC,

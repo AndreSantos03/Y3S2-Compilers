@@ -55,12 +55,12 @@ argument
     
 
 statement
-    : expression ';'
-    | '{' statement* '}'
-    | 'if' '(' expression ')' statement ('else' statement)
-    | 'while' '(' expression ')' statement
-    | ID '=' expression ';'
-    | ID '[' expression ']' '=' expression ';'
+    : expression ';' #SimpleExpression
+    | '{' statement* '}' #Block
+    | 'if' '(' expression ')' statement ('else' statement) #ifStatement
+    | 'while' '(' expression ')' statement #WhileStatement
+    | variable=ID '=' expression ';' #Assignment
+    | variable=ID '[' expression ']' '=' expression ';' #AssignmentArray
     ;
 
 expression

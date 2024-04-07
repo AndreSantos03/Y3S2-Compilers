@@ -10,6 +10,7 @@ import pt.up.fe.comp.jmm.report.Stage;
 import pt.up.fe.comp2024.analysis.passes.UndeclaredVariable;
 import pt.up.fe.comp2024.analysis.passes.MatchingTypes;
 import pt.up.fe.comp2024.analysis.passes.ArrayAccess;
+import pt.up.fe.comp2024.analysis.passes.Assignemnt;
 import pt.up.fe.comp2024.symboltable.JmmSymbolTableBuilder;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class JmmAnalysisImpl implements JmmAnalysis {
     public JmmAnalysisImpl() {
 
 
-        this.analysisPasses = List.of(new UndeclaredVariable(),new MatchingTypes(),new ArrayAccess());
+        this.analysisPasses = List.of(new UndeclaredVariable(),new MatchingTypes(),new ArrayAccess(),new Assignemnt());
     }
 
     @Override
