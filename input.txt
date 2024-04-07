@@ -8,6 +8,6 @@ class BoolTimesInt {
         boolean b;  
         a = 10;
         b = true;
-        return a * b;
+        return a * 212;
     }
 }

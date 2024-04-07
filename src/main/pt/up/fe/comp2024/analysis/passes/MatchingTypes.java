@@ -49,7 +49,7 @@ public class MatchingTypes extends AnalysisVisitor {
             leftType = new Type("int",false);
         }
         else{
-            leftType= getVariableType(leftOperator.get("variable"),table);
+            leftType= getVariableType(leftOperator.get("variable"),table,currentMethod);
         }
 
         Type rightType = null;
@@ -60,7 +60,7 @@ public class MatchingTypes extends AnalysisVisitor {
             rightType = new Type("int",false);
         }
         else{
-            rightType= getVariableType(rightOperator.get("variable"),table);
+            rightType= getVariableType(rightOperator.get("variable"),table,currentMethod);
         }
 
         //CONDITIONAL OPERATIONS
@@ -105,32 +105,4 @@ public class MatchingTypes extends AnalysisVisitor {
         return null;
     }
 
-    private Type getVariableType(String varName,SymbolTable table){
- 
-        //Checks in the local fields
-        for(Symbol symbol : table.getLocalVariables(currentMethod)){
-            if(symbol.getName().equals(varName))
-            {
-                return symbol.getType();
-            }
-        }
-
-        //Checks in the methods arguments
-        for(Symbol symbol : table.getParameters(currentMethod)){
-            if(symbol.getName().equals(varName))
-            {
-                return symbol.getType();
-            }
-        }
-
-        //Checks in the class fields
-        for(Symbol symbol : table.getFields()){
-            if(symbol.getName().equals(varName))
-            {
-                return symbol.getType();
-            }
-        }
-
-        return null;
-    }
 }
