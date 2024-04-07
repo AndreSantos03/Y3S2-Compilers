@@ -1,4 +1,4 @@
-class ArrayPlusInt {
+class ArrayAccessOnInt {
 
     public static void main(String[] args) {
 
@@ -6,10 +6,8 @@ class ArrayPlusInt {
 
     public int foo() {
         int[] a;
-        int b;
-
-        a = new int[2];
-        b = 10;
-        return 12 + b;
+        bool marge;
+        marge = false;
+        return a[12];
     }
 }

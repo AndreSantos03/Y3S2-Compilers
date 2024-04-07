@@ -27,8 +27,8 @@ public class MatchingTypes extends AnalysisVisitor {
 
     @Override
     public void buildVisitor() {
-        addVisit("BinaryExpression",this::visitBinaryExpression );
         addVisit("MethDeclaration", this::visitMethodDecl);
+        addVisit("BinaryExpression",this::visitBinaryExpression );
     }
 
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
@@ -40,29 +40,10 @@ public class MatchingTypes extends AnalysisVisitor {
 
         JmmNode leftOperator = binaryOp.getChild(0); 
         JmmNode rightOperator = binaryOp.getChild(1);
+
+        Type leftType= getVariableType(leftOperator,table,currentMethod);
+        Type rightType= getVariableType(rightOperator,table,currentMethod);
         
-        Type leftType = null;
-        if(leftOperator.getKind().equals("BooleanLiteral")){
-            leftType = new Type("boolean",false);
-        }
-        else if(leftOperator.getKind().equals("IntegerLiteral")){
-            leftType = new Type("int",false);
-        }
-        else{
-            leftType= getVariableType(leftOperator.get("variable"),table,currentMethod);
-        }
-
-        Type rightType = null;
-        if(rightOperator.getKind().equals("BooleanLiteral")){
-            rightType = new Type("boolean",false);
-        }
-        else if(rightOperator.getKind().equals("IntegerLiteral")){
-            rightType = new Type("int",false);
-        }
-        else{
-            rightType= getVariableType(rightOperator.get("variable"),table,currentMethod);
-        }
-
         //ARRAY OPERATIONS
         if (rightType != null && leftType != null && (rightType.isArray() || leftType.isArray())) {
             addReport(Report.newError(

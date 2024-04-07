@@ -42,8 +42,17 @@ public abstract class AnalysisVisitor extends PreorderJmmVisitor<SymbolTable, Vo
 
     //Defined by me, works for all the passes
     //We can pass an empty string as well, works the same
-    protected static Type getVariableType(String varName,SymbolTable table,String currentMethod){
+    protected static Type getVariableType(JmmNode var,SymbolTable table,String currentMethod){
  
+
+        if(var.getKind().equals("BooleanLiteral")){
+            return new Type("boolean",false);
+        }
+        else if(var.getKind().equals("IntegerLiteral")){
+            return new Type("int",false);
+        }
+        String varName = var.get("variable");
+        
         //Checks in the local fields
         for(Symbol symbol : table.getLocalVariables(currentMethod)){
             if(symbol.getName().equals(varName))
