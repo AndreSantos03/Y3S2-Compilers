@@ -34,6 +34,8 @@ public abstract class AnalysisVisitor extends PreorderJmmVisitor<SymbolTable, Vo
         // Visit the node
         visit(root, table);
 
+        System.out.println("Understanding the system\n");
+
         // Return reports
         return getReports();
     }

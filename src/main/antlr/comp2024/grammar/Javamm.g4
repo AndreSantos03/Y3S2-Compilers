@@ -39,11 +39,15 @@ fieldDeclaration
     ;
 
 methodDeclaration
-    : ('public')? ('static')? returnType=type methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* 'return' expression ';' '}'  #MethDeclaration
-    | ('public')? ('static')? 'void' methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* '}'  #MethDeclarationVoid
+    : ('public')? ('static')? returnType=type methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* returnDeclaration?  #MethDeclaration
     | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' '{'(fieldDeclaration | statement )* '}'  #MainMethDeclaration
     ;
 
+
+returnDeclaration
+    :('return' expression ';' '}')
+    ;
+    
 argument
     : type argName=ID  #argumentDecl
     ;

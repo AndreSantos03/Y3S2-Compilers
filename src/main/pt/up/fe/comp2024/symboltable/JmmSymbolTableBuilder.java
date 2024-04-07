@@ -173,26 +173,23 @@ public class JmmSymbolTableBuilder {
 
     private static List<Symbol> getLocalsList(JmmNode methodDecl) {
         List<Symbol> locals = new ArrayList<>();
-        
-        methodDecl.getChildren().forEach(methodBody -> {
-            if (methodBody.getKind().equals("MethodBody")) {
-                methodBody.getChildren("FieldDeclaration").forEach( fieldDec ->{
-                    System.out.println("Child " +fieldDec );
-                    String varName = fieldDec.get("fieldName");
-                    Type type;
-                    if(fieldDec.getChild(0).getChildren().size() == 0){
-                        String typeName = fieldDec.getChild(0).get("typeName");
-                        type = new Type(typeName,false);  
-                    }
-                    else{
-                        String typeName = fieldDec.getChild(0).getChild(0).get("typeName");
-                        type = new Type(typeName,true);  
-                    }
-                    Symbol symbol = new Symbol(type, varName);
-                    locals.add(symbol);
-                });
+        System.out.println("Method declaration: " + methodDecl.getChildren() + "\n" );
 
+        methodDecl.getChildren("FieldDeclaration").forEach(fieldDec -> {
+            System.out.println("Field declaration inside: " +fieldDec + "\n" );
+            String varName = fieldDec.get("fieldName");
+            Type type;
+            if(fieldDec.getChild(0).getChildren().size() == 0){
+                String typeName = fieldDec.getChild(0).get("typeName");
+                type = new Type(typeName,false);  
             }
+            else{
+                String typeName = fieldDec.getChild(0).getChild(0).get("typeName");
+                type = new Type(typeName,true);  
+            }
+            Symbol symbol = new Symbol(type, varName);
+            locals.add(symbol);
+
         });
     
         return locals;
@@ -204,9 +201,8 @@ public class JmmSymbolTableBuilder {
             if (child.getKind().equals("FieldDeclaration")) {
                 String fieldName = child.get("fieldName");
 
-                /* String typeName = (child.getChild(0).get("typeName"));
 
-                Type type = new Type(typeName, false); */
+
                 if(child.getChild(0).getChildren().size() == 0){
                     String typeName = (child.getChild(0).get("typeName"));
 
@@ -225,7 +221,5 @@ public class JmmSymbolTableBuilder {
 
         return fields;
     }
-
-
 
 }
