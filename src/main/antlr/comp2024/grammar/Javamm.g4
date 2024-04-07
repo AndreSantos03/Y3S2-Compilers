@@ -73,13 +73,12 @@ expression
     | '[' expression (',' expression)* ']' # ArrayInitializationExpression
     | 'this' # ThisReferenceExpression
     | '!' expression   # NegationExpression
-    | expression (('*' | '/') expression)  # BinaryExpression
-    | expression (('+' | '-') expression)   # BinaryExpression
-    // | expression (('<' | '>' | '<=' | '>=' | '==' | '!=' | '+=' | '-=' | '*=' | '/=') expression)  # BinaryExpression
-    | expression (('<' | '>' | '==' | '!=') expression)  # BinaryExpression
-    | expression ('&&' | '||') expression  # BinaryExpression
+    | expression ( operation=('*' | '/') expression)  # BinaryExpression
+    | expression (operation=('+' | '-') expression)   # BinaryExpression
+    | expression (operation=('<' | '>' | '==' | '!=') expression)  # BinaryExpression
+    | expression operation=('&&' | '||') expression  # BinaryExpression
     | INTEGER   # IntegerLiteral
-    | 'true'   # BooleanLiteral
-    | 'false'  # BooleanLiteral
+    | value='true'   # BooleanLiteral
+    | value='false'  # BooleanLiteral
     | variable=ID (op=('++' | '--'))? # VariableReferenceExpression
     ;
