@@ -57,7 +57,7 @@ argument
 statement
     : expression ';' #SimpleExpression
     | '{' statement* '}' #Block
-    | 'if' '(' expression ')' statement ('else' statement) #ifStatement
+    | 'if' '(' expression ')' statement ('else' statement) #IfStatement
     | 'while' '(' expression ')' statement #WhileStatement
     | variable=ID '=' expression ';' #Assignment
     | variable=ID '[' expression ']' '=' expression ';' #AssignmentArray

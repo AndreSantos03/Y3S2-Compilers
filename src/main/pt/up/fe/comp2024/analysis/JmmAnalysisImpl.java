@@ -8,8 +8,8 @@ import pt.up.fe.comp.jmm.parser.JmmParserResult;
 import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.comp.jmm.report.Stage;
 import pt.up.fe.comp2024.analysis.passes.UndeclaredVariable;
-import pt.up.fe.comp2024.analysis.passes.MatchingTypes;
-import pt.up.fe.comp2024.analysis.passes.ArrayAccess;
+import pt.up.fe.comp2024.analysis.passes.Expressions;
+import pt.up.fe.comp2024.analysis.passes.Array;
 import pt.up.fe.comp2024.analysis.passes.Assignemnt;
 import pt.up.fe.comp2024.symboltable.JmmSymbolTableBuilder;
 
@@ -24,7 +24,7 @@ public class JmmAnalysisImpl implements JmmAnalysis {
     public JmmAnalysisImpl() {
 
 
-        this.analysisPasses = List.of(new UndeclaredVariable(),new MatchingTypes(),new ArrayAccess(),new Assignemnt());
+        this.analysisPasses = List.of(new UndeclaredVariable(),new Expressions(),new Array(),new Assignemnt());
     }
 
     @Override

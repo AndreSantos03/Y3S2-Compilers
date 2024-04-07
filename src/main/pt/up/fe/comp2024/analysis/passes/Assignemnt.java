@@ -21,7 +21,7 @@ import pt.up.fe.specs.util.SpecsCheck;
 public class Assignemnt extends AnalysisVisitor {
 
     private String currentMethod;
-   
+    private final List<String> arithmeticOperators = Arrays.asList("+", "-", "*", "/","<",">","==","!=");
 
     @Override
     public void buildVisitor() {
@@ -37,7 +37,22 @@ public class Assignemnt extends AnalysisVisitor {
     private Void assignment(JmmNode assignmentExpression, SymbolTable table){
         Type variableType = getVariableType(assignmentExpression, table, currentMethod);
 
+
         JmmNode assigned = assignmentExpression.getChild(0);
+
+        if(assigned.getKind().equals("BinaryExpression")){
+            if(!arithmeticOperators.contains(assigned.get("operation"))){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(assignmentExpression),
+                    NodeUtils.getColumn(assignmentExpression),
+                    "Mismatch Types!",
+                    null)
+                );
+            }
+            return null;
+        }
+
         Type assignedType = getVariableType(assigned, table, currentMethod);
 
         if(!variableType.equals(assignedType)){

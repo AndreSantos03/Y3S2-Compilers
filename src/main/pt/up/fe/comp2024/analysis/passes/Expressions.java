@@ -18,7 +18,7 @@ import pt.up.fe.specs.util.SpecsCheck;
  *
  * @author JBispo
  */
-public class MatchingTypes extends AnalysisVisitor {
+public class Expressions extends AnalysisVisitor {
 
     private String currentMethod;
     private final List<String> conditionalOperators = Arrays.asList("&&","||");
@@ -29,6 +29,8 @@ public class MatchingTypes extends AnalysisVisitor {
     public void buildVisitor() {
         addVisit("MethDeclaration", this::visitMethodDecl);
         addVisit("BinaryExpression",this::visitBinaryExpression );
+        addVisit("IfStatement",this::conditionCheck);
+        addVisit("WhileStatement",this::conditionCheck);
     }
 
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
@@ -96,5 +98,25 @@ public class MatchingTypes extends AnalysisVisitor {
         }
         return null;
     }
+
+    //Check for bool conditionals after While and If
+    private Void conditionCheck(JmmNode loopExpr, SymbolTable table){
+        JmmNode conditionalExpr = loopExpr.getChild(0);
+        if(getVariableType(conditionalExpr, table, currentMethod).getName().equals("boolean")){
+            return null;
+        }
+        if(!conditionalOperators.contains(conditionalExpr.get("operation"))){
+            addReport(Report.newError(
+                Stage.SEMANTIC,
+                NodeUtils.getLine(loopExpr),
+                NodeUtils.getColumn(loopExpr),
+                "Must have a boolean as a conditional!",
+                null)
+            );
+            return null;
+        }
+        return null;
+    }
+
 
 }

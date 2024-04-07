@@ -18,7 +18,7 @@ import pt.up.fe.specs.util.SpecsCheck;
  *
  * @author JBispo
  */
-public class ArrayAccess extends AnalysisVisitor {
+public class Array extends AnalysisVisitor {
 
     private String currentMethod;
    
