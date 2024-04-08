@@ -17,7 +17,7 @@ program
     ;
 
 importDeclaration
-    : 'import' value+=ID ('.' value+=ID)* ';' #ImportStatement
+    : 'import' value=ID';' #ImportStatement
     ;
 
 classDeclaration

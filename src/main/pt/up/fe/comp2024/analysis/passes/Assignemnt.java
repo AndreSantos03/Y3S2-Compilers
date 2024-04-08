@@ -41,6 +41,27 @@ public class Assignemnt extends AnalysisVisitor {
         JmmNode assigned = assignmentExpression.getChild(0);
 
 
+        //Checks if it's calling for a class
+        if(assigned.getKind().equals("ClassInstantiationExpression")){
+            String classname = assigned.get("classname");
+            //checks for current class and then superclass and then imported
+            if(!table.getClassName().equals(classname)){
+
+                if(!table.getSuper().equals(classname)){
+                    System.out.println("Imports: " + table.getImports() + "\n");
+                    if(!table.getImports().contains(classname))
+                        addReport(Report.newError(
+                            Stage.SEMANTIC,
+                            NodeUtils.getLine(assignmentExpression),
+                            NodeUtils.getColumn(assignmentExpression),
+                            "Calls for an undefined class!",
+                            null)
+                        );
+                }
+            }
+            return null;
+        }
+
         //Checks for this reference in the class name and extends
         if(assigned.getKind().equals("ThisReferenceExpression")){
             //doesnt match the current class

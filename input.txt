@@ -1,11 +1,22 @@
-class ArrayInit {
+import man;
 
-    public int[] foo() {
-        int[] a;
-        boolean b;
-        b = false;
-        a = [10, b, 30];
-        return a;
+class IncompatibleArguments {
+
+    public static void main(String[] args) {
+
     }
 
+    public int foo(int a) {
+        return a + 1;
+    }
+
+    public int bar() {
+        Communists a;
+        boolean b;
+
+        a = new Communists();
+        b = true;
+
+        return a.foo(b);
+    }
 }
