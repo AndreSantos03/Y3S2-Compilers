@@ -7,13 +7,10 @@ import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.parser.JmmParserResult;
 import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.comp.jmm.report.Stage;
-import pt.up.fe.comp2024.analysis.passes.UndeclaredVariable;
-import pt.up.fe.comp2024.analysis.passes.Expressions;
-import pt.up.fe.comp2024.analysis.passes.Array;
-import pt.up.fe.comp2024.analysis.passes.Assignemnt;
-import pt.up.fe.comp2024.analysis.passes.Methods;
-import pt.up.fe.comp2024.analysis.passes.Objects;
 import pt.up.fe.comp2024.symboltable.JmmSymbolTableBuilder;
+
+import pt.up.fe.comp2024.analysis.passes.Visits;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +23,7 @@ public class JmmAnalysisImpl implements JmmAnalysis {
     public JmmAnalysisImpl() {
 
 
-        this.analysisPasses = List.of(new UndeclaredVariable(),new Expressions(),new Array(),new Assignemnt(), new Methods(),new Objects());
+        this.analysisPasses = List.of(new Visits());
     }
 
     @Override
