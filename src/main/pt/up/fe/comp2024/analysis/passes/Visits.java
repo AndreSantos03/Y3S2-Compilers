@@ -45,6 +45,7 @@ public class Visits extends AnalysisVisitor {
         addVisit("IfStatement",this::conditionCheck);
         addVisit("WhileStatement",this::conditionCheck);
         addVisit("ArrayAccessExpression",this::visitArrayAccess);
+        addVisit("ReturnDeclaration",this::visitReturnDecl);
     }
 
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
@@ -307,7 +308,80 @@ public class Visits extends AnalysisVisitor {
         return null;
     }
 
+    private Void visitReturnDecl(JmmNode returnExpr,SymbolTable table){
+        Type typeMethod= table.getReturnType(currentMethodString);
+        if(typeMethod.getName().equals("void")){
+            addReport(Report.newError(
+                Stage.SEMANTIC,
+                NodeUtils.getLine(returnExpr),
+                NodeUtils.getColumn(returnExpr),
+                "Void functions can't return!",
+                null)
+            );
+        }
+        JmmNode childNode = returnExpr.getChild(0);
 
+        //variable
+        if(childNode.getKind().equals("VariableReferenceExpression")){
+
+            if(!getVariableType(childNode, table).equals(typeMethod)){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(returnExpr),
+                    NodeUtils.getColumn(returnExpr),
+                    "Return type of method doesn't match!",
+                    null)
+                );
+            }
+            return null;
+        }
+
+        if(childNode.getKind().equals("BinaryExpression")){
+            //checks for +, * , ... and sees if its an int
+            if(!arithmeticOperators.contains(childNode.get("operation")) && typeMethod.getName().equals("int")){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(returnExpr),
+                    NodeUtils.getColumn(returnExpr),
+                    "Return type of method doesn't match!",
+                    null)
+                );
+            }
+            //checks for &&, ||, ... and sees if its an int
+            if(!conditionalOperators.contains(childNode.get("operation")) && typeMethod.getName().equals("boolean")){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(returnExpr),
+                    NodeUtils.getColumn(returnExpr),
+                    "Return type of method doesn't match!",
+                    null)
+                );
+            }
+            return null;
+        }
+
+
+        //methodcall
+        String calledMethodName = childNode.get("value");
+        if(table.getMethods().contains(calledMethodName)){
+            if(!table.getReturnType(calledMethodName).equals(typeMethod)){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(returnExpr),
+                    NodeUtils.getColumn(returnExpr),
+                    "Return type of method doesn't match!",
+                    null)
+                );
+            }
+        }
+        //we'll  just assume if imported works, there's another visit to see if the function call doesn't exist
+
+
+        return null;
+    }
+
+
+    //gets the type of the node in a trickle up effect
     private Type getVariableType(JmmNode var,SymbolTable table){
  
 

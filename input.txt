@@ -8,7 +8,7 @@ class IncompatibleReturn {
         return a + 1;
     }
 
-    public boolean bar() {
+    public int bar() {
         IncompatibleReturn a;
         int b;
 
