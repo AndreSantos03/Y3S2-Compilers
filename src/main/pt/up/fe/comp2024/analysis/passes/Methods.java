@@ -27,7 +27,7 @@ public class Methods extends AnalysisVisitor {
     @Override
     public void buildVisitor() {
         addVisit("MethDeclaration", this::visitMethodDecl);
-        addVisit("ThisReferenceExpression",this::visitThis);
+        addVisit("FunctionCallExpression",this::visitFunctionCall);
     }
 
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
@@ -35,19 +35,37 @@ public class Methods extends AnalysisVisitor {
         return null;
     }
 
-    private Void visitThis(JmmNode thisExpression, SymbolTable table){
-        Optional<JmmNode> method = thisExpression.getAncestor("MethDeclaration");
-        if(method.get().hasAttribute("isStatic")){
+    private Void visitFunctionCall(JmmNode functionCallExpr, SymbolTable table){
+        String calledMethodName = functionCallExpr.get("value");
+
+        if(!table.getMethods().contains(calledMethodName)){
             addReport(Report.newError(
                 Stage.SEMANTIC,
-                NodeUtils.getLine(thisExpression),
-                NodeUtils.getColumn(thisExpression),
-                "You can't use 'this' inside a static method!",
+                NodeUtils.getLine(functionCallExpr),
+                NodeUtils.getColumn(functionCallExpr),
+                "Calls for an undefined method!",
                 null)
             );
         }
 
-        
+        //check parameter
+        int counter = 0;
+        List<Symbol> argumentsMethod = table.getParameters(calledMethodName);
+        for(JmmNode parameter: functionCallExpr.getChildren("Parameter")){
+            JmmNode parameterChild = parameter.getChild(0);
+            Type type = getVariableType(parameterChild, table, currentMethod);
+            if(!type.equals(argumentsMethod.get(counter).getType())){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(functionCallExpr),
+                    NodeUtils.getColumn(functionCallExpr),
+                    "Function call parameter must match method arguments!",
+                    null)
+                );
+                return null;
+            }
+            counter++;
+        }
         return null;
     }
     

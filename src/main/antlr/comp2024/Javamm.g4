@@ -63,12 +63,17 @@ statement
     | variable=ID '[' expression ']' '=' expression ';' #AssignmentArray
     ;
 
+
+parameter
+    : expression (',' expression) *
+    ;
+
 expression
     : '(' expression ')' # ParenthesisExpression
     | 'new' 'int' '[' size=expression ']' # NewIntArrayExpression
-    | 'new' classname=ID ('(' (expression (',' expression)*)? ')')? # ClassInstantiationExpression
+    | 'new' classname=ID '(' parameter? ')'  # ClassInstantiationExpression
     | expression '[' index=expression ']' # ArrayAccessExpression
-    | expression '.' value=ID ('(' (expression (',' expression)*)? ')')? # FunctionCallExpression
+    | expression '.' value=ID '(' parameter? ')'  # FunctionCallExpression
     | expression '.' 'length' # ArrayLengthExpression
     | '[' expression (',' expression)* ']' # ArrayInitializationExpression
     | 'this' # ThisReferenceExpression

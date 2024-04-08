@@ -6,15 +6,15 @@ class IncompatibleArguments {
 
     }
 
-    public int foo(int a) {
-        return a + 1;
+    public int foo(boolean a) {
+        return a;
     }
 
     public int bar() {
-        Communists a;
+        IncompatibleArguments a;
         boolean b;
 
-        a = new Communists();
+        a = new IncompatibleArguments();
         b = true;
 
         return a.foo(b);
