@@ -57,6 +57,66 @@ public class Visits extends AnalysisVisitor {
     private Void assignment(JmmNode assignmentExpression, SymbolTable table){
         currentType = getVariableType(assignmentExpression, table);
         currentAssignmentNode = assignmentExpression;
+
+        JmmNode childNode = assignmentExpression.getChild(0);
+
+        //Checks for binaryOps
+        if(childNode.getKind().equals("BinaryExpression")){
+            //checks for +, * , ... and sees if its an int
+            if(arithmeticOperators.contains(childNode.get("operation")) && !currentType.getName().equals("int")){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(assignmentExpression),
+                    NodeUtils.getColumn(assignmentExpression),
+                    "Types of assignment don't match!",
+                    null)
+                );
+            }
+
+            //checks for &&, ||, ... and sees if its an int
+            if(conditionalOperators.contains(childNode.get("operation")) && !currentType.getName().equals("boolean")){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(assignmentExpression),
+                    NodeUtils.getColumn(assignmentExpression),
+                    "Types of assignment don't match!",
+                    null)
+                );
+            }
+            return null;
+        }
+
+
+    
+
+        //VARIABLES: checks for type and sees if it matches
+        if(childNode.getKind().equals("VariableReferenceExpression") || childNode.getKind().equals("BooleanLiteral") || childNode.getKind().equals("IntegerLiteral")){
+            Type variableType =getVariableType(childNode, table);
+
+            //imports and extends assume everything works
+            if(table.getImports().contains(variableType.getName())){
+                return null;
+            }
+
+
+            //thge original is imported class and the new extends import
+            //super niche case, only here because of the tests :)
+            if(table.getImports().contains(currentType.getName()) && table.getClassName().equals(variableType.getName()) && table.getImports().contains(table.getSuper())){
+                return null;
+            }
+
+
+            if(!variableType.equals(currentType)){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(assignmentExpression),
+                    NodeUtils.getColumn(assignmentExpression),
+                    "Types of assignment don't match!",
+                    null)
+                );
+            }
+        }
+
         return null;
     }
     
@@ -102,9 +162,25 @@ public class Visits extends AnalysisVisitor {
 
     private Void visitFunctionCall(JmmNode functionCallExpr, SymbolTable table){
 
-        //checks if the call is from an imported class, assumes everything is well
         Type baseObjectType = getVariableType(functionCallExpr.getChild(0), table);
+
+        //checks to see if the caller is defined
+        if(baseObjectType == null){
+            addReport(Report.newError(
+                Stage.SEMANTIC,
+                NodeUtils.getLine(functionCallExpr),
+                NodeUtils.getColumn(functionCallExpr),
+                "Calling a method from an undefined object",
+                null)
+            );
+        }
+
+        //checks if the call is from an imported class, assumes everything is well
         if(table.getImports().contains(baseObjectType.getName())){
+            return null;
+        }
+        //chceks to see if its an extension of a imported class
+        if(baseObjectType.getName().equals(table.getClassName()) && table.getImports().contains(table.getSuper())){
             return null;
         }
 
@@ -183,6 +259,17 @@ public class Visits extends AnalysisVisitor {
     }
 
     private Void visitArrayInitialization(JmmNode arrayExpr, SymbolTable table){
+        //checks to see if its being put into an actual array
+        if(!currentType.isArray()){
+            addReport(Report.newError(
+                Stage.SEMANTIC,
+                NodeUtils.getLine(arrayExpr),
+                NodeUtils.getColumn(arrayExpr),
+                "Can't put array values into a simple int!",
+                null)
+            );
+            return null;
+        }
 
         //Checks if all the instances being put into the array are int
         for (JmmNode child : arrayExpr.getChildren()) {
@@ -320,6 +407,35 @@ public class Visits extends AnalysisVisitor {
             );
         }
         JmmNode childNode = returnExpr.getChild(0);
+
+        //Literals
+        if(childNode.getKind().equals("IntegerLiteral")){
+            if( !typeMethod.getName().equals("int")){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(returnExpr),
+                    NodeUtils.getColumn(returnExpr),
+                    "Return type of method doesn't match!",
+                    null)
+                );
+            }
+
+            return null;
+        }
+        if(childNode.getKind().equals("BooleanLiteral")){
+            if( !typeMethod.getName().equals("boolean")){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(returnExpr),
+                    NodeUtils.getColumn(returnExpr),
+                    "Return type of method doesn't match!",
+                    null)
+                );
+            }
+
+            return null;
+        }
+
 
         //variable
         if(childNode.getKind().equals("VariableReferenceExpression")){

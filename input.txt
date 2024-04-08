@@ -1,20 +1,18 @@
-class IncompatibleReturn {
+import A;
+
+class CallToMethodAssumedInExtends extends A {
 
     public static void main(String[] args) {
 
     }
 
-    public int foo(int a) {
-        return a + 1;
-    }
+    public int foo() {
+        CallToMethodAssumedInExtends a;
+        a = new CallToMethodAssumedInExtends();
 
-    public int bar() {
-        IncompatibleReturn a;
-        int b;
+        // Assume bar() is in A
+        a.bar();
 
-        a = new IncompatibleReturn();
-        b = 0;
-
-        return a.foo(b);
+        return 0;
     }
 }
