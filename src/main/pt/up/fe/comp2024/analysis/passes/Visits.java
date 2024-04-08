@@ -23,8 +23,11 @@ import pt.up.fe.specs.util.SpecsCheck;
  */
 public class Visits extends AnalysisVisitor {
 
-    private String currentMethod;
+    private String currentMethodString;
+    private JmmNode currentMethod;
+    private JmmNode currentAssignmentNode;
     private Type currentType;
+
 
     private final List<String> conditionalOperators = Arrays.asList("&&","||");
     private final List<String> arithmeticOperators = Arrays.asList("+", "-", "*", "/","<",">","==","!=");
@@ -45,13 +48,14 @@ public class Visits extends AnalysisVisitor {
     }
 
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
-        currentMethod = method.get("methodName");
+        currentMethodString = method.get("methodName");
+        currentMethod = method;
         return null;
     }
 
     private Void assignment(JmmNode assignmentExpression, SymbolTable table){
-        currentType = getVariableType(assignmentExpression, table, currentMethod);
-
+        currentType = getVariableType(assignmentExpression, table);
+        currentAssignmentNode = assignmentExpression;
         return null;
     }
     
@@ -59,7 +63,7 @@ public class Visits extends AnalysisVisitor {
     //given to us by teachers
     private Void visitVarRefExpr(JmmNode varRefExpr, SymbolTable table) {
 
-        SpecsCheck.checkNotNull(currentMethod, () -> "Expected current method to be set");
+        SpecsCheck.checkNotNull(currentMethodString, () -> "Expected current method to be set");
 
         // Check if exists a parameter or variable declaration with the same name as the variable reference
         var varRefName = varRefExpr.get("variable");
@@ -71,13 +75,13 @@ public class Visits extends AnalysisVisitor {
         }
 
         // Var is a parameter, return
-        if (table.getParameters(currentMethod).stream()
+        if (table.getParameters(currentMethodString).stream()
                 .anyMatch(param -> param.getName().equals(varRefName))) {
             return null;
         }
 
         // Var is a declared variable, return
-        if (table.getLocalVariables(currentMethod).stream()
+        if (table.getLocalVariables(currentMethodString).stream()
                 .anyMatch(varDecl -> varDecl.getName().equals(varRefName))) {
             return null;
         }
@@ -98,7 +102,7 @@ public class Visits extends AnalysisVisitor {
     private Void visitFunctionCall(JmmNode functionCallExpr, SymbolTable table){
 
         //checks if the call is from an imported class, assumes everything is well
-        Type baseObjectType = getVariableType(functionCallExpr.getChild(0), table, currentMethod);
+        Type baseObjectType = getVariableType(functionCallExpr.getChild(0), table);
         if(table.getImports().contains(baseObjectType.getName())){
             return null;
         }
@@ -120,7 +124,7 @@ public class Visits extends AnalysisVisitor {
         List<Symbol> argumentsMethod = table.getParameters(calledMethodName);
         for(JmmNode parameter: functionCallExpr.getChildren("Parameter")){
             JmmNode parameterChild = parameter.getChild(0);
-            Type type = getVariableType(parameterChild, table, currentMethod);
+            Type type = getVariableType(parameterChild, table);
             if(!type.equals(argumentsMethod.get(counter).getType())){
                 addReport(Report.newError(
                     Stage.SEMANTIC,
@@ -181,8 +185,8 @@ public class Visits extends AnalysisVisitor {
 
         //Checks if all the instances being put into the array are int
         for (JmmNode child : arrayExpr.getChildren()) {
-            if(! getVariableType(child, table, currentMethod).getName().equals("int")){
-                System.out.println(getVariableType(child, table, currentMethod).getName() + "\n");
+            if(! getVariableType(child, table).getName().equals("int")){
+                System.out.println(getVariableType(child, table).getName() + "\n");
                 addReport(Report.newError(
                     Stage.SEMANTIC,
                     NodeUtils.getLine(arrayExpr),
@@ -201,8 +205,8 @@ public class Visits extends AnalysisVisitor {
         JmmNode leftOperator = binaryOp.getChild(0); 
         JmmNode rightOperator = binaryOp.getChild(1);
 
-        Type leftType= getVariableType(leftOperator,table,currentMethod);
-        Type rightType= getVariableType(rightOperator,table,currentMethod);
+        Type leftType= getVariableType(leftOperator,table);
+        Type rightType= getVariableType(rightOperator,table);
         
         //ARRAY OPERATIONS
         if (rightType != null && leftType != null && (rightType.isArray() || leftType.isArray())) {
@@ -260,7 +264,7 @@ public class Visits extends AnalysisVisitor {
     //Check for bool conditionals after While and If
     private Void conditionCheck(JmmNode loopExpr, SymbolTable table){
         JmmNode conditionalExpr = loopExpr.getChild(0);
-        if(getVariableType(conditionalExpr, table, currentMethod).getName().equals("boolean")){
+        if(getVariableType(conditionalExpr, table).getName().equals("boolean")){
             return null;
         }
         if(!conditionalOperators.contains(conditionalExpr.get("operation"))){
@@ -278,7 +282,7 @@ public class Visits extends AnalysisVisitor {
 
     private Void visitArrayAccess(JmmNode arrayAccessExpression, SymbolTable table){
         JmmNode accessedArray = arrayAccessExpression.getChild(0);
-        if(!getVariableType(accessedArray,table,currentMethod).isArray()){
+        if(!getVariableType(accessedArray,table).isArray()){
             addReport(Report.newError(
                 Stage.SEMANTIC,
                 NodeUtils.getLine(arrayAccessExpression),
@@ -289,7 +293,7 @@ public class Visits extends AnalysisVisitor {
         }
 
         JmmNode indexExpression = arrayAccessExpression.getChild(1);
-        Type indexType = getVariableType(indexExpression, table, currentMethod);
+        Type indexType = getVariableType(indexExpression, table);
         if(indexType.getName()!="int"){
             addReport(Report.newError(
                 Stage.SEMANTIC,
@@ -298,6 +302,45 @@ public class Visits extends AnalysisVisitor {
                 "You have to access an array through an index!",
                 null)
             );
+        }
+
+        return null;
+    }
+
+
+    private Type getVariableType(JmmNode var,SymbolTable table){
+ 
+
+        if(var.getKind().equals("BooleanLiteral")){
+            return new Type("boolean",false);
+        }
+        else if(var.getKind().equals("IntegerLiteral")){
+            return new Type("int",false);
+        }
+        String varName = var.get("variable");
+        
+        //Checks in the local fields
+        for(Symbol symbol : table.getLocalVariables(currentMethodString)){
+            if(symbol.getName().equals(varName))
+            {
+                return symbol.getType();
+            }
+        }
+
+        //Checks in the methods arguments
+        for(Symbol symbol : table.getParameters(currentMethodString)){
+            if(symbol.getName().equals(varName))
+            {
+                return symbol.getType();
+            }
+        }
+
+        //Checks in the class fields
+        for(Symbol symbol : table.getFields()){
+            if(symbol.getName().equals(varName))
+            {
+                return symbol.getType();
+            }
         }
 
         return null;
