@@ -11,12 +11,8 @@ class IncompatibleArguments {
     }
 
     public int bar() {
-        IncompatibleArguments a;
-        boolean b;
+        man a;
 
-        a = new IncompatibleArguments();
-        b = true;
-
-        return a.foo(b);
+        return a.fir(4);
     }
 }

@@ -36,6 +36,13 @@ public class Methods extends AnalysisVisitor {
     }
 
     private Void visitFunctionCall(JmmNode functionCallExpr, SymbolTable table){
+
+        //checks if the call is from an imported class, assumes everything is well
+        Type baseObjectType = getVariableType(functionCallExpr.getChild(0), table, currentMethod);
+        if(table.getImports().contains(baseObjectType.getName())){
+            return null;
+        }
+
         String calledMethodName = functionCallExpr.get("value");
 
         if(!table.getMethods().contains(calledMethodName)){
