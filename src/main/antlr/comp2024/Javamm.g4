@@ -25,13 +25,13 @@ classDeclaration
     ;
 
 type
-    : type '[' ']' 
-    | typeName='int'
-    | typeName='int' '...'
-    | typeName='boolean'
-    | typeName='String'
+    : type '[' ']' #Array
+    | typeName='int' #Int
+    | typeName='int' '...' #vararg
+    | typeName='boolean' #boolean
+    | typeName='String' #string
 
-    | typeName=ID 
+    | typeName=ID #id
     ;
 
 fieldDeclaration

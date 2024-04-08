@@ -1,14 +1,11 @@
-class A {
+class ArrayInit {
 
-    public static void main(String[] args) {
-
-    }
-
-    public int foo() {
-        A a;
-
-        a = this;
-
+    public int[] foo() {
+        int[] a;
+        boolean b;
+        b = false;
+        a = [10, b, 30];
         return a;
     }
+
 }

@@ -59,6 +59,26 @@ public class Assignemnt extends AnalysisVisitor {
             return null;
         }
 
+
+        //Array Initialization
+        if(assigned.getKind().equals("ArrayInitializationExpression")){
+            for (JmmNode child : assigned.getChildren()) {
+                if(! getVariableType(child, table, currentMethod).getName().equals("int")){
+                    System.out.println(getVariableType(child, table, currentMethod).getName() + "\n");
+                    addReport(Report.newError(
+                        Stage.SEMANTIC,
+                        NodeUtils.getLine(assignmentExpression),
+                        NodeUtils.getColumn(assignmentExpression),
+                        "Can't initialize array with a non int value!",
+                        null)
+                    );
+                }
+            }
+
+            return null;
+        }
+
+
         if(assigned.getKind().equals("BinaryExpression")){
             if(!arithmeticOperators.contains(assigned.get("operation"))){
                 addReport(Report.newError(

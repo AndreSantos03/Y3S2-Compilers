@@ -365,15 +365,48 @@ public class JavammParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class TypeContext extends ParserRuleContext {
-		public Token typeName;
-		public TerminalNode ID() { return getToken(JavammParser.ID, 0); }
-		public TypeContext type() {
-			return getRuleContext(TypeContext.class,0);
-		}
 		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
+	 
+		public TypeContext() { }
+		public void copyFrom(TypeContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ArrayContext extends TypeContext {
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public ArrayContext(TypeContext ctx) { copyFrom(ctx); }
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class BooleanContext extends TypeContext {
+		public Token typeName;
+		public BooleanContext(TypeContext ctx) { copyFrom(ctx); }
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class StringContext extends TypeContext {
+		public Token typeName;
+		public StringContext(TypeContext ctx) { copyFrom(ctx); }
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class VarargContext extends TypeContext {
+		public Token typeName;
+		public VarargContext(TypeContext ctx) { copyFrom(ctx); }
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class IdContext extends TypeContext {
+		public Token typeName;
+		public TerminalNode ID() { return getToken(JavammParser.ID, 0); }
+		public IdContext(TypeContext ctx) { copyFrom(ctx); }
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class IntContext extends TypeContext {
+		public Token typeName;
+		public IntContext(TypeContext ctx) { copyFrom(ctx); }
 	}
 
 	public final TypeContext type() throws RecognitionException {
@@ -396,34 +429,50 @@ public class JavammParser extends Parser {
 			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
 			case 1:
 				{
+				_localctx = new IntContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+
 				setState(68);
-				((TypeContext)_localctx).typeName = match(T__10);
+				((IntContext)_localctx).typeName = match(T__10);
 				}
 				break;
 			case 2:
 				{
+				_localctx = new VarargContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(69);
-				((TypeContext)_localctx).typeName = match(T__10);
+				((VarargContext)_localctx).typeName = match(T__10);
 				setState(70);
 				match(T__11);
 				}
 				break;
 			case 3:
 				{
+				_localctx = new BooleanContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(71);
-				((TypeContext)_localctx).typeName = match(T__12);
+				((BooleanContext)_localctx).typeName = match(T__12);
 				}
 				break;
 			case 4:
 				{
+				_localctx = new StringContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(72);
-				((TypeContext)_localctx).typeName = match(T__13);
+				((StringContext)_localctx).typeName = match(T__13);
 				}
 				break;
 			case 5:
 				{
+				_localctx = new IdContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(73);
-				((TypeContext)_localctx).typeName = match(ID);
+				((IdContext)_localctx).typeName = match(ID);
 				}
 				break;
 			}
@@ -437,7 +486,7 @@ public class JavammParser extends Parser {
 					_prevctx = _localctx;
 					{
 					{
-					_localctx = new TypeContext(_parentctx, _parentState);
+					_localctx = new ArrayContext(new TypeContext(_parentctx, _parentState));
 					pushNewRecursionContext(_localctx, _startState, RULE_type);
 					setState(76);
 					if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
