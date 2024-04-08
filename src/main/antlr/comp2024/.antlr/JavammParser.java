@@ -467,7 +467,7 @@ public class JavammParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class FieldDeclarationContext extends ParserRuleContext {
-		public Token fieldName;
+		public Token variable;
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -488,7 +488,7 @@ public class JavammParser extends Parser {
 			setState(84);
 			type(0);
 			setState(85);
-			((FieldDeclarationContext)_localctx).fieldName = match(ID);
+			((FieldDeclarationContext)_localctx).variable = match(ID);
 			setState(88);
 			_errHandler.sync(this);
 			_la = _input.LA(1);

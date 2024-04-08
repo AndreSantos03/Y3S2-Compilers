@@ -168,7 +168,7 @@ public class JmmSymbolTableBuilder {
         List<Symbol> locals = new ArrayList<>();
 
         methodDecl.getChildren("FieldDeclaration").forEach(fieldDec -> {
-            String varName = fieldDec.get("fieldName");
+            String varName = fieldDec.get("variable");
             Type type;
             if(fieldDec.getChild(0).getChildren().size() == 0){
                 String typeName = fieldDec.getChild(0).get("typeName");
@@ -190,7 +190,7 @@ public class JmmSymbolTableBuilder {
 
         classDecl.getChildren().forEach(child -> {
             if (child.getKind().equals("FieldDeclaration")) {
-                String fieldName = child.get("fieldName");
+                String fieldName = child.get("variable");
 
 
 

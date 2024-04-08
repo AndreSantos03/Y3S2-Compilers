@@ -35,7 +35,7 @@ type
     ;
 
 fieldDeclaration
-    : type fieldName=ID ('[' ']')? ';' 
+    : type variable=ID ('[' ']')? ';' 
     ;
 
 methodDeclaration

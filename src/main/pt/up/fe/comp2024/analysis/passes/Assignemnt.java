@@ -40,6 +40,25 @@ public class Assignemnt extends AnalysisVisitor {
 
         JmmNode assigned = assignmentExpression.getChild(0);
 
+
+        //Checks for this reference in the class name and extends
+        if(assigned.getKind().equals("ThisReferenceExpression")){
+            //doesnt match the current class
+            if(!table.getClassName().equals(variableType.getName())){
+                //Check for superclass
+                if(!table.getSuper().equals(variableType.getName())){
+                    addReport(Report.newError(
+                        Stage.SEMANTIC,
+                        NodeUtils.getLine(assignmentExpression),
+                        NodeUtils.getColumn(assignmentExpression),
+                        "Mismatch between the current or extended class and the variable type!",
+                        null)
+                    );
+                }
+            }
+            return null;
+        }
+
         if(assigned.getKind().equals("BinaryExpression")){
             if(!arithmeticOperators.contains(assigned.get("operation"))){
                 addReport(Report.newError(

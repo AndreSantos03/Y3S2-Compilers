@@ -19,7 +19,7 @@ import java.util.Optional;
  *
  * @author JBispo
  */
-public class Methods extends AnalysisVisitor {
+public class Objects extends AnalysisVisitor {
 
     private String currentMethod;
    
@@ -27,7 +27,6 @@ public class Methods extends AnalysisVisitor {
     @Override
     public void buildVisitor() {
         addVisit("MethDeclaration", this::visitMethodDecl);
-        addVisit("ThisReferenceExpression",this::visitThis);
     }
 
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
@@ -35,19 +34,8 @@ public class Methods extends AnalysisVisitor {
         return null;
     }
 
-    private Void visitThis(JmmNode thisExpression, SymbolTable table){
-        Optional<JmmNode> method = thisExpression.getAncestor("MethDeclaration");
-        if(method.get().hasAttribute("isStatic")){
-            addReport(Report.newError(
-                Stage.SEMANTIC,
-                NodeUtils.getLine(thisExpression),
-                NodeUtils.getColumn(thisExpression),
-                "You can't use 'this' inside a static method!",
-                null)
-            );
-        }
+    private Void arrayAccess(JmmNode thisExpression, SymbolTable table){
 
-        
         return null;
     }
     
