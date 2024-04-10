@@ -34,7 +34,7 @@ public class Visits extends AnalysisVisitor {
 
     @Override
     public void buildVisitor() {
-        addVisit("MethDeclaration", this::visitMethodDecl);
+        addVisit("MethodDeclaration", this::visitMethodDecl);
         addVisit("Assignment",this::assignment);
         addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("FunctionCallExpression",this::visitFunctionCall);
@@ -50,8 +50,13 @@ public class Visits extends AnalysisVisitor {
     }
 
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
-        currentMethodString = method.get("methodName");
         currentMethod = method;
+        if(currentMethod.hasAttribute("methodName")){
+            currentMethodString = method.get("methodName");
+        }
+        else{
+            currentMethodString = "main";
+        }
         return null;
     }
 
@@ -218,11 +223,7 @@ public class Visits extends AnalysisVisitor {
         //checks for varargs
         if(argumentsMethod.get(0).getType().getName().equals("int..."))
         {
-  /*           //checks if its array
-            if(getVariableType(functionCallExpr.getChildren("Parameter").get(0).get()).isArray()){
-                System.out.println("dda111");
-                return null;
-            } */
+
             for(JmmNode parameter: functionCallExpr.getChild(0).getChildren()){
                 Type type = getVariableType(parameter, table);
                 if(!type.getName().equals("int")){
@@ -301,7 +302,6 @@ public class Visits extends AnalysisVisitor {
 
     private Void visitArrayInitialization(JmmNode arrayExpr, SymbolTable table){
         //checks to see if its being put into an actual array
-        System.out.println(currentType.isArray());
         if(!currentType.isArray() && !currentType.getName().equals("int...")){
             addReport(Report.newError(
                 Stage.SEMANTIC,
@@ -316,7 +316,6 @@ public class Visits extends AnalysisVisitor {
         //Checks if all the instances being put into the array are int
         for (JmmNode child : arrayExpr.getChildren()) {
             if(! getVariableType(child, table).getName().equals("int")){
-                System.out.println(getVariableType(child, table).getName() + "\n");
                 addReport(Report.newError(
                     Stage.SEMANTIC,
                     NodeUtils.getLine(arrayExpr),
@@ -414,7 +413,6 @@ public class Visits extends AnalysisVisitor {
         JmmNode accessedArray = arrayAccessExpression.getChild(0);
         Type variableType = getVariableType(accessedArray,table);
         if(!variableType.isArray() && !variableType.getName().equals("int...")){
-            System.out.println("mimimi");
             addReport(Report.newError(
                 Stage.SEMANTIC,
                 NodeUtils.getLine(arrayAccessExpression),
@@ -568,7 +566,7 @@ public class Visits extends AnalysisVisitor {
 
     //gets the type of the node in a trickle up effect
     private Type getVariableType(JmmNode var,SymbolTable table){
- 
+        
 
         if(var.getKind().equals("BooleanLiteral")){
             return new Type("boolean",false);
@@ -579,6 +577,7 @@ public class Visits extends AnalysisVisitor {
 
         String varName = var.get("variable");
         
+
         //Checks in the local fields
         for(Symbol symbol : table.getLocalVariables(currentMethodString)){
             if(symbol.getName().equals(varName))

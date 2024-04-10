@@ -43,7 +43,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         // might no longer have the equivalent enums in Kind class.
         addVisit("Program", this::visitProgram);
         addVisit("ClassDecl", this::visitClassDecl);
-        addVisit("MethDeclaration", this::visitMethodDecl);
+        addVisit("methodDeclaration", this::visitMethodDecl);
         addVisit("Assignment", this::visitAssignStmt);
         addVisit("ReturnDeclaration", this::visitReturnStmt);
     }
@@ -81,8 +81,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
                     .method public <init>()V                                      
                     """);
 
-        code.append(String.format(".limit stack %i\n",stackLimit));
-        code.append(String.format(".limit locals %i\n",localsLimit));
+        code.append(String.format(".limit stack %d\n",stackLimit));
+        code.append(String.format(".limit locals %d\n",localsLimit));
         code.append("""
                     aload_0
                     invokespecial java/lang/Object/<init>()V
