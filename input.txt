@@ -1,20 +1,21 @@
-class IncompatibleArguments {
+class Test {
 
-    public static void main(String[] args) {
 
-    }
+	public static void main(String[] args) {
 
-    public int foo(int a) {
-        return a + 1;
-    }
+	}
 
-    public int bar() {
-        IncompatibleArguments a;
-        int b;
+	
+	public int foo() {
+	    int a;
+	    int b;
+	    int c;
 
-        a = new IncompatibleArguments();
-        b = 4;
+	    a = 1;
+	    b = 2;
 
-        return a.foo(b);
-    }
+	    c = a + b;
+
+	    return c;
+	}
 }

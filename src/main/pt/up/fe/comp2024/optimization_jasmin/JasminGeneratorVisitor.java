@@ -12,6 +12,10 @@ import java.util.stream.Collectors;
 
 public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
+    private final int  stackLimit = 99;
+    private final int  localsLimit = 99;
+
+
     private static final String NL = "\n";
     private static final String TAB = "   ";
 
@@ -39,16 +43,15 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         // might no longer have the equivalent enums in Kind class.
         addVisit("Program", this::visitProgram);
         addVisit("ClassDecl", this::visitClassDecl);
-        addVisit("MethodDecl", this::visitMethodDecl);
-        addVisit("AssignStmt", this::visitAssignStmt);
-        addVisit("ReturnStmt", this::visitReturnStmt);
+        addVisit("MethDeclaration", this::visitMethodDecl);
+        addVisit("Assignment", this::visitAssignStmt);
+        addVisit("ReturnDeclaration", this::visitReturnStmt);
     }
 
 
     private String visitProgram(JmmNode program, Void unused) {
-
         // Get class decl node
-        var classDecl = program.getChild(0);
+        var classDecl = program.getChildren("ClassDecl").get(0); //imports are child of program, this makes sure class is always accessed
         SpecsCheck.checkArgument(classDecl.isInstance("ClassDecl"), () -> "Expected a node of type 'ClassDecl', but instead got '" + classDecl.getKind() + "'");
 
         return visit(classDecl);
@@ -56,24 +59,36 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private String visitClassDecl(JmmNode classDecl, Void unused) {
         var code = new StringBuilder();
+        
 
         // generate class name
         var className = table.getClassName();
         code.append(".class ").append(className).append(NL).append(NL);
 
-        // TODO: Hardcoded to Object, needs to be expanded
-        code.append(".super java/lang/Object").append(NL);
+        String superClassName = table.getSuper();
+        
+        //no super class
+        if(superClassName == ""){
+            code.append(".super java/lang/Object").append(NL); //default
+        }
+        else{
+            code.append(".super " + superClassName ).append(NL);
+        }
 
-        // generate a single constructor method
-        var defaultConstructor = """
-                ;default constructor
-                .method public <init>()V
+        //default method constructor
+        code.append("""
+                    ;default constructor
+                    .method public <init>()V                                      
+                    """);
+
+        code.append(String.format(".limit stack %i\n",stackLimit));
+        code.append(String.format(".limit locals %i\n",localsLimit));
+        code.append("""
                     aload_0
                     invokespecial java/lang/Object/<init>()V
                     return
                 .end method
-                """;
-        code.append(defaultConstructor);
+                """);
 
         // generate code for all other methods
         for (var method : classDecl.getChildren("MethodDecl")) {
@@ -84,6 +99,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     }
 
     private String visitMethodDecl(JmmNode methodDecl, Void unused) {
+        System.out.println("mimimi");
         var methodName = methodDecl.get("name");
 
 
@@ -138,6 +154,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     }
 
     private String visitAssignStmt(JmmNode assignStmt, Void unused) {
+        System.out.println(assignStmt);
         var code = new StringBuilder();
 
         // generate code that will put the value on the right on top of the stack
