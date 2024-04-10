@@ -6,7 +6,7 @@ class Test {
 	}
 
 	
-	public int foo() {
+	public int foo(int d) {
 	    int a;
 	    int b;
 	    int c;

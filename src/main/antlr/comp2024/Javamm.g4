@@ -40,8 +40,8 @@ fieldDeclaration
     ;
 
 methodDeclaration
-    : ('public')? (isStatic='static')? type methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* returnDeclaration? '}' 
-    | 'public' 'static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' '{'(fieldDeclaration | statement )* '}'
+    : (isPublic='public')? (isStatic='static')? type methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* returnDeclaration? '}' 
+    | isPublic='public' isStatic='static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' '{'(fieldDeclaration | statement )* '}'
     ;
 
 

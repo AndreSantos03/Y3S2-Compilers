@@ -10,11 +10,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import pt.up.fe.comp.jmm.analysis.table.Symbol;
+
+
 public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private final int  stackLimit = 99;
     private final int  localsLimit = 99;
 
+    private final Map<String, String> typeDictionary = new HashMap<String, String>() {{
+        put("int", "I");
+        put("boolean", "Z");
+        put("String", "[Ljava/lang/String;");
+    }};
 
     private static final String NL = "\n";
     private static final String TAB = "   ";
@@ -43,7 +51,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         // might no longer have the equivalent enums in Kind class.
         addVisit("Program", this::visitProgram);
         addVisit("ClassDecl", this::visitClassDecl);
-        addVisit("methodDeclaration", this::visitMethodDecl);
+        addVisit("MethodDeclaration", this::visitMethodDecl);
         addVisit("Assignment", this::visitAssignStmt);
         addVisit("ReturnDeclaration", this::visitReturnStmt);
     }
@@ -91,7 +99,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
                 """);
 
         // generate code for all other methods
-        for (var method : classDecl.getChildren("MethodDecl")) {
+        for (var method : classDecl.getChildren("MethodDeclaration")) {
             code.append(visit(method));
         }
 
@@ -99,40 +107,63 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     }
 
     private String visitMethodDecl(JmmNode methodDecl, Void unused) {
-        System.out.println("mimimi");
-        var methodName = methodDecl.get("name");
 
-
-        // set method
+        String methodName;
+        if(methodDecl.hasAttribute("methodName")){
+            methodName = methodDecl.get("methodName");
+        }
+        else{
+            methodName = "main";
+        }
         currentMethod = methodName;
 
         // set next register that can be used
         // if method is static, then can start at 0
         // if method is not static, 0 contains 'this', and must start at 1
         // for the initial language, there are no static methods
-        nextRegister = 1;
+        if(methodDecl.hasAttribute("isStatic")){
+            nextRegister = 0;
+        }
+        else{
+            nextRegister = 1;
+        }
 
         // initialize register map and set parameters
         currentRegisters = new HashMap<>();
-        for (var param : methodDecl.getChildren("Param")) {
-            currentRegisters.put(param.get("name"), nextRegister);
+        for (var param : methodDecl.getChildren("ArgumentDecl")) {
+            currentRegisters.put(param.get("argName"), nextRegister);
             nextRegister++;
         }
+
 
         exprGenerator = new JasminExprGeneratorVisitor(currentRegisters);
 
         var code = new StringBuilder();
+ 
+        // var publicString = methodDecl.getObject("isPublic", Boolean.class) ? "public " : "";
+        var publicString = methodDecl.hasAttribute("isPublic") ? "public " : "";
+        var staticString = methodDecl.hasAttribute("isStatic") ? "static " : "";
 
-        // calculate modifier
-        var modifier = methodDecl.getObject("isPublic", Boolean.class) ? "public " : "";
+        var parameterString = "(";
+        if(methodName =="main"){
+            //if its main function
+            parameterString+=typeDictionary.get("string");
+        }else{
+            for(Symbol param :table.getParameters(methodName)){
+                parameterString+=typeDictionary.get(param.getType().getName());
+            }
+        }
+        parameterString+=")";
 
 
-        // TODO: Hardcoded param types and return type, needs to be expanded
-        code.append("\n.method ").append(modifier).append(methodName).append("(I)I").append(NL);
+        code.append("\n.method ").append(publicString).append(staticString).append(methodName).append(parameterString).append(NL);
 
         // Add limits
         code.append(TAB).append(".limit stack 99").append(NL);
         code.append(TAB).append(".limit locals 99").append(NL);
+
+
+        //We are g
 
         for (var stmt : methodDecl.getChildren("Stmt")) {
             // Get code for statement, split into lines and insert the necessary indentation

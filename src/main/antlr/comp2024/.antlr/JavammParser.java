@@ -572,6 +572,7 @@ public class JavammParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class MethodDeclarationContext extends ParserRuleContext {
+		public Token isPublic;
 		public Token isStatic;
 		public Token methodName;
 		public Token argName;
@@ -623,7 +624,7 @@ public class JavammParser extends Parser {
 				if (_la==T__3) {
 					{
 					setState(92);
-					match(T__3);
+					((MethodDeclarationContext)_localctx).isPublic = match(T__3);
 					}
 				}
 
@@ -717,9 +718,9 @@ public class JavammParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(125);
-				match(T__3);
+				((MethodDeclarationContext)_localctx).isPublic = match(T__3);
 				setState(126);
-				match(T__15);
+				((MethodDeclarationContext)_localctx).isStatic = match(T__15);
 				setState(127);
 				match(T__19);
 				setState(128);
