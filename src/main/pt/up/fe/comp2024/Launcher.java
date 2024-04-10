@@ -6,7 +6,7 @@ import pt.up.fe.comp.jmm.jasmin.JasminResult;
 import pt.up.fe.comp.jmm.ollir.OllirResult;
 import pt.up.fe.comp.jmm.parser.JmmParserResult;
 import pt.up.fe.comp2024.analysis.JmmAnalysisImpl;
-import pt.up.fe.comp2024.backend.JasminBackendImpl;
+import pt.up.fe.comp2024.optimization_jasmin.AstToJasminImpl;
 import pt.up.fe.comp2024.optimization.JmmOptimizationImpl;
 import pt.up.fe.comp2024.parser.JmmParserImpl;
 import pt.up.fe.specs.util.SpecsIo;
@@ -48,19 +48,18 @@ public class Launcher {
         System.out.println(semanticsResult.getSymbolTable().print()); 
 
         
-        // Optimization stage
-     /*    JmmOptimizationImpl ollirGen = new JmmOptimizationImpl();
-        OllirResult ollirResult = ollirGen.toOllir(semanticsResult);
-        TestUtils.noErrors(ollirResult.getReports());
- */
-        // Print OLLIR code
-        //System.out.println(ollirResult.getOllirCode());
+        // // Optimization stage
+        // JmmOptimizationImpl ollirGen = new JmmOptimizationImpl();
+        // OllirResult ollirResult = ollirGen.toOllir(semanticsResult);
+        // TestUtils.noErrors(ollirResult.getReports());
+        // // Print OLLIR code
+        // System.out.println(ollirResult.getOllirCode());
 
         // Code generation stage
-      /*   JasminBackendImpl jasminGen = new JasminBackendImpl();
-        JasminResult jasminResult = jasminGen.toJasmin(ollirResult);
+        AstToJasminImpl jasminGen = new AstToJasminImpl();
+        JasminResult jasminResult = jasminGen.toJasmin(semanticsResult);
         TestUtils.noErrors(jasminResult.getReports());
- */
+        
         // Print Jasmin code
         //System.out.println(jasminResult.getJasminCode());
     }

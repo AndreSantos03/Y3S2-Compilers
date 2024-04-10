@@ -10,10 +10,10 @@ class IncompatibleArguments {
 
     public int bar() {
         IncompatibleArguments a;
-        boolean b;
+        int b;
 
         a = new IncompatibleArguments();
-        b = true;
+        b = 4;
 
         return a.foo(b);
     }

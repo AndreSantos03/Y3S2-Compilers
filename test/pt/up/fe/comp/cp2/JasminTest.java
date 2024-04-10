@@ -38,7 +38,7 @@ public class JasminTest {
 
         // If AstToJasmin pipeline, change name of the resource and execute other test
         if (TestUtils.hasAstToJasminClass()) {
-
+            System.out.println("mimimi");
             // Rename resource
             var jmmResource = SpecsIo.removeExtension(resource) + ".jmm";
 
