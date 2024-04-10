@@ -24,6 +24,7 @@ public class JmmAnalysisImpl implements JmmAnalysis {
 
 
         this.analysisPasses = List.of(new Visits());
+        // this.analysisPasses = List.of();
     }
 
     @Override

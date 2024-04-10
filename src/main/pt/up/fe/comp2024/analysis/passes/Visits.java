@@ -39,13 +39,14 @@ public class Visits extends AnalysisVisitor {
         addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("FunctionCallExpression",this::visitFunctionCall);
         addVisit("ClassInstantiationExpression",this::visitClassCall);
-        addVisit("ThisReferenceExpression",this::visitThisCall);
+        // addVisit("ThisReferenceExpression",this::visitThisCall);
         addVisit("ArrayInitializationExpression",this::visitArrayInitialization);
         addVisit("BinaryExpression",this::visitBinaryExpression);
         addVisit("IfStatement",this::conditionCheck);
         addVisit("WhileStatement",this::conditionCheck);
         addVisit("ArrayAccessExpression",this::visitArrayAccess);
         addVisit("ReturnDeclaration",this::visitReturnDecl);
+        addVisit("Vararg",this::visitVararg);
     }
 
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
@@ -129,6 +130,11 @@ public class Visits extends AnalysisVisitor {
         // Check if exists a parameter or variable declaration with the same name as the variable reference
         var varRefName = varRefExpr.get("variable");
 
+        //ignores if it's called from a function, it just means its whatever the function is calling
+        if(varRefExpr.getParent().getKind().equals("FunctionCallExpression")){
+            return null;
+        }
+
         // Var is a field, return
         if (table.getFields().stream()
                 .anyMatch(param -> param.getName().equals(varRefName))) {
@@ -162,26 +168,35 @@ public class Visits extends AnalysisVisitor {
 
     private Void visitFunctionCall(JmmNode functionCallExpr, SymbolTable table){
 
-        Type baseObjectType = getVariableType(functionCallExpr.getChild(0), table);
-
-        //checks to see if the caller is defined
-        if(baseObjectType == null){
-            addReport(Report.newError(
-                Stage.SEMANTIC,
-                NodeUtils.getLine(functionCallExpr),
-                NodeUtils.getColumn(functionCallExpr),
-                "Calling a method from an undefined object",
-                null)
-            );
-        }
-
-        //checks if the call is from an imported class, assumes everything is well
-        if(table.getImports().contains(baseObjectType.getName())){
-            return null;
-        }
-        //chceks to see if its an extension of a imported class
-        if(baseObjectType.getName().equals(table.getClassName()) && table.getImports().contains(table.getSuper())){
-            return null;
+        //checks to see if it's a an object function being called
+        if(!functionCallExpr.getChild(0).getKind().equals("Parameter")){
+            JmmNode base = functionCallExpr.getChild(0);   
+            //ignore the rest of the checks if it references the this object
+            if(!base.getKind().equals("ThisReferenceExpression")){
+                Type baseObjectType = getVariableType(base, table);
+    
+                //checks to see if the caller is defined
+                if(baseObjectType == null){
+                    addReport(Report.newError(
+                        Stage.SEMANTIC,
+                        NodeUtils.getLine(functionCallExpr),
+                        NodeUtils.getColumn(functionCallExpr),
+                        "Calling a method from an undefined object",
+                        null)
+                    );
+                    return null;
+                }
+    
+                //checks if the call is from an imported class, assumes everything is well
+                if(table.getImports().contains(baseObjectType.getName())){
+                    return null;
+                }
+    
+                //chceks to see if its an extension of a imported class
+                if(baseObjectType.getName().equals(table.getClassName()) && table.getImports().contains(table.getSuper())){
+                    return null;
+                }
+            }
         }
 
         String calledMethodName = functionCallExpr.get("value");
@@ -197,11 +212,37 @@ public class Visits extends AnalysisVisitor {
         }
 
         //check parameter
-        int counter = 0;
         List<Symbol> argumentsMethod = table.getParameters(calledMethodName);
-        for(JmmNode parameter: functionCallExpr.getChildren("Parameter")){
-            JmmNode parameterChild = parameter.getChild(0);
-            Type type = getVariableType(parameterChild, table);
+
+
+        //checks for varargs
+        if(argumentsMethod.get(0).getType().getName().equals("int..."))
+        {
+  /*           //checks if its array
+            if(getVariableType(functionCallExpr.getChildren("Parameter").get(0).get()).isArray()){
+                System.out.println("dda111");
+                return null;
+            } */
+            for(JmmNode parameter: functionCallExpr.getChild(0).getChildren()){
+                Type type = getVariableType(parameter, table);
+                if(!type.getName().equals("int")){
+                    addReport(Report.newError(
+                        Stage.SEMANTIC,
+                        NodeUtils.getLine(functionCallExpr),
+                        NodeUtils.getColumn(functionCallExpr),
+                        "Vararg functions only take int as parameter!",
+                        null)
+                    );
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        //checks for normal ones;
+        int counter = 0;
+        for(JmmNode parameter: functionCallExpr.getChildren("Parameter").get(0).getChildren()){
+            Type type = getVariableType(parameter, table);
             if(!type.equals(argumentsMethod.get(counter).getType())){
                 addReport(Report.newError(
                     Stage.SEMANTIC,
@@ -239,10 +280,10 @@ public class Visits extends AnalysisVisitor {
 
         return null;
     }
-    private Void visitThisCall(JmmNode thisExpr, SymbolTable table){
+
+/*     private Void visitThisCall(JmmNode thisExpr, SymbolTable table){
 
         //Checks for this reference in the class name and extends
-
         if(!table.getClassName().equals(currentType.getName())){
             //Check for superclass
             if(!table.getSuper().equals(currentType.getName())){
@@ -256,11 +297,12 @@ public class Visits extends AnalysisVisitor {
             }
         }
         return null;
-    }
+    } */
 
     private Void visitArrayInitialization(JmmNode arrayExpr, SymbolTable table){
         //checks to see if its being put into an actual array
-        if(!currentType.isArray()){
+        System.out.println(currentType.isArray());
+        if(!currentType.isArray() && !currentType.getName().equals("int...")){
             addReport(Report.newError(
                 Stage.SEMANTIC,
                 NodeUtils.getLine(arrayExpr),
@@ -370,7 +412,9 @@ public class Visits extends AnalysisVisitor {
 
     private Void visitArrayAccess(JmmNode arrayAccessExpression, SymbolTable table){
         JmmNode accessedArray = arrayAccessExpression.getChild(0);
-        if(!getVariableType(accessedArray,table).isArray()){
+        Type variableType = getVariableType(accessedArray,table);
+        if(!variableType.isArray() && !variableType.getName().equals("int...")){
+            System.out.println("mimimi");
             addReport(Report.newError(
                 Stage.SEMANTIC,
                 NodeUtils.getLine(arrayAccessExpression),
@@ -407,7 +451,6 @@ public class Visits extends AnalysisVisitor {
             );
         }
         JmmNode childNode = returnExpr.getChild(0);
-
         //Literals
         if(childNode.getKind().equals("IntegerLiteral")){
             if( !typeMethod.getName().equals("int")){
@@ -476,6 +519,11 @@ public class Visits extends AnalysisVisitor {
             return null;
         }
 
+        // array
+        if(childNode.getKind().equals("ArrayAccessExpression")){
+            //check to see if it's an int access is already done somewhere else
+            return null;
+        }
 
         //methodcall
         String calledMethodName = childNode.get("value");
@@ -497,6 +545,27 @@ public class Visits extends AnalysisVisitor {
     }
 
 
+    private Void visitVararg(JmmNode varargExpr, SymbolTable table){
+        JmmNode parentNode = varargExpr.getParent();
+
+        //checks to see if it's argument
+        if(parentNode.getKind().equals("ArgumentDecl")){
+            //checks to see if vararg is the first argument on a method call
+            List<Symbol> parameters = table.getParameters(currentMethodString);
+            int parametersSize = parameters.size();
+            if(!parameters.get(parametersSize - 1).getName().equals(parentNode.get("argName"))){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(varargExpr),
+                    NodeUtils.getColumn(varargExpr),
+                    "Varargs must be the last method!",
+                    null)
+                );
+            }
+        }
+        return null;
+    }
+
     //gets the type of the node in a trickle up effect
     private Type getVariableType(JmmNode var,SymbolTable table){
  
@@ -507,6 +576,7 @@ public class Visits extends AnalysisVisitor {
         else if(var.getKind().equals("IntegerLiteral")){
             return new Type("int",false);
         }
+
         String varName = var.get("variable");
         
         //Checks in the local fields
@@ -535,4 +605,35 @@ public class Visits extends AnalysisVisitor {
 
         return null;
     }
+
+    //Same thing but with String
+    private Type getVariableType(String varName,SymbolTable table){
+
+        //Checks in the local fields
+        for(Symbol symbol : table.getLocalVariables(currentMethodString)){
+            if(symbol.getName().equals(varName))
+            {
+                return symbol.getType();
+            }
+        }
+
+        //Checks in the methods arguments
+        for(Symbol symbol : table.getParameters(currentMethodString)){
+            if(symbol.getName().equals(varName))
+            {
+                return symbol.getType();
+            }
+        }
+
+        //Checks in the class fields
+        for(Symbol symbol : table.getFields()){
+            if(symbol.getName().equals(varName))
+            {
+                return symbol.getType();
+            }
+        }
+
+        return null;
+    }
+    
 }

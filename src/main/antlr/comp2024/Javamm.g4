@@ -27,6 +27,7 @@ classDeclaration
 type
     : type '[' ']' #Array
     | typeName='int' #Int
+    | typeName='int...' #vararg
     | typeName='int' '...' #vararg
     | typeName='boolean' #boolean
     | typeName='String' #string
@@ -73,6 +74,7 @@ expression
     | 'new' 'int' '[' size=expression ']' # NewIntArrayExpression
     | 'new' classname=ID '(' parameter? ')'  # ClassInstantiationExpression
     | expression '[' index=expression ']' # ArrayAccessExpression
+    | value=ID '(' parameter? ')'  # FunctionCallExpression
     | expression '.' value=ID '(' parameter? ')'  # FunctionCallExpression
     | expression '.' 'length' # ArrayLengthExpression
     | '[' expression (',' expression)* ']' # ArrayInitializationExpression
