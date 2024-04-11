@@ -95,7 +95,7 @@ public class JmmSymbolTableBuilder {
             //main method
             else{
                 String methodName = "main";
-                Type returnType = new Type("void", true);
+                Type returnType = new Type("void", false);
                 map.put(methodName, returnType);
             }
         });

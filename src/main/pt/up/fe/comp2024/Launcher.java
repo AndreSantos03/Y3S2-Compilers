@@ -16,6 +16,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Launcher {
 
     public static void main(String[] args) {
@@ -61,7 +65,31 @@ public class Launcher {
         TestUtils.noErrors(jasminResult.getReports());
         
         // Print Jasmin code
-        //System.out.println(jasminResult.getJasminCode());
+        System.out.println(jasminResult.getJasminCode());
+
+
+        //Get all the Jasmin Code to input.j
+        String jasminCode = jasminResult.getJasminCode();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("input.j"))) {
+            writer.write(jasminCode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        //try to compile the jasmin code
+        try {
+            Process process = new ProcessBuilder("java", "-jar", "libs/jasmin.jar", "input.j").start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                System.err.println("Error executing Jasmin code. Exit code: " + exitCode);
+            } else {
+                System.out.println("Jasmin code executed successfully");
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

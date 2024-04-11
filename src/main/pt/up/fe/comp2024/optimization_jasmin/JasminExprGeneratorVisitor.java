@@ -22,17 +22,18 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         // Using strings to avoid compilation problems in projects that
         // might no longer have the equivalent enums in Kind class.
         addVisit("IntegerLiteral", this::visitIntegerLiteral);
-        addVisit("VarRefExpr", this::visitVarRefExpr);
-        addVisit("BinaryExpr", this::visitBinaryExpr);
+        addVisit("VariableReferenceExpression", this::visitVarRefExpr);
+        addVisit("BinaryExpression", this::visitBinaryExpr); 
     }
 
     private Void visitIntegerLiteral(JmmNode integerLiteral, StringBuilder code) {
-        code.append("ldc " + integerLiteral.get("value") + NL);
+        String value = integerLiteral.get("value");
+        code.append("iconst_" + value + NL);
         return null;
     }
 
     private Void visitVarRefExpr(JmmNode varRefExpr, StringBuilder code) {
-        var name = varRefExpr.get("name");
+        var name = varRefExpr.get("variable");
 
         // get register
         var reg = currentRegisters.get(name);
@@ -49,10 +50,10 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         // we can assume the value for the operation are already loaded in the stack
 
         // get the operation
-        var op = switch (binaryExpr.get("op")) {
+        var op = switch (binaryExpr.get("operation")) {
             case "+" -> "iadd";
             case "*" -> "imul";
-            default -> throw new NotImplementedException(binaryExpr.get("op"));
+            default -> throw new NotImplementedException(binaryExpr.get("operation"));
         };
 
         // apply operation

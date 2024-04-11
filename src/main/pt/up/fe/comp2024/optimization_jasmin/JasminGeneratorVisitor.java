@@ -22,6 +22,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         put("int", "I");
         put("boolean", "Z");
         put("String", "[Ljava/lang/String;");
+        put("void", "V");
     }};
 
     private static final String NL = "\n";
@@ -54,6 +55,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit("MethodDeclaration", this::visitMethodDecl);
         addVisit("Assignment", this::visitAssignStmt);
         addVisit("ReturnDeclaration", this::visitReturnStmt);
+        addVisit("SimpleExpression",this::visitSimpleStmt);
+        addVisit("FunctionCallExpression",this::visitFunctionExpr);
     }
 
 
@@ -71,7 +74,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         // generate class name
         var className = table.getClassName();
-        code.append(".class ").append(className).append(NL).append(NL);
+        code.append(".class public ").append(className).append(NL);
 
         String superClassName = table.getSuper();
         
@@ -85,16 +88,15 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         //default method constructor
         code.append("""
-                    ;default constructor
                     .method public <init>()V                                      
                     """);
 
-        code.append(String.format(".limit stack %d\n",stackLimit));
-        code.append(String.format(".limit locals %d\n",localsLimit));
+        code.append(TAB).append(String.format(".limit stack %d\n",stackLimit));
+        code.append(TAB).append(String.format(".limit locals %d\n",localsLimit));
         code.append("""
-                    aload_0
-                    invokespecial java/lang/Object/<init>()V
-                    return
+                   aload_0
+                   invokespecial java/lang/Object/<init>()V
+                   return
                 .end method
                 """);
 
@@ -147,30 +149,36 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         var parameterString = "(";
         if(methodName =="main"){
             //if its main function
-            parameterString+=typeDictionary.get("string");
+            parameterString+=typeDictionary.get("String");
         }else{
             for(Symbol param :table.getParameters(methodName)){
                 parameterString+=typeDictionary.get(param.getType().getName());
             }
         }
         parameterString+=")";
+        parameterString+=typeDictionary.get(table.getReturnType(methodName).getName()); //return type
 
 
         code.append("\n.method ").append(publicString).append(staticString).append(methodName).append(parameterString).append(NL);
 
         // Add limits
-        code.append(TAB).append(".limit stack 99").append(NL);
-        code.append(TAB).append(".limit locals 99").append(NL);
+        code.append(TAB).append(TAB).append(".limit stack 99").append(NL);
+        code.append(TAB).append(TAB).append(".limit locals 99").append(NL);
 
 
-        //We are g
-
-        for (var stmt : methodDecl.getChildren("Stmt")) {
-            // Get code for statement, split into lines and insert the necessary indentation
-            var instCode = StringLines.getLines(visit(stmt)).stream()
+        // Get code for statement, split into lines and insert the necessary indentation
+        for(var stmt :  methodDecl.getChildren()){    
+            //ignore the type child of the method and the field declare
+            if(stmt.getKind() !="type" && !stmt.hasAttribute("typeName") && !stmt.getKind().equals("FieldDeclaration")){
+                var instCode = StringLines.getLines(visit(stmt)).stream()
                     .collect(Collectors.joining(NL + TAB, TAB, NL));
+                code.append(instCode);
+            }
+        }
 
-            code.append(instCode);
+        //add return if it's void, it isn't added by default
+        if(table.getReturnType(methodName).getName().equals("void")){
+            code.append(TAB).append(TAB).append("return").append(NL);
         }
 
         code.append(".end method\n");
@@ -185,17 +193,16 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     }
 
     private String visitAssignStmt(JmmNode assignStmt, Void unused) {
-        System.out.println(assignStmt);
         var code = new StringBuilder();
 
         // generate code that will put the value on the right on top of the stack
-        exprGenerator.visit(assignStmt.getChild(1), code);
+        exprGenerator.visit(assignStmt.getChild(0), code);
 
         // store value in top of the stack in destination
-        var lhs = assignStmt.getChild(0);
-        SpecsCheck.checkArgument(lhs.isInstance("VarRefExpr"), () -> "Expected a node of type 'VarRefExpr', but instead got '" + lhs.getKind() + "'");
+        var destName = assignStmt.get("variable");
 
-        var destName = lhs.get("name");
+
+        // SpecsCheck.checkArgument(lhs.isInstance("VarRefExpr"), () -> "Expected a node of type 'VarRefExpr', but instead got '" + lhs.getKind() + "'");
 
         // get register
         var reg = currentRegisters.get(destName);
@@ -208,7 +215,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         }
 
         // TODO: Hardcoded for int type, needs to be expanded
-        code.append("istore ").append(reg).append(NL);
+        code.append("istore_").append(reg).append(NL);
 
         return code.toString();
     }
@@ -220,9 +227,42 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         // TODO: Hardcoded to always return an int type, needs to be expanded
 
         // generate code that will put the value of the return on the top of the stack
+
         exprGenerator.visit(returnStmt.getChild(0), code);
         code.append("ireturn").append(NL);
 
         return code.toString();
     }
+
+    //used mostly for simple function calls, for example a print
+    private String visitSimpleStmt(JmmNode simpleStmt, Void unused) {
+        var code = new StringBuilder();
+
+        JmmNode childNode = simpleStmt.getChild(0);
+    
+        code.append(visit(childNode));
+
+        return code.toString();
+    }
+    private String visitFunctionExpr(JmmNode functionStmt, Void unused) {
+        String functionName = functionStmt.get("value");
+        JmmNode objectNode = functionStmt.getChild(0);
+        String objectName = objectNode.get("variable");
+
+        var code = new StringBuilder();
+
+        //Static method call for imports and static functions
+        if(table.getImports().contains(objectName) || functionStmt.hasAttribute("isVirtual")){
+            code.append(TAB).append("invokestatic ").append(objectName).append("/").append(functionName).append("(");
+            //parameters
+            for(Symbol param : table.getParameters(functionName)){
+                code.append(typeDictionary.get(param.getType().getName()));
+            }
+            code.append(")V");
+
+        }
+
+        return code.toString();
+    }
+    
 }

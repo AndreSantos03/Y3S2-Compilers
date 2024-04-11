@@ -175,11 +175,19 @@ public class Visits extends AnalysisVisitor {
 
         //checks to see if it's a an object function being called
         if(!functionCallExpr.getChild(0).getKind().equals("Parameter")){
-            JmmNode base = functionCallExpr.getChild(0);   
+            JmmNode base = functionCallExpr.getChild(0);
+
             //ignore the rest of the checks if it references the this object
             if(!base.getKind().equals("ThisReferenceExpression")){
+
+                //checks to see if it's an import, if it is we assume it works
+                if(base.hasAttribute("variable")){
+                    if(table.getImports().contains(base.get("variable"))){
+                        return null;
+                    }
+                }
+
                 Type baseObjectType = getVariableType(base, table);
-    
                 //checks to see if the caller is defined
                 if(baseObjectType == null){
                     addReport(Report.newError(

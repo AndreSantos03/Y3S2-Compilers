@@ -1,21 +1,6 @@
-class Test {
-
-
+import ioPlus;
+class HelloWorld {
 	public static void main(String[] args) {
-
-	}
-
-	
-	public int foo(int d) {
-	    int a;
-	    int b;
-	    int c;
-
-	    a = 1;
-	    b = 2;
-
-	    c = a + b;
-
-	    return c;
+		ioPlus.printHelloWorld();
 	}
 }

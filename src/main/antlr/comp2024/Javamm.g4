@@ -84,7 +84,7 @@ expression
     | expression (operation=('+' | '-') expression)   # BinaryExpression
     | expression (operation=('<' | '>' | '==' | '!=') expression)  # BinaryExpression
     | expression operation=('&&' | '||') expression  # BinaryExpression
-    | INTEGER   # IntegerLiteral
+    | value=INTEGER   # IntegerLiteral
     | value='true'   # BooleanLiteral
     | value='false'  # BooleanLiteral
     | variable=ID (op=('++' | '--'))? # VariableReferenceExpression

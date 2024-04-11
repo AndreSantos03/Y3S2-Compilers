@@ -130,6 +130,14 @@ public class JavammParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_program; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterProgram(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitProgram(this);
+		}
 	}
 
 	public final ProgramContext program() throws RecognitionException {
@@ -201,6 +209,14 @@ public class JavammParser extends Parser {
 			return getToken(JavammParser.ID, i);
 		}
 		public ImportStatementContext(ImportDeclarationContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterImportStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitImportStatement(this);
+		}
 	}
 
 	public final ImportDeclarationContext importDeclaration() throws RecognitionException {
@@ -275,6 +291,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(MethodDeclarationContext.class,i);
 		}
 		public ClassDeclContext(ClassDeclarationContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterClassDecl(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitClassDecl(this);
+		}
 	}
 
 	public final ClassDeclarationContext classDeclaration() throws RecognitionException {
@@ -377,32 +401,80 @@ public class JavammParser extends Parser {
 			return getRuleContext(TypeContext.class,0);
 		}
 		public ArrayContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterArray(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitArray(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class BooleanContext extends TypeContext {
 		public Token typeName;
 		public BooleanContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterBoolean(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitBoolean(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class StringContext extends TypeContext {
 		public Token typeName;
 		public StringContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterString(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitString(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class VarargContext extends TypeContext {
 		public Token typeName;
 		public VarargContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterVararg(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitVararg(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class IdContext extends TypeContext {
 		public Token typeName;
 		public TerminalNode ID() { return getToken(JavammParser.ID, 0); }
 		public IdContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterId(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitId(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class IntContext extends TypeContext {
 		public Token typeName;
 		public IntContext(TypeContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterInt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitInt(this);
+		}
 	}
 
 	public final TypeContext type() throws RecognitionException {
@@ -530,6 +602,14 @@ public class JavammParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_fieldDeclaration; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterFieldDeclaration(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitFieldDeclaration(this);
+		}
 	}
 
 	public final FieldDeclarationContext fieldDeclaration() throws RecognitionException {
@@ -605,6 +685,14 @@ public class JavammParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_methodDeclaration; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterMethodDeclaration(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitMethodDeclaration(this);
+		}
 	}
 
 	public final MethodDeclarationContext methodDeclaration() throws RecognitionException {
@@ -791,6 +879,14 @@ public class JavammParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_returnDeclaration; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterReturnDeclaration(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitReturnDeclaration(this);
+		}
 	}
 
 	public final ReturnDeclarationContext returnDeclaration() throws RecognitionException {
@@ -838,6 +934,14 @@ public class JavammParser extends Parser {
 		}
 		public TerminalNode ID() { return getToken(JavammParser.ID, 0); }
 		public ArgumentDeclContext(ArgumentContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterArgumentDecl(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitArgumentDecl(this);
+		}
 	}
 
 	public final ArgumentContext argument() throws RecognitionException {
@@ -884,6 +988,14 @@ public class JavammParser extends Parser {
 		}
 		public TerminalNode ID() { return getToken(JavammParser.ID, 0); }
 		public AssignmentContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterAssignment(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitAssignment(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class IfStatementContext extends StatementContext {
@@ -897,6 +1009,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(StatementContext.class,i);
 		}
 		public IfStatementContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterIfStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitIfStatement(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class BlockContext extends StatementContext {
@@ -907,6 +1027,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(StatementContext.class,i);
 		}
 		public BlockContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterBlock(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitBlock(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class AssignmentArrayContext extends StatementContext {
@@ -919,6 +1047,14 @@ public class JavammParser extends Parser {
 		}
 		public TerminalNode ID() { return getToken(JavammParser.ID, 0); }
 		public AssignmentArrayContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterAssignmentArray(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitAssignmentArray(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class WhileStatementContext extends StatementContext {
@@ -929,6 +1065,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(StatementContext.class,0);
 		}
 		public WhileStatementContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterWhileStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitWhileStatement(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class SimpleExpressionContext extends StatementContext {
@@ -936,6 +1080,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public SimpleExpressionContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterSimpleExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitSimpleExpression(this);
+		}
 	}
 
 	public final StatementContext statement() throws RecognitionException {
@@ -1077,6 +1229,14 @@ public class JavammParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_parameter; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterParameter(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitParameter(this);
+		}
 	}
 
 	public final ParameterContext parameter() throws RecognitionException {
@@ -1132,6 +1292,14 @@ public class JavammParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class ThisReferenceExpressionContext extends ExpressionContext {
 		public ThisReferenceExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterThisReferenceExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitThisReferenceExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ArrayInitializationExpressionContext extends ExpressionContext {
@@ -1142,6 +1310,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public ArrayInitializationExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterArrayInitializationExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitArrayInitializationExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ParenthesisExpressionContext extends ExpressionContext {
@@ -1149,11 +1325,27 @@ public class JavammParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public ParenthesisExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterParenthesisExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitParenthesisExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class BooleanLiteralContext extends ExpressionContext {
 		public Token value;
 		public BooleanLiteralContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterBooleanLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitBooleanLiteral(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class FunctionCallExpressionContext extends ExpressionContext {
@@ -1166,6 +1358,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public FunctionCallExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterFunctionCallExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitFunctionCallExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class BinaryExpressionContext extends ExpressionContext {
@@ -1177,6 +1377,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public BinaryExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterBinaryExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitBinaryExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class VariableReferenceExpressionContext extends ExpressionContext {
@@ -1184,6 +1392,14 @@ public class JavammParser extends Parser {
 		public Token op;
 		public TerminalNode ID() { return getToken(JavammParser.ID, 0); }
 		public VariableReferenceExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterVariableReferenceExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitVariableReferenceExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ArrayLengthExpressionContext extends ExpressionContext {
@@ -1191,6 +1407,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public ArrayLengthExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterArrayLengthExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitArrayLengthExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class NewIntArrayExpressionContext extends ExpressionContext {
@@ -1199,6 +1423,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public NewIntArrayExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterNewIntArrayExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitNewIntArrayExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ClassInstantiationExpressionContext extends ExpressionContext {
@@ -1208,6 +1440,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(ParameterContext.class,0);
 		}
 		public ClassInstantiationExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterClassInstantiationExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitClassInstantiationExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class NegationExpressionContext extends ExpressionContext {
@@ -1215,6 +1455,14 @@ public class JavammParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public NegationExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterNegationExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitNegationExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ArrayAccessExpressionContext extends ExpressionContext {
@@ -1226,11 +1474,28 @@ public class JavammParser extends Parser {
 			return getRuleContext(ExpressionContext.class,i);
 		}
 		public ArrayAccessExpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterArrayAccessExpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitArrayAccessExpression(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class IntegerLiteralContext extends ExpressionContext {
+		public Token value;
 		public TerminalNode INTEGER() { return getToken(JavammParser.INTEGER, 0); }
 		public IntegerLiteralContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).enterIntegerLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavammListener ) ((JavammListener)listener).exitIntegerLiteral(this);
+		}
 	}
 
 	public final ExpressionContext expression() throws RecognitionException {
@@ -1386,7 +1651,7 @@ public class JavammParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(239);
-				match(INTEGER);
+				((IntegerLiteralContext)_localctx).value = match(INTEGER);
 				}
 				break;
 			case 9:
