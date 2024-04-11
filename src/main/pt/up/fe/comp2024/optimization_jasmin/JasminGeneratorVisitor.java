@@ -57,6 +57,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit("ReturnDeclaration", this::visitReturnStmt);
         addVisit("SimpleExpression",this::visitSimpleStmt);
         addVisit("FunctionCallExpression",this::visitFunctionExpr);
+        addVisit("ArgumentDecl",this::visitArgStmt);
     }
 
 
@@ -162,8 +163,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         code.append("\n.method ").append(publicString).append(staticString).append(methodName).append(parameterString).append(NL);
 
         // Add limits
-        code.append(TAB).append(TAB).append(".limit stack 99").append(NL);
-        code.append(TAB).append(TAB).append(".limit locals 99").append(NL);
+        code.append(TAB).append(".limit stack 99").append(NL);
+        code.append(TAB).append(".limit locals 99").append(NL);
 
 
         // Get code for statement, split into lines and insert the necessary indentation
@@ -263,6 +264,10 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         }
 
         return code.toString();
+    }
+    //we don't need to anything with it
+    private String visitArgStmt(JmmNode ArgStmt, Void unused){
+        return "";
     }
     
 }

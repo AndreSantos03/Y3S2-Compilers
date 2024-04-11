@@ -81,6 +81,12 @@ public class Visits extends AnalysisVisitor {
 
             //checks for &&, ||, ... and sees if its an int
             if(conditionalOperators.contains(childNode.get("operation")) && !currentType.getName().equals("boolean")){
+                //checks to see if its a 1 or 0
+                if(childNode.hasAttribute("value")){
+                    if(childNode.get("value").equals("0") || childNode.get("value").equals("1")){
+                        return null;
+                    }
+                }
                 addReport(Report.newError(
                     Stage.SEMANTIC,
                     NodeUtils.getLine(assignmentExpression),
@@ -111,6 +117,14 @@ public class Visits extends AnalysisVisitor {
                 return null;
             }
 
+            //checks to see if 0 or 1 is assigned to boolean
+            if(currentType.getName().equals("boolean")){
+                if(childNode.hasAttribute("value")){
+                    if(childNode.get("value").equals("0") || childNode.get("value").equals("1")){
+                        return null;
+                    }
+                }
+            }
 
             if(!variableType.equals(currentType)){
                 addReport(Report.newError(

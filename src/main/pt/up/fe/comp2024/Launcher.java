@@ -76,6 +76,8 @@ public class Launcher {
             e.printStackTrace();
         }
 
+        jasminResult.run();
+        
 
         //try to compile the jasmin code
         try {
