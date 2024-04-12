@@ -212,6 +212,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     }
 
     private String visitAssignStmt(JmmNode assignStmt, Void unused) {
+        System.out.println(assignStmt);
         var code = new StringBuilder();
 
         // store value in top of the stack in destination
@@ -235,11 +236,13 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             if (reg == null) {
                 //checks to see if it's a field
                 reg = nextRegister;
+                System.out.println("adding to reg : " + destName + " to " + reg);
                 currentRegisters.put(destName, reg);
                 nextRegister++;
             }
             JmmNode childNode = assignStmt.getChild(0);
             exprGenerator.visit(childNode, code);
+
 
             //Class stores differently, its directly in the generator visitor
             if(!childNode.getKind().equals("ClassInstantiationExpression")){
@@ -253,8 +256,6 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     private String visitReturnStmt(JmmNode returnStmt, Void unused) {
 
         var code = new StringBuilder();
-
-        // TODO: Hardcoded to always return an int type, needs to be expanded
 
         // generate code that will put the value of the return on the top of the stack
 
@@ -275,15 +276,23 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         return code.toString();
     }
     private String visitFunctionExpr(JmmNode functionStmt, Void unused) {
+        System.out.println(functionStmt);
         String functionName = functionStmt.get("value");
         JmmNode objectNode = functionStmt.getChild(0);
-        String objectName = objectNode.get("variable");
+        String objectName;
+        //checks for THIS
+        if(objectNode.getKind().equals("ThisReferenceExpression")){
+            objectName = table.getClassName();
+        }
+        else{
+            objectName = objectNode.get("variable");
+        }
 
         var code = new StringBuilder();
 
         //Static method call for imports and static functions
         if(table.getImports().contains(objectName) || functionStmt.hasAttribute("isVirtual")){
-            code.append(TAB).append("invokestatic ").append(objectName).append("/").append(functionName).append("(");
+            code.append("invokestatic ").append(objectName).append("/").append(functionName).append("(");
             //parameters
             for(Symbol param : table.getParameters(functionName)){
                 code.append(typeDictionary.get(param.getType().getName()));

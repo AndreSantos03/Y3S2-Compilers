@@ -10,6 +10,8 @@ import pt.up.fe.comp.jmm.analysis.table.Type;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.specs.comp.ollir.Field;
 
@@ -18,9 +20,13 @@ import java.util.List;
 public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilder, Void> {
 
     private static final String NL = "\n";
+    private static final String TAB = "   ";
 
     private final Map<String, Integer> currentRegisters;
     private final SymbolTable table;
+
+    //keeps track of object registers for when to use aload and iload
+    private Set<Integer> objectRegisters = new HashSet<>();
 
     private final Map<String, String> typeDictionary = new HashMap<String, String>() {{
         put("int", "I");
@@ -38,10 +44,13 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     protected void buildVisitor() {
         // Using strings to avoid compilation problems in projects that
         // might no longer have the equivalent enums in Kind class.
-        addVisit("IntegerLiteral", this::visitIntegerLiteral);
-        addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("BinaryExpression", this::visitBinaryExpr); 
+        addVisit("IntegerLiteral", this::visitIntegerLiteral);
+        addVisit("ThisReferenceExpression",this::visitThisExpr);
+        addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("ClassInstantiationExpression",this::visitClassExpr);
+        addVisit("FunctionCallExpression",this::visitFunctionExpr);
+        addVisit("Parameter",this::visitParamExpr);
     }
 
     private Void visitIntegerLiteral(JmmNode integerLiteral, StringBuilder code) {
@@ -80,8 +89,13 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
                 }
             }
         }
-        code.append("iload_" + reg + NL);
-
+        //checks to see if its a class
+        if( objectRegisters.contains(reg)){
+            code.append("aload_" + reg + NL);
+        }
+        else{
+            code.append("iload_" + reg + NL);
+        }
         return null;
     }
 
@@ -106,15 +120,68 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     private Void visitClassExpr(JmmNode classExpr, StringBuilder code) {
         String className = classExpr.get("classname");
         code.append("new ").append(className).append(NL);
+        code.append("dup").append(NL);
 
         String assignedName = classExpr.getParent().get("variable");
 
         var reg = currentRegisters.get(assignedName);
+        objectRegisters.add(reg);
 
         code.append("astore_").append(reg).append(NL);
         code.append("aload_").append(reg).append(NL);
         code.append(String.format("invokespecial %s/<init>()V",className)).append(NL);
+        code.append("pop").append(NL);
 
         return null;
     }
+
+    private Void visitFunctionExpr(JmmNode functionStmt, StringBuilder code) {
+        String functionName = functionStmt.get("value");
+        JmmNode objectNode = functionStmt.getChild(0);
+        String objectName;
+        //checks for THIS
+        if(objectNode.getKind().equals("ThisReferenceExpression")){
+            objectName = table.getClassName();
+        }
+        else{
+            objectName = objectNode.get("variable");
+        }
+
+
+        //Static method call for imports and static functions
+        if(table.getImports().contains(objectName) || functionStmt.hasAttribute("isVirtual") ){
+            code.append("invokestatic ").append(objectName).append("/").append(functionName).append("(");
+            //parameters
+            for(Symbol param : table.getParameters(functionName)){
+                code.append(typeDictionary.get(param.getType().getName()));
+            }
+            code.append(")V");
+            code.append(NL);
+
+        }
+        //Special method
+        else{
+            String objectType = table.getReturnType(functionName).getName();
+            code.append("invokevirtual ").append(objectName).append("/").append(functionName).append("(");
+            //parameters
+            for(Symbol param : table.getParameters(functionName)){
+                code.append(typeDictionary.get(param.getType().getName()));
+            }
+            code.append(")").append(typeDictionary.get(objectType));
+            code.append(NL);
+        }
+
+        return null;
+    }
+    private Void visitThisExpr(JmmNode thisStmt, StringBuilder code) {
+        code.append("aload_0").append(NL);
+        return null;
+    }
+    private Void visitParamExpr(JmmNode paramExpr, StringBuilder code) {
+        String variable = paramExpr.getChild(0).get("variable");
+        var reg = currentRegisters.get(variable);
+        code.append("iload_").append(reg).append(NL);
+        return null;
+    }
+    
 }

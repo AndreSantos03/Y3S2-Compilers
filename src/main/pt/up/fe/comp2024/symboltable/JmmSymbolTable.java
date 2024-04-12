@@ -93,4 +93,6 @@ public class JmmSymbolTable implements SymbolTable {
         }
         return Collections.unmodifiableList(localVariables);
     }
+
+    
 }

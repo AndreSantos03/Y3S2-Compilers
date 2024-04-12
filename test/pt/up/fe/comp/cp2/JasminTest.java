@@ -36,18 +36,15 @@ public class JasminTest {
     public static void testOllirToJasmin(String resource, String expectedOutput) {
         JasminResult result = null;
 
-        System.out.println("2");
 
         // If AstToJasmin pipeline, change name of the resource and execute other test
         if (TestUtils.hasAstToJasminClass()) {
-            System.out.println("1");
 
             // Rename resource
             var jmmResource = SpecsIo.removeExtension(resource) + ".jmm";
 
             // Test Jmm resource
             result = TestUtils.backend(SpecsIo.getResource(jmmResource));
-            System.out.println("3");
 
         } else {
 
@@ -55,14 +52,11 @@ public class JasminTest {
 
             result = TestUtils.backend(ollirResult);
         }
-        System.out.println("mi");
 
         
         var testName = new File(resource).getName();
         System.out.println(testName + ":\n" + result.getJasminCode());
-        System.out.println("before");
         var runOutput = result.runWithFullOutput();
-        System.out.println("after");
         assertEquals("Error while running compiled Jasmin: " + runOutput.getOutput(), 0, runOutput.getReturnValue());
         System.out.println("\n Result: " + runOutput.getOutput());
 
