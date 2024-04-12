@@ -9,6 +9,8 @@ import pt.up.fe.specs.util.utilities.StringLines;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 
@@ -34,6 +36,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private String currentMethod;
     private int nextRegister;
+
+    private Map<String, String> classFields = new HashMap<>();
 
     private Map<String, Integer> currentRegisters;
 
@@ -75,7 +79,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         // generate class name
         var className = table.getClassName();
-        code.append(".class public ").append(className).append(NL);
+        code.append(".class ").append(className).append(NL);
 
         String superClassName = table.getSuper();
         
@@ -87,19 +91,33 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             code.append(".super " + superClassName ).append(NL);
         }
 
+        //class fields
+        for(Symbol field : table.getFields()){
+            classFields.put(field.getName(),field.getType().getName());
+            code.append(".field private ");
+            code.append(field.getName()).append(" ");
+            code.append(typeDictionary.get(field.getType().getName())).append(NL);
+        }
+
         //default method constructor
         code.append("""
                     .method public <init>()V                                      
                     """);
 
-        code.append(TAB).append(String.format(".limit stack %d\n",stackLimit));
-        code.append(TAB).append(String.format(".limit locals %d\n",localsLimit));
-        code.append("""
-                   aload_0
-                   invokespecial java/lang/Object/<init>()V
-                   return
-                .end method
-                """);
+        code.append(TAB).append(String.format(".limit stack %d",stackLimit)).append(NL);
+        code.append(TAB).append(String.format(".limit locals %d",localsLimit)).append(NL);
+        code.append(TAB).append("aload_0").append(NL);
+        code.append(TAB).append("invokespecial ");
+        if(superClassName == ""){
+            code.append("java/lang/Object");
+        }
+        else{
+            code.append(table.getSuper());
+        }
+        code.append("/<init>()V").append(NL);
+        code.append(TAB).append("return").append(NL);
+        code.append(".end method").append(NL);
+
 
         // generate code for all other methods
         for (var method : classDecl.getChildren("MethodDeclaration")) {
@@ -139,7 +157,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         }
 
 
-        exprGenerator = new JasminExprGeneratorVisitor(currentRegisters);
+        exprGenerator = new JasminExprGeneratorVisitor(currentRegisters,table);
 
         var code = new StringBuilder();
  
@@ -179,7 +197,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         //add return if it's void, it isn't added by default
         if(table.getReturnType(methodName).getName().equals("void")){
-            code.append(TAB).append(TAB).append("return").append(NL);
+            code.append(TAB).append("return").append(NL);
         }
 
         code.append(".end method\n");
@@ -196,27 +214,38 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     private String visitAssignStmt(JmmNode assignStmt, Void unused) {
         var code = new StringBuilder();
 
-        // generate code that will put the value on the right on top of the stack
-        exprGenerator.visit(assignStmt.getChild(0), code);
-
         // store value in top of the stack in destination
         var destName = assignStmt.get("variable");
 
 
-        // SpecsCheck.checkArgument(lhs.isInstance("VarRefExpr"), () -> "Expected a node of type 'VarRefExpr', but instead got '" + lhs.getKind() + "'");
+        //FIELD
+        if(classFields.containsKey(destName)){  
+            code.append("aload_0").append(NL); //always 0 because it references the this object
+            exprGenerator.visit(assignStmt.getChild(0), code);
+            String destType = typeDictionary.get(classFields.get(destName));
+            code.append(String.format("putfield %s/%s %s",
+            table.getClassName(),destName,destType));
 
-        // get register
-        var reg = currentRegisters.get(destName);
-
-        // If no mapping, variable has not been assigned yet, create mapping
-        if (reg == null) {
-            reg = nextRegister;
-            currentRegisters.put(destName, reg);
-            nextRegister++;
         }
+        //NORMAL VARIABLE ASSIGNMENT
+        else{        
+            // get register
+            var reg = currentRegisters.get(destName);
+            // If no mapping, variable has not been assigned yet, create mapping
+            if (reg == null) {
+                //checks to see if it's a field
+                reg = nextRegister;
+                currentRegisters.put(destName, reg);
+                nextRegister++;
+            }
+            JmmNode childNode = assignStmt.getChild(0);
+            exprGenerator.visit(childNode, code);
 
-        // TODO: Hardcoded for int type, needs to be expanded
-        code.append("istore_").append(reg).append(NL);
+            //Class stores differently, its directly in the generator visitor
+            if(!childNode.getKind().equals("ClassInstantiationExpression")){
+                code.append("istore_").append(reg).append(NL);
+            }
+        }
 
         return code.toString();
     }
