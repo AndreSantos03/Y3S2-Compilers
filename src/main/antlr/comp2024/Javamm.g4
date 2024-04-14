@@ -17,7 +17,7 @@ program
     ;
 
 importDeclaration
-    : 'import' value=ID ('.'function=ID )?';' #ImportStatement
+    : 'import' value=ID ('.'function=ID )*';' #ImportStatement
     ;
 
 classDeclaration
@@ -40,8 +40,8 @@ fieldDeclaration
     ;
 
 methodDeclaration
-    : (isPublic='public')? (isStatic='static')? type methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* returnDeclaration? '}' 
-    | isPublic='public' isStatic='static' 'void' 'main' '(' 'String' '[' ']' argName=ID ')' '{'(fieldDeclaration | statement )* '}'
+    :(isPublic='public')? isStatic='static' 'void' 'main' '(' 'String' '[' ']' 'args' ')' '{'(fieldDeclaration | statement )* '}'
+    |(isPublic='public')? (isStatic='static')? type methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* returnDeclaration? '}' 
     ;
 
 

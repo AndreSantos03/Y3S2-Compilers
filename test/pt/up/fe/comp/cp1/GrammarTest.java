@@ -21,7 +21,7 @@ public class GrammarTest {
 
     private static final String IMPORT = "importDeclaration";
 
-    private static final String MAIN_METHOD = "mainMethodDeclaration";
+    private static final String MAIN_METHOD = "methodDeclaration";
 
     private static final String INSTANCE_METHOD = "methodDeclaration";
 
