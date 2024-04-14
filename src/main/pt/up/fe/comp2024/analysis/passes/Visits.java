@@ -452,7 +452,15 @@ public class Visits extends AnalysisVisitor {
     //Check for bool conditionals after While and If
     private Void conditionCheck(JmmNode loopExpr, SymbolTable table){
         JmmNode conditionalExpr = loopExpr.getChild(0);
-        if(getVariableType(conditionalExpr, table).getName().equals("boolean")){
+
+        if( conditionalExpr.getKind().equals("VariableReferenceExpression")&& !getVariableType(conditionalExpr, table).getName().equals("boolean")){
+            addReport(Report.newError(
+                Stage.SEMANTIC,
+                NodeUtils.getLine(loopExpr),
+                NodeUtils.getColumn(loopExpr),
+                "Condition variable must be boolean!",
+                null)
+            );
             return null;
         }
         if(!conditionalOperators.contains(conditionalExpr.get("operation"))){
