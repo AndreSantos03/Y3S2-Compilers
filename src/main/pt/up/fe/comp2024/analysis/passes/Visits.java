@@ -185,7 +185,7 @@ public class Visits extends AnalysisVisitor {
                 null)
         );
 
-        return null;
+        throw new RuntimeException(message);
     }
 
     private Void visitFunctionCall(JmmNode functionCallExpr, SymbolTable table){
