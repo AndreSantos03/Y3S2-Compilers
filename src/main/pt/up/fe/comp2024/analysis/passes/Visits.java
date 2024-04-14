@@ -33,10 +33,10 @@ public class Visits extends AnalysisVisitor {
     private final List<String> arithmeticOperators = Arrays.asList("+", "-", "*", "/","<",">","==","!=");
 
     @Override
-    public void buildVisitor() {        
-        addVisit("VariableReferenceExpression", this::visitVarRefExpr);
+    public void buildVisitor() {
         addVisit("MethodDeclaration", this::visitMethodDecl);
         addVisit("Assignment",this::assignment);
+        addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("FunctionCallExpression",this::visitFunctionCall);
         addVisit("ClassInstantiationExpression",this::visitClassCall);
         // addVisit("ThisReferenceExpression",this::visitThisCall);
@@ -143,7 +143,6 @@ public class Visits extends AnalysisVisitor {
 
     //given to us by teachers
     private Void visitVarRefExpr(JmmNode varRefExpr, SymbolTable table) {
-        System.out.println("dawdwadwmimi12312321");
 
         SpecsCheck.checkNotNull(currentMethodString, () -> "Expected current method to be set");
 
@@ -176,8 +175,6 @@ public class Visits extends AnalysisVisitor {
             return null;
         }
 
-        System.out.println("error");
-
         // Create error report
         var message = String.format("Variable '%s' does not exist.", varRefName);
         addReport(Report.newError(
@@ -187,7 +184,8 @@ public class Visits extends AnalysisVisitor {
                 message,
                 null)
         );
-        throw new RuntimeException(message);
+
+        return null;
     }
 
     private Void visitFunctionCall(JmmNode functionCallExpr, SymbolTable table){
@@ -499,8 +497,6 @@ public class Visits extends AnalysisVisitor {
     }
 
     private Void visitReturnDecl(JmmNode returnExpr,SymbolTable table){
-
-        System.out.println("goiod");
         Type typeMethod= table.getReturnType(currentMethodString);
         if(typeMethod.getName().equals("void")){
             addReport(Report.newError(
@@ -512,7 +508,6 @@ public class Visits extends AnalysisVisitor {
             );
         }
         JmmNode childNode = returnExpr.getChild(0);
-        visitVarRefExpr(childNode, table);
 
         //Literals
         if(childNode.getKind().equals("IntegerLiteral")){
@@ -542,13 +537,9 @@ public class Visits extends AnalysisVisitor {
             return null;
         }
 
-        System.out.println("dadw");
-    
+
         //variable
         if(childNode.getKind().equals("VariableReferenceExpression")){
-            //first checks to see if variable is declared
-            visitVarRefExpr(childNode, table);
-            System.out.println("daw1111");
 
             if(!getVariableType(childNode, table).equals(typeMethod)){
                 addReport(Report.newError(
