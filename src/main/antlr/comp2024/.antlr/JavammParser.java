@@ -182,25 +182,16 @@ public class JavammParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class ImportDeclarationContext extends ParserRuleContext {
-		public ImportDeclarationContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_importDeclaration; }
-	 
-		public ImportDeclarationContext() { }
-		public void copyFrom(ImportDeclarationContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	@SuppressWarnings("CheckReturnValue")
-	public static class ImportStatementContext extends ImportDeclarationContext {
 		public Token value;
 		public Token function;
 		public List<TerminalNode> ID() { return getTokens(JavammParser.ID); }
 		public TerminalNode ID(int i) {
 			return getToken(JavammParser.ID, i);
 		}
-		public ImportStatementContext(ImportDeclarationContext ctx) { copyFrom(ctx); }
+		public ImportDeclarationContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_importDeclaration; }
 	}
 
 	public final ImportDeclarationContext importDeclaration() throws RecognitionException {
@@ -208,13 +199,12 @@ public class JavammParser extends Parser {
 		enterRule(_localctx, 2, RULE_importDeclaration);
 		int _la;
 		try {
-			_localctx = new ImportStatementContext(_localctx);
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(34);
 			match(T__0);
 			setState(35);
-			((ImportStatementContext)_localctx).value = match(ID);
+			((ImportDeclarationContext)_localctx).value = match(ID);
 			setState(40);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -224,7 +214,7 @@ public class JavammParser extends Parser {
 				setState(36);
 				match(T__1);
 				setState(37);
-				((ImportStatementContext)_localctx).function = match(ID);
+				((ImportDeclarationContext)_localctx).function = match(ID);
 				}
 				}
 				setState(42);

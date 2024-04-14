@@ -66,8 +66,8 @@ public class JmmSymbolTableBuilder {
     private static Set<String> buildImports(JmmNode root) {
         Set<String> imports = new HashSet<>();
         
-        root.getChildren("ImportStatement").forEach(child -> {
-            if ("ImportStatement".equals(child.getKind())) {
+        root.getChildren("ImportDeclaration").forEach(child -> {
+            if ("ImportDeclaration".equals(child.getKind())) {
                 String importValue = child.get("value");
                 imports.add(importValue);
             }

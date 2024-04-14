@@ -17,7 +17,7 @@ program
     ;
 
 importDeclaration
-    : 'import' value=ID ('.'function=ID )*';' #ImportStatement
+    : 'import' value=ID ('.'function=ID )*';' 
     ;
 
 classDeclaration
