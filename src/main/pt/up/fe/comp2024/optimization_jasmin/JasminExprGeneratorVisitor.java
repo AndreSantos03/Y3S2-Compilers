@@ -88,6 +88,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
                     return null;
                 }
             }
+            return null;
         }
         //checks to see if its a class
         if( objectRegisters.contains(reg)){
@@ -130,7 +131,6 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         code.append("astore_").append(reg).append(NL);
         code.append("aload_").append(reg).append(NL);
         code.append(String.format("invokespecial %s/<init>()V",className)).append(NL);
-        code.append("pop").append(NL);
 
         return null;
     }
@@ -151,18 +151,24 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         //Static method call for imports and static functions
         if(table.getImports().contains(objectName) || functionStmt.hasAttribute("isVirtual") ){
             code.append("invokestatic ").append(objectName).append("/").append(functionName).append("(");
-            //parameters
-            for(Symbol param : table.getParameters(functionName)){
-                code.append(typeDictionary.get(param.getType().getName()));
+            if(functionStmt.getChildren().size() > 1){
+                //parameters
+                JmmNode paramNode = functionStmt.getChild(1);
+
+                //we're assuming imports only take as valuable ints
+                //adding a int parameter for each variable
+                for( int i = 0;i < paramNode.getChildren().size(); i++){
+                    code.append("I");
+                }
             }
             code.append(")V");
             code.append(NL);
 
         }
-        //Special method
+        //Calls a class function
         else{
             String objectType = table.getReturnType(functionName).getName();
-            code.append("invokevirtual ").append(objectName).append("/").append(functionName).append("(");
+            code.append("invokevirtual ").append(table.getClassName()).append("/").append(functionName).append("(");
             //parameters
             for(Symbol param : table.getParameters(functionName)){
                 code.append(typeDictionary.get(param.getType().getName()));
@@ -173,14 +179,14 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
         return null;
     }
+
     private Void visitThisExpr(JmmNode thisStmt, StringBuilder code) {
         code.append("aload_0").append(NL);
         return null;
     }
+    
+    //does nothing
     private Void visitParamExpr(JmmNode paramExpr, StringBuilder code) {
-        String variable = paramExpr.getChild(0).get("variable");
-        var reg = currentRegisters.get(variable);
-        code.append("iload_").append(reg).append(NL);
         return null;
     }
     
