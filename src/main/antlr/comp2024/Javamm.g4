@@ -11,6 +11,8 @@ MULTI_COMMENT : '/*' .*? '*/' -> skip ;
 
 INTEGER : '0' | [1-9] [0-9]*;
 ID : [a-zA-Z_$] [a-zA-Z_0-9$]*;
+STRING : '"' ( ~["\\\r\n] | '\\' . )* '"';
+
 
 program
     : (importDeclaration)* classDeclaration methodDeclaration? EOF
@@ -76,7 +78,7 @@ expression
     | expression '[' index=expression ']' # ArrayAccessExpression
     | value=ID '(' parameter? ')'  # FunctionCallExpression
     | expression '.' value=ID '(' parameter? ')'  # FunctionCallExpression
-    | expression '.' 'length' # ArrayLengthExpression
+    | expression '.' expression #NestedFunctionCall
     | '[' expression (',' expression)* ']' # ArrayInitializationExpression
     | 'this' # ThisReferenceExpression
     | '!' expression   # NegationExpression
@@ -87,5 +89,6 @@ expression
     | value=INTEGER   # IntegerLiteral
     | value='true'   # BooleanLiteral
     | value='false'  # BooleanLiteral
+    | value=STRING    # StringLiteral
     | variable=ID (op=('++' | '--'))? # VariableReferenceExpression
     ;
