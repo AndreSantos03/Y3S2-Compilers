@@ -108,7 +108,18 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         // get the operation
         var op = switch (binaryExpr.get("operation")) {
             case "+" -> "iadd";
+            case "-" -> "isub";
             case "*" -> "imul";
+            case "/" -> "idiv";
+            case "&&" -> "iand";
+            case "||" -> "ior";
+
+            // case "<" -> "iflt";
+            // case ">" -> "ifgt";
+            // case "<=" -> "ifle";
+            // case ">=" -> "ifge";
+            // case "==" -> "ifeq";
+            // case "!=" -> "ifne";
             default -> throw new NotImplementedException(binaryExpr.get("operation"));
         };
 
