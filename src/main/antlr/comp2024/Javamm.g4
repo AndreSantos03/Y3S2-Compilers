@@ -81,9 +81,9 @@ expression
     | '[' expression (',' expression)* ']' # ArrayInitializationExpression
     | 'this' # ThisReferenceExpression
     | '!' expression   # NegationExpression
-    | expression ( operation=('*' | '/') expression)  # BinaryExpression
-    | expression (operation=('+' | '-') expression)   # BinaryExpression
-    | expression (operation=('<' | '>' | '==' | '!=') expression)  # BinaryExpression
+    | expression  operation=('*' | '/') expression  # BinaryExpression
+    | expression operation=('+' | '-') expression   # BinaryExpression
+    | expression operation=('<' | '>' | '==' | '!=') expression  # BinaryExpression
     | expression operation=('&&' | '||') expression  # BinaryExpression
     | value=INTEGER   # IntegerLiteral
     | value='true'   # BooleanLiteral

@@ -12,9 +12,11 @@
    .limit stack 99
    .limit locals 99
    iconst_3
-   iconst_5
-   iadd
    iconst_2
+   isub
+   iconst_2
+   iconst_2
+   isub
    idiv
    istore_0
    iload_0
