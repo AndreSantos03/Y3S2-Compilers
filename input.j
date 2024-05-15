@@ -1,4 +1,4 @@
-.class A
+.class Simple
 .super java/lang/Object
 .method public <init>()V
    .limit stack 99
@@ -8,14 +8,16 @@
    return
 .end method
 
-.method public ma()Z
-   .limit stack 99
-   .limit locals 99
-   ireturn
-.end method
-
 .method public static main([Ljava/lang/String;)V
    .limit stack 99
    .limit locals 99
+   iconst_3
+   iconst_5
+   iconst_2
+   iadd
+   iadd
+   istore_0
+   iload_0
+   invokestatic io/println(I)V
    return
 .end method

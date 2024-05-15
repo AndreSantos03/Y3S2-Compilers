@@ -1,14 +1,14 @@
+import io;
+class Simple {
 
 
-class A {
 
-    public boolean ma(){
-        boolean a;
-        a = true;
-        return a;
+    public static void main(String[] args){
+        int c;
+        c = 3 + 5 + 2;
+        io.println(c);
     }
 
-    public static void main(String[] args) {
 
-    }
+
 }

@@ -859,6 +859,17 @@ public class Visits extends AnalysisVisitor {
             return new Type("int",false);
         }
 
+        if(var.getKind().equals("BinaryExpression")){
+            if(arithmeticOperators.contains(var.get("operation"))){
+                return new Type("int",false);
+            }
+            else{
+                return new Type("boolean",false);
+            }
+        }        
+
+
+
         String varName = var.get("variable");
         
 
