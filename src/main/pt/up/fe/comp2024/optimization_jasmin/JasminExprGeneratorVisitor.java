@@ -197,8 +197,19 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
                 code.append(")" + typeDictionary.get(table.getReturnType(objectName).getName()));
             }
            else{
-                //else we assume its import and imports we are always assuming they're returning null
-                code.append(")V"); 
+                String returnType;
+                if(isInImports){
+                    if(functionStmt.getParent().getKind().equals("Assignment")){
+                        returnType = getVariableType(functionStmt.getParent().get("variable"), functionStmt).getName();
+                    }
+                    else{
+                        returnType = "void";
+                    }
+                }
+                else{
+                    returnType = table.getReturnType(functionName).getName();
+                }
+                code.append(")").append(typeDictionary.get(returnType));
            }
             code.append(NL);
 
@@ -209,7 +220,12 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             String returnType;
             if(importContains(objectTypeString)){
                 objectPath = getFullImportPath(objectType.getName());
-                returnType = "void";
+                if(functionStmt.getParent().getKind().equals("Assignment")){
+                    returnType = getVariableType(functionStmt.getParent().get("variable"), functionStmt).getName();
+                }
+                else{
+                    returnType = "void";
+                }
             }            
             else{
                 objectPath = table.getClassName();
@@ -293,8 +309,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             String[] parts = imp.split("\\.");
             for (String part : parts) {
                 if(part.equals(object)){
-                    return imp.replace('.', '/');
-                    // return imp;
+                    // return imp.replace('.', '/');
+                    return imp;
                 }
             }
         }

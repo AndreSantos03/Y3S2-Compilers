@@ -11,11 +11,7 @@
 .method public static main([Ljava/lang/String;)V
    .limit stack 99
    .limit locals 99
-   new ExampleA
-   dup
-   astore_0
-   invokespecial ExampleA/<init>()V
-   aload_0
-   invokevirtual java.util.ExampleA/doFunnier()V
+   invokestatic java.util.ExampleA/doFunnier()I
+   istore_0
    return
 .end method
