@@ -1,22 +1,25 @@
-.class CallToMethodAssumedInExtends
-.super A
+.class A
+.super java/lang/Object
 .method public <init>()V
    .limit stack 99
    .limit locals 99
    aload_0
-   invokespecial A/<init>()V
+   invokespecial java/lang/Object/<init>()V
+   return
+.end method
+
+.method public add()V
+   .limit stack 99
+   .limit locals 99
+   aload_0
+   istore_1
    return
 .end method
 
 .method public static main([Ljava/lang/String;)V
    .limit stack 99
    .limit locals 99
-   return
-.end method
-
-.method public foo()I
-   .limit stack 99
-   .limit locals 99
    aload_0
-   invokevirtual CallToMethodAssumedInExtends/a()V
+   istore_0
+   return
 .end method

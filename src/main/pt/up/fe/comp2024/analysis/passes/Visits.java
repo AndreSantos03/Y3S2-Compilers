@@ -41,7 +41,7 @@ public class Visits extends AnalysisVisitor {
         addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("FunctionCallExpression",this::visitFunctionCall);
         addVisit("ClassInstantiationExpression",this::visitClassCall);
-        // addVisit("ThisReferenceExpression",this::visitThisCall);
+        addVisit("ThisReferenceExpression",this::visitThisCall);
         addVisit("ArrayInitializationExpression",this::visitArrayInitialization);
         addVisit("BinaryExpression",this::visitBinaryExpression);
         addVisit("IfStatement",this::conditionCheck);
@@ -220,6 +220,19 @@ public class Visits extends AnalysisVisitor {
 
         throw new RuntimeException(message);
     }
+    private Void visitThisCall(JmmNode thisExpr, SymbolTable table) {
+        if(currentMethod.hasAttribute("isStatic")){
+            addReport(Report.newError(
+                Stage.SEMANTIC,
+                NodeUtils.getLine(thisExpr),
+                NodeUtils.getColumn(thisExpr),
+                "Can't use this in a static method!",
+                null)
+        );
+        }
+        return null;
+    }
+
 
     private Void visitFunctionCall(JmmNode functionCallExpr, SymbolTable table){
 

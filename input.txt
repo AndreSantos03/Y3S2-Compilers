@@ -1,15 +1,11 @@
-class CallToMethodAssumedInExtends extends A {
+class A {
+    public void add(){
+        A b;
+        b = this;
+    }
 
     public static void main(String[] args) {
-
-    }
-
-    public void a(){
-        int b;
-        b =3;
-    }
-
-    public int foo() {
-        a();
+        A b;
+        b = this;
     }
 }
