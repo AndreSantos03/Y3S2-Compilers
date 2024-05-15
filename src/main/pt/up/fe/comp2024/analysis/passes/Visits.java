@@ -112,40 +112,6 @@ public class Visits extends AnalysisVisitor {
             }
         }      
 
-        //check for same superclass as class name
-        if(table.getClassName().equals(table.getSuper())){
-            addReport(Report.newError(
-                Stage.SEMANTIC,
-                NodeUtils.getLine(program),
-                NodeUtils.getColumn(program),
-                "Can't have the class name the same as the imported class!",
-                null)
-            ); 
-        }
-
-        //check for superclass in imported
-        if(table.getImports().contains(table.getSuper())){
-            addReport(Report.newError(
-                Stage.SEMANTIC,
-                NodeUtils.getLine(program),
-                NodeUtils.getColumn(program),
-                "Can't have the super class in imported!",
-                null)
-            ); 
-        }
-
-
-    //check for class  in imported
-    if(table.getImports().contains(table.getClassName())){
-        addReport(Report.newError(
-            Stage.SEMANTIC,
-            NodeUtils.getLine(program),
-            NodeUtils.getColumn(program),
-            "Can't have the super class in imported!",
-            null)
-        ); 
-    }
-
         return null;
     }
 
