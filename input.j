@@ -1,4 +1,4 @@
-.class Simple
+.class A
 .super java/lang/Object
 .method public <init>()V
    .limit stack 99
@@ -11,15 +11,7 @@
 .method public static main([Ljava/lang/String;)V
    .limit stack 99
    .limit locals 99
-   iconst_3
-   iconst_2
-   isub
-   iconst_2
-   iconst_2
-   isub
-   idiv
+   invokevirtual A/getA()V
    istore_0
-   iload_0
-   invokestatic io/println(I)V
    return
 .end method

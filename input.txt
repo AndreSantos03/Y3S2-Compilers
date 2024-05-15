@@ -1,9 +1,9 @@
-import io;
+import java.util.ExampleA;
 
-class Simple {
+public class A {
     public static void main(String[] args) {
         int c;
-        c = (3 - 2) / (2 - 2); // (1 / 0) - Error: Division by zero
-        io.println(c);
+        c = ExampleA.getA();
+
     }
 }

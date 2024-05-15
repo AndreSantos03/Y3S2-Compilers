@@ -67,15 +67,17 @@ public class JmmSymbolTableBuilder {
         Set<String> imports = new HashSet<>();
         
         root.getChildren("ImportDeclaration").forEach(child -> {
-            if ("ImportDeclaration".equals(child.getKind())) {
-                String importValue = child.get("value");
-                imports.add(importValue);
-            }
+            String importValue = child.get("value");      
+            
+            String importString = importValue.substring(1, importValue.length()-1);
+            importString = String.join(".", importString.split(", "));
+
+
+            
+            imports.add(importString);
         });
-        
         return imports;
     }
-
 
 
     private static Map<String, Type> buildReturnTypes(JmmNode classDecl) {

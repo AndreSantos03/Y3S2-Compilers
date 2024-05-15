@@ -19,7 +19,7 @@ program
     ;
 
 importDeclaration
-    : 'import' value=ID (( '.' value=ID )* '.' function=ID)? ';' 
+    : 'import' value+=ID ('.' value+=ID)* ';' #ImportStmt
     ;
 
 classDeclaration

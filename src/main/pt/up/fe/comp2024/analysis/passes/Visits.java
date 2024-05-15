@@ -34,6 +34,9 @@ public class Visits extends AnalysisVisitor {
     private Type currentType;
 
 
+    private Set<String>  importObjects;
+
+
     private final List<String> conditionalOperators = Arrays.asList("&&","||");
     private final List<String> arithmeticOperators = Arrays.asList("+", "-", "*", "/","<",">","==","!=");
 
@@ -56,6 +59,7 @@ public class Visits extends AnalysisVisitor {
         addVisit("Vararg",this::visitVararg);
     }
     private Void visitProgram(JmmNode program, SymbolTable table) {
+        importObjects = new HashSet<>();
 
         //check for duplicate fields
         Set<String> uniqueFields = new HashSet<>();
@@ -112,6 +116,14 @@ public class Visits extends AnalysisVisitor {
                 );  
             }
         }      
+
+        //create object import set
+        for(String imp : table.getImports()){
+            String[] parts = imp.split("\\.");
+
+            String lastElement = parts[parts.length - 1];
+            importObjects.add(lastElement);
+        }
 
         return null;
     }
@@ -219,14 +231,14 @@ public class Visits extends AnalysisVisitor {
             Type variableType =getVariableType(childNode, table);
 
             //imports and extends assume everything works
-            if(table.getImports().contains(variableType.getName())){
+            if(importObjects.contains(variableType.getName())){
                 return null;
             }
 
 
             //thge original is imported class and the new extends import
             //super niche case, only here because of the tests :)
-            if(table.getImports().contains(currentType.getName()) && table.getClassName().equals(variableType.getName()) && table.getImports().contains(table.getSuper())){
+            if(importObjects.contains(currentType.getName()) && table.getClassName().equals(variableType.getName()) && importObjects.contains(table.getSuper())){
                 return null;
             }
 
@@ -376,7 +388,7 @@ public class Visits extends AnalysisVisitor {
 
 
         //checks if the call is from an imported class, assumes everything is well
-        if(table.getImports().contains(calledMethodName)){
+        if(importObjects.contains(calledMethodName)){
             return null;
         }
 
@@ -392,7 +404,7 @@ public class Visits extends AnalysisVisitor {
 
                     //checks to see if it's an import, if it is we assume it works
                     if(base.hasAttribute("variable")){
-                        if(table.getImports().contains(base.get("variable"))){
+                        if(importObjects.contains(base.get("variable"))){
                             return null;
                         }
                     }
@@ -415,7 +427,7 @@ public class Visits extends AnalysisVisitor {
                     }
         
                     //chceks to see if its an extension of a imported class
-                    if(baseObjectType.getName().equals(table.getClassName()) && table.getImports().contains(table.getSuper())){
+                    if(baseObjectType.getName().equals(table.getClassName()) && importObjects.contains(table.getSuper())){
                         return null;
                     }
                 }
@@ -427,7 +439,7 @@ public class Visits extends AnalysisVisitor {
 
 
         //if the called method is an import we assume it works
-        if(table.getImports().contains(calledMethodName)){
+        if(importObjects.contains(calledMethodName)){
             return null;
         }
 
@@ -502,7 +514,7 @@ public class Visits extends AnalysisVisitor {
         if(!table.getClassName().equals(classname)){
 
             if(!table.getSuper().equals(classname)){
-                if(!table.getImports().contains(classname)){
+                if(!importObjects.contains(classname)){
                     addReport(Report.newError(
                         Stage.SEMANTIC,
                         NodeUtils.getLine(classExpr),
@@ -854,7 +866,7 @@ public class Visits extends AnalysisVisitor {
         if(var.getKind().equals("ParenthesisExpression")){
             var = var.getChild(0);
         }
-        
+
         if(var.getKind().equals("BooleanLiteral")){
             return new Type("boolean",false);
         }
