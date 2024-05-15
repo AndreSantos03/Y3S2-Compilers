@@ -4,6 +4,7 @@ class A {
 
     public boolean ma(){
         boolean a;
+        a = true;
         return a;
     }
 

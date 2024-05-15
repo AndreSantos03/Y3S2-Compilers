@@ -322,19 +322,26 @@ public class Visits extends AnalysisVisitor {
                 .anyMatch(varDecl -> varDecl.getName().equals(varRefName))) {
 
             //check to see if its undefined
-            for(JmmNode assignments : currentMethod.getChildren("Assignment")){
-                if(assignments.get("variable").equals(varRefName)){
-                    return null;
+            for(JmmNode childNode : currentMethod.getChildren()){
+                //we are checking the child nodes until we reach the one where our current node is the children
+                if(childNode.getKind().equals("Assignment")){
+                    if(childNode.get("variable").equals(varRefName)){
+                        return null;
+                    }
+                }
+                if(childNode.getChildren("VariableReferenceExpression").contains(varRefExpr)){
+
+                    addReport(Report.newError(
+                        Stage.SEMANTIC,
+                        NodeUtils.getLine(varRefExpr),
+                        NodeUtils.getColumn(varRefExpr),
+                        "Variable is undefined",
+                        null)
+                    );
                 }
             }
-            addReport(Report.newError(
-                Stage.SEMANTIC,
-                NodeUtils.getLine(varRefExpr),
-                NodeUtils.getColumn(varRefExpr),
-                "Variable is undefined",
-                null)
-            );
             return null;
+
         }
 
         // Create error report
