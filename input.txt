@@ -5,7 +5,7 @@ class Simple {
 
     public static void main(String[] args){
         int c;
-        c = 3 + 5 + 2;
+        c = (3 + 5) / 2;
         io.println(c);
     }
 

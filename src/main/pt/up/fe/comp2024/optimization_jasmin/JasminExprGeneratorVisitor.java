@@ -51,6 +51,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         addVisit("ClassInstantiationExpression",this::visitClassExpr);
         addVisit("FunctionCallExpression",this::visitFunctionExpr);
         addVisit("Parameter",this::visitParamExpr);
+        addVisit("ParenthesisExpression",this::visitParentheses);
+
     }
 
     private Void visitIntegerLiteral(JmmNode integerLiteral, StringBuilder code) {
@@ -200,5 +202,10 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     private Void visitParamExpr(JmmNode paramExpr, StringBuilder code) {
         return null;
     }
-    
+
+    //does nothing
+    private Void visitParentheses(JmmNode parenthesesExpr, StringBuilder code) {
+        return null;
+    }
+
 }

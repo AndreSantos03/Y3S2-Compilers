@@ -851,7 +851,10 @@ public class Visits extends AnalysisVisitor {
 
     //gets the type of the node in a trickle up effect
     private Type getVariableType(JmmNode var,SymbolTable table){
-
+        if(var.getKind().equals("ParenthesisExpression")){
+            var = var.getChild(0);
+        }
+        
         if(var.getKind().equals("BooleanLiteral")){
             return new Type("boolean",false);
         }

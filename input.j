@@ -13,9 +13,9 @@
    .limit locals 99
    iconst_3
    iconst_5
+   iadd
    iconst_2
-   iadd
-   iadd
+   idiv
    istore_0
    iload_0
    invokestatic io/println(I)V
