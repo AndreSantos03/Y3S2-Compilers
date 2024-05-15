@@ -320,6 +320,20 @@ public class Visits extends AnalysisVisitor {
         // Var is a declared variable, return
         if (table.getLocalVariables(currentMethodString).stream()
                 .anyMatch(varDecl -> varDecl.getName().equals(varRefName))) {
+
+            //check to see if its undefined
+            for(JmmNode assignments : currentMethod.getChildren("Assignment")){
+                if(assignments.get("variable").equals(varRefName)){
+                    return null;
+                }
+            }
+            addReport(Report.newError(
+                Stage.SEMANTIC,
+                NodeUtils.getLine(varRefExpr),
+                NodeUtils.getColumn(varRefExpr),
+                "Variable is undefined",
+                null)
+            );
             return null;
         }
 

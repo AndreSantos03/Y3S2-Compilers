@@ -2,8 +2,12 @@
 
 class A {
 
+    public boolean ma(){
+        boolean a;
+        return a;
+    }
 
     public static void main(String[] args) {
-        a[3] = 3;
+
     }
 }
