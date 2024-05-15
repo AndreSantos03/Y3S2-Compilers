@@ -12,10 +12,4 @@
 .method public static foo()I
    .limit stack 99
    .limit locals 99
-   aload_0
-   iconst_3
-   putfield ArrayAccessOnInt/b I
-   aload_0
-   getfield ArrayAccessOnInt/b I
-   ireturn
 .end method

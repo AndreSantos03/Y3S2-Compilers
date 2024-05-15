@@ -221,6 +221,15 @@ public class Visits extends AnalysisVisitor {
 
     private Void visitFunctionCall(JmmNode functionCallExpr, SymbolTable table){
 
+        String calledMethodName = functionCallExpr.get("value");
+
+
+        //checks if the call is from an imported class, assumes everything is well
+        if(table.getImports().contains(calledMethodName)){
+            return null;
+        }
+
+
         //checks to see if it's a an object function being called
         
         if(!functionCallExpr.getChild(0).getKind().equals("Parameter")){
@@ -250,18 +259,21 @@ public class Visits extends AnalysisVisitor {
                     return null;
                 }
     
-                //checks if the call is from an imported class, assumes everything is well
-                if(table.getImports().contains(baseObjectType.getName())){
-                    return null;
-                }
-    
                 //chceks to see if its an extension of a imported class
                 if(baseObjectType.getName().equals(table.getClassName()) && table.getImports().contains(table.getSuper())){
                     return null;
                 }
             }
         }
-        String calledMethodName = functionCallExpr.get("value");
+
+
+        System.out.println("dwadwaw");
+
+        //if the called method is an import we assume it works
+        if(table.getImports().contains(calledMethodName)){
+            System.out.println("dadwada");
+            return null;
+        }
 
         if(!table.getMethods().contains(calledMethodName)){
             addReport(Report.newError(
