@@ -15,6 +15,8 @@ import java.util.HashSet;
 
 import org.specs.comp.ollir.Field;
 
+import jas.StringCP;
+
 import java.util.List;
 
 public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilder, Void> {
@@ -142,7 +144,6 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         objectRegisters.add(reg);
 
         code.append("astore_").append(reg).append(NL);
-        code.append("aload_").append(reg).append(NL);
         code.append(String.format("invokespecial %s/<init>()V",className)).append(NL);
 
         return null;
@@ -160,9 +161,16 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             objectName = objectNode.get("variable");
         }
 
+        Type objectType = getVariableType(objectName, objectNode);
+        String objectTypeString;
+        if(objectType != null){
+            objectTypeString = objectType.getName();
+        }
+        else{
+            objectTypeString = "";
+        }
 
         boolean isInImports = importContains(objectName);
-
         //Static method call for imports and static functions
         if(isInImports || functionStmt.hasAttribute("isStatic") ){
             String objectPath;
@@ -197,13 +205,23 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         }
         //Calls a class function
         else{
-            String objectType = table.getReturnType(functionName).getName();
-            code.append("invokevirtual ").append(table.getClassName()).append("/").append(functionName).append("(");
+            String objectPath;
+            String returnType;
+            if(importContains(objectTypeString)){
+                objectPath = getFullImportPath(objectType.getName());
+                returnType = "void";
+            }            
+            else{
+                objectPath = table.getClassName();
+                returnType = table.getReturnType(functionName).getName();
+            }
+
+            code.append("invokevirtual ").append(objectPath).append("/").append(functionName).append("(");
             //parameters
             for(Symbol param : table.getParameters(functionName)){
                 code.append(typeDictionary.get(param.getType().getName()));
             }
-            code.append(")").append(typeDictionary.get(objectType));
+            code.append(")").append(typeDictionary.get(returnType));
             code.append(NL);
         }
 
@@ -225,11 +243,44 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         return null;
     }
 
+    private Type getVariableType( String var,JmmNode expr){
+        JmmNode currentMethod = expr.getAncestor("MethodDeclaration").get();
+        String methodName ;
+        if(currentMethod.hasAttribute("methodName")){
+            methodName = currentMethod.get("methodName");
+        }
+        else{
+            methodName = "main";
+        }
+        for( Symbol local : table.getLocalVariables(methodName)){
+            if(local.getName().equals(var)){
+                return local.getType();
+            }
+        }
+        if(!methodName.equals("main")){
+            for(Symbol param : table.getParameters(methodName)){
+                if(param.getName().equals(var)){
+                    return param.getType();
+                }
+            }
+        }
+
+        for(Symbol field : table.getFields()){
+            if(field.getName().equals(var)){
+                return field.getType();
+            }
+        }
+        return null;
+    }
+    
     //checks to see if an object is a part of the imports
     private boolean importContains(String object){
         for(String imp : table.getImports()){
-            if(imp.contains(object)){
-                return true;
+            String[] parts = imp.split("\\.");
+            for (String part : parts) {
+                if(part.equals(object)){
+                    return true;
+                }
             }
         }
         return false;
@@ -239,9 +290,12 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     //get full import path for a class
     private String getFullImportPath(String object){
         for(String imp : table.getImports()){
-            if(imp.contains(object)){
-                // return imp.replace('.', '/');
-                return imp;
+            String[] parts = imp.split("\\.");
+            for (String part : parts) {
+                if(part.equals(object)){
+                    // return imp.replace('.', '/');
+                    return imp;
+                }
             }
         }
         return "";
