@@ -67,6 +67,22 @@ public class Visits extends AnalysisVisitor {
 
         JmmNode childNode = assignmentExpression.getChild(0);
 
+        //checks to see if we're assigning a field from a static method
+        if(currentMethod.hasAttribute("isStatic")){
+            for(Symbol field : table.getFields()){
+                if(field.getName().equals(assignmentExpression.get("variable"))){
+                    addReport(Report.newError(
+                        Stage.SEMANTIC,
+                        NodeUtils.getLine(assignmentExpression),
+                        NodeUtils.getColumn(assignmentExpression),
+                        "Trying to access class field from a static method",
+                        null)
+                    );                
+                }
+            }
+        }
+
+
         //Checks for binaryOps
         if(childNode.getKind().equals("BinaryExpression")){
             //checks for +, * , ... and sees if its an int
@@ -151,22 +167,18 @@ public class Visits extends AnalysisVisitor {
         var varRefName = varRefExpr.get("variable");
 
         //checks to see if field is called from static method
-        if(varRefExpr.getAncestor("MethodDeclaration").isPresent()){
-            JmmNode methodNode = varRefExpr.getAncestor("MethodDeclaration").get();
-            if(methodNode.hasAttribute("isStatic") ){
-                for(Symbol field : table.getFields()){
-                    if(field.getName().equals(varRefName)){
-                        addReport(Report.newError(
-                            Stage.SEMANTIC,
-                            NodeUtils.getLine(varRefExpr),
-                            NodeUtils.getColumn(varRefExpr),
-                            "Trying to access class field from a static method",
-                            null)
+        if(currentMethod.hasAttribute("isStatic") ){
+            for(Symbol field : table.getFields()){
+                if(field.getName().equals(varRefName)){
+                    addReport(Report.newError(
+                        Stage.SEMANTIC,
+                        NodeUtils.getLine(varRefExpr),
+                        NodeUtils.getColumn(varRefExpr),
+                        "Trying to access class field from a static method",
+                        null)
                     );
-                    }
                 }
-
-            }
+             }
         }
 
         //ignores if it's called from a function, it just means its whatever the function is calling
