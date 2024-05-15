@@ -293,8 +293,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             String[] parts = imp.split("\\.");
             for (String part : parts) {
                 if(part.equals(object)){
-                    // return imp.replace('.', '/');
-                    return imp;
+                    return imp.replace('.', '/');
+                    // return imp;
                 }
             }
         }
