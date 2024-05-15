@@ -8,18 +8,16 @@
    return
 .end method
 
-.method public add()V
+.method public ada(II)V
    .limit stack 99
    .limit locals 99
-   aload_0
-   istore_1
+   
+   
    return
 .end method
 
 .method public static main([Ljava/lang/String;)V
    .limit stack 99
    .limit locals 99
-   aload_0
-   istore_0
    return
 .end method

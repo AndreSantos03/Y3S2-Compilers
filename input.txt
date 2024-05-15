@@ -1,11 +1,10 @@
+
+
 class A {
-    public void add(){
-        A b;
-        b = this;
+    public void ada(int a, int a){
+
     }
 
     public static void main(String[] args) {
-        A b;
-        b = this;
     }
 }

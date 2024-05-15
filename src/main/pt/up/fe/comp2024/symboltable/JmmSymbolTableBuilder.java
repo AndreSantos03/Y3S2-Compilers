@@ -29,7 +29,7 @@ public class JmmSymbolTableBuilder {
         var imports = buildImports(root);
 
 
-        classDecl = root.getChild(imports.size());
+        classDecl = root.getChildren("ClassDecl").get(0);
         String className = classDecl.get("className");
 
 

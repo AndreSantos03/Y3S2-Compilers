@@ -5,8 +5,11 @@ import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.antlr.v4.parse.ANTLRParser.range_return;
+import org.specs.comp.ollir.Field;
 import org.stringtemplate.v4.compiler.CodeGenerator.region_return;
 
 import java_cup.runtime.symbol;
@@ -36,6 +39,7 @@ public class Visits extends AnalysisVisitor {
 
     @Override
     public void buildVisitor() {
+        addVisit("Program",this::visitProgram);
         addVisit("MethodDeclaration", this::visitMethodDecl);
         addVisit("Assignment",this::assignment);
         addVisit("VariableReferenceExpression", this::visitVarRefExpr);
@@ -50,6 +54,66 @@ public class Visits extends AnalysisVisitor {
         addVisit("ReturnDeclaration",this::visitReturnDecl);
         addVisit("Vararg",this::visitVararg);
     }
+    private Void visitProgram(JmmNode program, SymbolTable table) {
+
+        //check for duplicate fields
+        Set<String> uniqueFields = new HashSet<>();
+        for (Symbol field : table.getFields()) {
+            if (!uniqueFields.add(field.getName())) {
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(program),
+                    NodeUtils.getColumn(program),
+                    "Can't have duplicate fields!",
+                    null)
+                );  
+            }
+        }        
+        
+        //check for duplicate imports
+        Set<String> uniqueImports = new HashSet<>();
+        for (JmmNode importExpr: program.getChildren("ImportDeclaration")) {
+            if (!uniqueImports.add(importExpr.get("value"))) {
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(program),
+                    NodeUtils.getColumn(program),
+                    "Can't have duplicate imports!",
+                    null)
+                );  
+            }
+        }        
+        
+        //check for duplicate methods
+        Set<String> uniqueMethods = new HashSet<>();
+        for (String methodString: table.getMethods()) {
+            //check for duplicate parameters
+            Set<Symbol> uniqueParams = new HashSet<>();
+            for(Symbol params: table.getParameters(methodString)){
+                if (!uniqueParams.add(params)) {
+                    addReport(Report.newError(
+                        Stage.SEMANTIC,
+                        NodeUtils.getLine(program),
+                        NodeUtils.getColumn(program),
+                        "Can't have duplicate parameters!",
+                        null)
+                    );  
+                }
+            }
+
+            if (!uniqueMethods.add(methodString)) {
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(program),
+                    NodeUtils.getColumn(program),
+                    "Can't have duplicate methods!",
+                    null)
+                );  
+            }
+        }      
+
+        return null;
+    }
 
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
     
@@ -60,6 +124,20 @@ public class Visits extends AnalysisVisitor {
         else{
             currentMethodString = "main";
         }
+        
+        //check for duplicated locals
+        Set<String> uniqueLocals = new HashSet<>();
+        for (JmmNode fieldExpr: method.getChildren("FieldDeclaration")) {
+            if (!uniqueLocals.add(fieldExpr.get("variable"))) {
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(fieldExpr),
+                    NodeUtils.getColumn(fieldExpr),
+                    "Can't have duplicate locals!",
+                    null)
+                );  
+            }
+        }     
         return null;
     }
 
