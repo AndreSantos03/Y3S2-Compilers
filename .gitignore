@@ -15,3 +15,7 @@ gradle*
 output.ollir
 output.jasmin
 output.j
+
+
+
+src/main/antlr/comp2024/.antlr

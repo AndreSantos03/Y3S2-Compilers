@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.stringtemplate.v4.compiler.CodeGenerator.region_return;
 
+import java_cup.runtime.symbol;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.comp.jmm.report.Stage;
@@ -149,6 +150,25 @@ public class Visits extends AnalysisVisitor {
         // Check if exists a parameter or variable declaration with the same name as the variable reference
         var varRefName = varRefExpr.get("variable");
 
+        //checks to see if field is called from static method
+        if(varRefExpr.getAncestor("MethodDeclaration").isPresent()){
+            JmmNode methodNode = varRefExpr.getAncestor("MethodDeclaration").get();
+            if(methodNode.hasAttribute("isStatic") ){
+                for(Symbol field : table.getFields()){
+                    if(field.getName().equals(varRefName)){
+                        addReport(Report.newError(
+                            Stage.SEMANTIC,
+                            NodeUtils.getLine(varRefExpr),
+                            NodeUtils.getColumn(varRefExpr),
+                            "Trying to access class field from a static method",
+                            null)
+                    );
+                    }
+                }
+
+            }
+        }
+
         //ignores if it's called from a function, it just means its whatever the function is calling
         if(varRefExpr.getParent().getKind().equals("FunctionCallExpression")){
             return null;
@@ -167,7 +187,6 @@ public class Visits extends AnalysisVisitor {
             return null;
         }    
            
-
 
         // Var is a declared variable, return
         if (table.getLocalVariables(currentMethodString).stream()

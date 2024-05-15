@@ -1,0 +1,10 @@
+class ArrayAccessOnInt {
+    int b;
+
+
+    public static int foo() {
+        b = 3;
+
+        return b;
+    }
+}
