@@ -776,6 +776,9 @@ public class Visits extends AnalysisVisitor {
     private Void visitVararg(JmmNode varargExpr, SymbolTable table){
         JmmNode parentNode = varargExpr.getParent();
 
+
+
+
         //checks to see if it's argument
         if(parentNode.getKind().equals("ArgumentDecl")){
             //checks to see if vararg is the first argument on a method call
@@ -790,6 +793,15 @@ public class Visits extends AnalysisVisitor {
                     null)
                 );
             }
+        }
+        else{
+            addReport(Report.newError(
+                Stage.SEMANTIC,
+                NodeUtils.getLine(varargExpr),
+                NodeUtils.getColumn(varargExpr),
+                "Varargs must be used only as arguments for function!",
+                null)
+            );
         }
         return null;
     }
