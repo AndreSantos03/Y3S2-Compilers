@@ -268,13 +268,11 @@ public class Visits extends AnalysisVisitor {
             );
         }
 
+
+        System.out.println(arrayType);
         return  null;
     }
-    private Void arrayAccess(JmmNode assignmentArrayExpr, SymbolTable table){
 
-
-        return  null;
-    }
     
 
     //given to us by teachers
@@ -664,7 +662,6 @@ public class Visits extends AnalysisVisitor {
 
     private Void visitArrayAccess(JmmNode arrayAccessExpression, SymbolTable table){
         JmmNode accessedArray = arrayAccessExpression.getChild(0);
-        String arrayName = accessedArray.get("variable");
         Type variableType = getVariableType(accessedArray,table);
         if(!variableType.isArray() && !variableType.getName().equals("int...")){
             addReport(Report.newError(
@@ -687,23 +684,6 @@ public class Visits extends AnalysisVisitor {
                 null)
             );
         }
-
-        //check to see if has been assigned yet a value
-        for(JmmNode assignmentNodes : currentMethod.getChildren("Assignment")){
-            if(assignmentNodes.get("variable").equals(arrayName)){
-                return null;
-            }
-        }
-
-        //it didnt find any initialization, so its unitiliazed
-        addReport(Report.newError(
-            Stage.SEMANTIC,
-            NodeUtils.getLine(arrayAccessExpression),
-            NodeUtils.getColumn(arrayAccessExpression),
-            "You can not access an unitialized array!",
-            null)
-        );
-        
 
         return null;
     }
