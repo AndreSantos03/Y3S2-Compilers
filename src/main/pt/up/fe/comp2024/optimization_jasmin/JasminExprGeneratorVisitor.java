@@ -240,7 +240,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     private String getFullImportPath(String object){
         for(String imp : table.getImports()){
             if(imp.contains(object)){
-                return imp.replace('.', '/');
+                // return imp.replace('.', '/');
+                return imp;
             }
         }
         return "";
