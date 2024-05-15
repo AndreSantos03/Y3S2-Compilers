@@ -1,8 +1,7 @@
 
 
 class A {
-    public void ada(int a, int a){
-
+    public int ada(int a){  
     }
 
     public static void main(String[] args) {

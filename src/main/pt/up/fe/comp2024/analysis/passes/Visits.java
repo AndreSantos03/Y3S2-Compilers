@@ -138,6 +138,21 @@ public class Visits extends AnalysisVisitor {
                 );  
             }
         }     
+        
+        //check if it has a return
+        //the check for type is done in the return visit
+        if(!table.getReturnType(currentMethodString).getName().equals("void")){
+            if(method.getChildren("ReturnDeclaration").size() == 0){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(method),
+                    NodeUtils.getColumn(method),
+                    "Non void functions must have a return!",
+                    null)
+                );  
+            }
+        }
+
         return null;
     }
 
