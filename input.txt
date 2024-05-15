@@ -1,9 +1,9 @@
 import java.util.ExampleA;
+import java.util.ExampleB;
 
 public class A {
     public static void main(String[] args) {
-        int c;
-        c = ExampleA.getA();
-
+        ExampleA.doFun();
+        ExampleB.doFunnier();
     }
 }

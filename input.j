@@ -11,7 +11,7 @@
 .method public static main([Ljava/lang/String;)V
    .limit stack 99
    .limit locals 99
-   invokevirtual A/getA()V
-   istore_0
+   invokestatic java/util/ExampleA/doFun()V
+   invokestatic java/util/ExampleB/doFunnier()V
    return
 .end method

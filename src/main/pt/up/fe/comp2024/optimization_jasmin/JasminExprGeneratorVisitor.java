@@ -161,9 +161,18 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         }
 
 
+        boolean isInImports = importContains(objectName);
+
         //Static method call for imports and static functions
-        if(table.getImports().contains(objectName) || functionStmt.hasAttribute("isVirtual") ){
-            code.append("invokestatic ").append(objectName).append("/").append(functionName).append("(");
+        if(isInImports || functionStmt.hasAttribute("isStatic") ){
+            String objectPath;
+            if(isInImports){
+                objectPath = getFullImportPath(objectName);
+            }
+            else{
+                objectPath = objectName;
+            }
+            code.append("invokestatic ").append(objectPath).append("/").append(functionName).append("(");
             if(functionStmt.getChildren().size() > 1){
                 //parameters
                 JmmNode paramNode = functionStmt.getChild(1);
@@ -174,7 +183,15 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
                     code.append("I");
                 }
             }
-            code.append(")V");
+
+            if(table.getMethods().contains(objectName)){
+                //if its on the table then we can see the return type
+                code.append(")" + typeDictionary.get(table.getReturnType(objectName).getName()));
+            }
+           else{
+                //else we assume its import and imports we are always assuming they're returning null
+                code.append(")V"); 
+           }
             code.append(NL);
 
         }
@@ -208,4 +225,24 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         return null;
     }
 
+    //checks to see if an object is a part of the imports
+    private boolean importContains(String object){
+        for(String imp : table.getImports()){
+            if(imp.contains(object)){
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    //get full import path for a class
+    private String getFullImportPath(String object){
+        for(String imp : table.getImports()){
+            if(imp.contains(object)){
+                return imp.replace('.', '/');
+            }
+        }
+        return "";
+    }
 }
