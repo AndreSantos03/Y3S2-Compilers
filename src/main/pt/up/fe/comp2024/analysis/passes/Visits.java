@@ -231,50 +231,43 @@ public class Visits extends AnalysisVisitor {
         }
 
 
+        if(functionCallExpr.getNumChildren() != 0){
+            //checks to see if it's a an object function being called
+            if(!functionCallExpr.getChild(0).getKind().equals("Parameter")){
+                JmmNode base = functionCallExpr.getChild(0);
 
-        //checks to see if it's a an object function being called
+
+                //ignore the rest of the checks if it references the this object
+                if(!base.getKind().equals("ThisReferenceExpression")){
+
+                    //checks to see if it's an import, if it is we assume it works
+                    if(base.hasAttribute("variable")){
+                        if(table.getImports().contains(base.get("variable"))){
+                            return null;
+                        }
+                    }
+
         
-        if(!functionCallExpr.getChild(0).getKind().equals("Parameter")){
-            JmmNode base = functionCallExpr.getChild(0);
+
+                    Type baseObjectType = getVariableType(base, table);
 
 
-            //ignore the rest of the checks if it references the this object
-            if(!base.getKind().equals("ThisReferenceExpression")){
-
-                //checks to see if it's an import, if it is we assume it works
-                if(base.hasAttribute("variable")){
-                    if(table.getImports().contains(base.get("variable"))){
+                    //checks to see if the caller is defined
+                    if(baseObjectType == null){
+                        addReport(Report.newError(
+                            Stage.SEMANTIC,
+                            NodeUtils.getLine(functionCallExpr),
+                            NodeUtils.getColumn(functionCallExpr),
+                            "Calling a method from an undefined object",
+                            null)
+                        );
                         return null;
                     }
-                }
-
-    
-
-                Type baseObjectType = getVariableType(base, table);
-
-
-                //checks to see if the caller is defined
-                if(baseObjectType == null){
-                    addReport(Report.newError(
-                        Stage.SEMANTIC,
-                        NodeUtils.getLine(functionCallExpr),
-                        NodeUtils.getColumn(functionCallExpr),
-                        "Calling a method from an undefined object",
-                        null)
-                    );
-                    return null;
-                }
-    
-                //chceks to see if its an extension of a imported class
-                if(baseObjectType.getName().equals(table.getClassName()) && table.getImports().contains(table.getSuper())){
-                    return null;
-                }
-            }
-            //its a this call
-            else{
-                //we assume the extended method inlcuded this method call and that it just works
-                if(table.getSuper() != null){
-                    return null;
+        
+                    //chceks to see if its an extension of a imported class
+                    if(baseObjectType.getName().equals(table.getClassName()) && table.getImports().contains(table.getSuper())){
+                        return null;
+                    }
                 }
             }
         }
@@ -285,6 +278,11 @@ public class Visits extends AnalysisVisitor {
 
         //if the called method is an import we assume it works
         if(table.getImports().contains(calledMethodName)){
+            return null;
+        }
+
+        // we can assume its in the super class and we assume it works
+        if(table.getSuper() != null){
             return null;
         }
 

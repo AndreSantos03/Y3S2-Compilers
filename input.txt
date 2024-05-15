@@ -7,6 +7,6 @@ class CallToMethodAssumedInExtends extends A {
     }
 
     public int foo() {
-        this.a();
+        a();
     }
 }
