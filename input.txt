@@ -1,8 +1,9 @@
 
 
 class A {
-    int... b;
+
 
     public static void main(String[] args) {
+        a[3] = 3;
     }
 }

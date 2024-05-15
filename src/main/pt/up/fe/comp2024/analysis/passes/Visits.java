@@ -42,6 +42,7 @@ public class Visits extends AnalysisVisitor {
         addVisit("Program",this::visitProgram);
         addVisit("MethodDeclaration", this::visitMethodDecl);
         addVisit("Assignment",this::assignment);
+        addVisit("AssignmentArray",this::assignmentArray);
         addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("FunctionCallExpression",this::visitFunctionCall);
         addVisit("ClassInstantiationExpression",this::visitClassCall);
@@ -251,6 +252,27 @@ public class Visits extends AnalysisVisitor {
 
         return null;
     }
+
+    private Void assignmentArray(JmmNode assignmentArrayExpr, SymbolTable table){
+        String arrayName = assignmentArrayExpr.get("variable");
+        Type arrayType = getVariableType(arrayName,table);
+
+        //check to see if variable is defined
+        if(arrayType == null){
+            addReport(Report.newError(
+                Stage.SEMANTIC,
+                NodeUtils.getLine(assignmentArrayExpr),
+                NodeUtils.getColumn(assignmentArrayExpr),
+                "Assigning to an undefined array!",
+                null)
+            );
+        }
+
+
+        System.out.println(arrayType);
+        return  null;
+    }
+
     
 
     //given to us by teachers
