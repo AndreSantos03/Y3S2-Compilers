@@ -1,15 +1,22 @@
-.class ArrayAccessOnInt
-.super java/lang/Object
-.field private b I
+.class CallToMethodAssumedInExtends
+.super A
 .method public <init>()V
    .limit stack 99
    .limit locals 99
    aload_0
-   invokespecial java/lang/Object/<init>()V
+   invokespecial A/<init>()V
    return
 .end method
 
-.method public static foo()I
+.method public static main([Ljava/lang/String;)V
    .limit stack 99
    .limit locals 99
+   return
+.end method
+
+.method public foo()I
+   .limit stack 99
+   .limit locals 99
+   aload_0
+   invokevirtual CallToMethodAssumedInExtends/a()V
 .end method

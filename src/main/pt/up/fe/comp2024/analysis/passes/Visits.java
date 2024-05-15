@@ -6,6 +6,7 @@ import pt.up.fe.comp.jmm.analysis.table.Type;
 import java.util.Arrays;
 import java.util.List;
 
+import org.antlr.v4.parse.ANTLRParser.range_return;
 import org.stringtemplate.v4.compiler.CodeGenerator.region_return;
 
 import java_cup.runtime.symbol;
@@ -230,6 +231,7 @@ public class Visits extends AnalysisVisitor {
         }
 
 
+
         //checks to see if it's a an object function being called
         
         if(!functionCallExpr.getChild(0).getKind().equals("Parameter")){
@@ -246,7 +248,11 @@ public class Visits extends AnalysisVisitor {
                     }
                 }
 
+    
+
                 Type baseObjectType = getVariableType(base, table);
+
+
                 //checks to see if the caller is defined
                 if(baseObjectType == null){
                     addReport(Report.newError(
@@ -264,16 +270,24 @@ public class Visits extends AnalysisVisitor {
                     return null;
                 }
             }
+            //its a this call
+            else{
+                //we assume the extended method inlcuded this method call and that it just works
+                if(table.getSuper() != null){
+                    return null;
+                }
+            }
         }
 
+  
 
-        System.out.println("dwadwaw");
+
 
         //if the called method is an import we assume it works
         if(table.getImports().contains(calledMethodName)){
-            System.out.println("dadwada");
             return null;
         }
+
 
         if(!table.getMethods().contains(calledMethodName)){
             addReport(Report.newError(

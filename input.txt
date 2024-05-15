@@ -1,11 +1,12 @@
-import add;
+import A;
 
-class ArrayAccessOnInt {
-    int b;
+class CallToMethodAssumedInExtends extends A {
 
+    public static void main(String[] args) {
 
-    public static int foo() {
-    int a;
-    a = add();
+    }
+
+    public int foo() {
+        this.a();
     }
 }
