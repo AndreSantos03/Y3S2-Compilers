@@ -52,6 +52,7 @@ public class Visits extends AnalysisVisitor {
     }
 
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
+    
         currentMethod = method;
         if(currentMethod.hasAttribute("methodName")){
             currentMethodString = method.get("methodName");

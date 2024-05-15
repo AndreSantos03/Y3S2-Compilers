@@ -33,7 +33,7 @@ type
     | typeName='int' '...' #vararg
     | typeName='boolean' #boolean
     | typeName='String' #string
-
+    | typeName='void' #void
     | typeName=ID #id
     ;
 

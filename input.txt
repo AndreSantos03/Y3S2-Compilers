@@ -1,9 +1,12 @@
-import A;
-
 class CallToMethodAssumedInExtends extends A {
 
     public static void main(String[] args) {
 
+    }
+
+    public void a(){
+        int b;
+        b =3;
     }
 
     public int foo() {
