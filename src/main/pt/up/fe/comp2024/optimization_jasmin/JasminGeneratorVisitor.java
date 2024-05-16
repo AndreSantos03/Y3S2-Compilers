@@ -38,6 +38,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     private int nextRegister;
 
     private Map<String, String> classFields = new HashMap<>();
+    private Map<String,String> methodFields = new HashMap<>();
 
     private Map<String, Integer> currentRegisters;
 
@@ -187,6 +188,13 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         // Get code for statement, split into lines and insert the necessary indentation
         for(var stmt :  methodDecl.getChildren()){    
+
+            //Adding to the list of methods locals
+            if(stmt.getKind().equals("FieldDeclaration")){
+                String typeField = stmt.getChild(0).get("typeName");
+                String fieldName = stmt.get("variable");
+                methodFields.put(fieldName, typeField);
+            }
             //ignore the type child of the method and the field declare
             if(stmt.getKind() !="type" && !stmt.hasAttribute("typeName") && !stmt.getKind().equals("FieldDeclaration")){
                 var instCode = StringLines.getLines(visit(stmt)).stream()
@@ -218,17 +226,10 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         var destName = assignStmt.get("variable");
 
 
-        //FIELD
-        if(classFields.containsKey(destName)){  
-            code.append("aload_0").append(NL); //always 0 because it references the this object
-            exprGenerator.visit(assignStmt.getChild(0), code);
-            String destType = typeDictionary.get(classFields.get(destName));
-            code.append(String.format("putfield %s/%s %s",
-            table.getClassName(),destName,destType));
 
-        }
+
         //NORMAL VARIABLE ASSIGNMENT
-        else{        
+        if(methodFields.containsKey(destName)){        
             // get register
             var reg = currentRegisters.get(destName);
             // If no mapping, variable has not been assigned yet, create mapping
@@ -247,6 +248,15 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
                 code.append("istore_").append(reg).append(NL);
             }    
+        }        //Fields
+        else{ 
+            //check if there's a field declaration with the same name
+            code.append("aload_0").append(NL); //always 0 because it references the this object
+            exprGenerator.visit(assignStmt.getChild(0), code);
+            String destType = typeDictionary.get(classFields.get(destName));
+            code.append(String.format("putfield %s/%s %s",
+            table.getClassName(),destName,destType));
+
         }
 
         return code.toString();

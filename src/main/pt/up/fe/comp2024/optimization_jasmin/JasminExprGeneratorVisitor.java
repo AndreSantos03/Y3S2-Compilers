@@ -143,8 +143,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         var reg = currentRegisters.get(assignedName);
         objectRegisters.add(reg);
 
-        code.append("astore_").append(reg).append(NL);
         code.append(String.format("invokespecial %s/<init>()V",className)).append(NL);
+        code.append("astore_").append(reg).append(NL);
 
         return null;
     }

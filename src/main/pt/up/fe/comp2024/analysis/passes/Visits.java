@@ -175,20 +175,20 @@ public class Visits extends AnalysisVisitor {
 
         JmmNode childNode = assignmentExpression.getChild(0);
 
-        //checks to see if we're assigning a field from a static method
-        if(currentMethod.hasAttribute("isStatic")){
-            for(Symbol field : table.getFields()){
-                if(field.getName().equals(assignmentExpression.get("variable"))){
-                    addReport(Report.newError(
-                        Stage.SEMANTIC,
-                        NodeUtils.getLine(assignmentExpression),
-                        NodeUtils.getColumn(assignmentExpression),
-                        "Trying to access class field from a static method",
-                        null)
-                    );                
-                }
-            }
-        }
+        // //checks to see if we're assigning a field from a static method
+        // if(currentMethod.hasAttribute("isStatic")){
+        //     for(Symbol field : table.getFields()){
+        //         if(field.getName().equals(assignmentExpression.get("variable"))){
+        //             addReport(Report.newError(
+        //                 Stage.SEMANTIC,
+        //                 NodeUtils.getLine(assignmentExpression),
+        //                 NodeUtils.getColumn(assignmentExpression),
+        //                 "Trying to access class field from a static method",
+        //                 null)
+        //             );                
+        //         }
+        //     }
+        // }
 
 
         //Checks for binaryOps
@@ -281,7 +281,6 @@ public class Visits extends AnalysisVisitor {
         }
 
 
-        System.out.println(arrayType);
         return  null;
     }
 
@@ -295,20 +294,20 @@ public class Visits extends AnalysisVisitor {
         // Check if exists a parameter or variable declaration with the same name as the variable reference
         var varRefName = varRefExpr.get("variable");
 
-        //checks to see if field is called from static method
-        if(currentMethod.hasAttribute("isStatic") ){
-            for(Symbol field : table.getFields()){
-                if(field.getName().equals(varRefName)){
-                    addReport(Report.newError(
-                        Stage.SEMANTIC,
-                        NodeUtils.getLine(varRefExpr),
-                        NodeUtils.getColumn(varRefExpr),
-                        "Trying to access class field from a static method",
-                        null)
-                    );
-                }
-             }
-        }
+        // //checks to see if field is called from static method
+        // if(currentMethod.hasAttribute("isStatic") ){
+        //     for(Symbol field : table.getFields()){
+        //         if(field.getName().equals(varRefName)){
+        //             addReport(Report.newError(
+        //                 Stage.SEMANTIC,
+        //                 NodeUtils.getLine(varRefExpr),
+        //                 NodeUtils.getColumn(varRefExpr),
+        //                 "Trying to access class field from a static method",
+        //                 null)
+        //             );
+        //         }
+        //      }
+        // }
 
         //ignores if it's called from a function, it just means its whatever the function is calling
         if(varRefExpr.getParent().getKind().equals("FunctionCallExpression")){

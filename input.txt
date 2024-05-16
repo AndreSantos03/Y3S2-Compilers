@@ -1,8 +1,17 @@
-import java.util.ExampleA;
+import io;
 
-public class A {
-    public static void main(String[] args) {
-        int b;
-        b = ExampleA.doFunnier();
+class A {
+    int a;
+
+    public int x(){
+        a = 10;    
+        io.print(a);
+        return a;
+    }
+ 
+    public static void main(String[] args){
+        A a;
+        a = new A();
+        a.x();
     }
 }
