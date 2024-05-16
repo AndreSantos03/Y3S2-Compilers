@@ -37,7 +37,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     private final Map<String, String> typeDictionary = new HashMap<String, String>() {{
         put("int", "I");
         put("boolean", "Z");
-        put("String", "[Ljava/lang/String;");
+        put("String", "Ljava/lang/String;");
         put("void", "V");
     }};
 
@@ -53,6 +53,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         addVisit("BinaryExpression", this::visitBinaryExpr); 
         addVisit("IntegerLiteral", this::visitIntegerLiteral);
         addVisit("BooleanLiteral", this::visitBooleanLiteral);
+        addVisit("StringLiteral", this::visitStringLiteral);
         addVisit("ThisReferenceExpression",this::visitThisExpr);
         addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("ClassInstantiationExpression",this::visitClassExpr);
@@ -84,7 +85,14 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         boolean valueBoolean = Boolean.parseBoolean(valueString);
         int value = 0;
         if (valueBoolean) value = 1;
-        String constInstruction = "iconst_"; // fodasse
+        String constInstruction = "iconst_";
+        code.append(constInstruction + value + NL);
+        return null;
+    }
+
+    private Void visitStringLiteral(JmmNode stringLiteral, StringBuilder code) {
+        String value = stringLiteral.get("value");
+        String constInstruction = "ldc ";
         code.append(constInstruction + value + NL);
         return null;
     }
@@ -315,6 +323,9 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         }
         else if(var.getKind().equals("IntegerLiteral")){
             return new Type("int",false);
+        }
+        else if(var.getKind().equals("StringLiteral")){
+            return new Type("String",false);
         }
 
         if(var.getKind().equals("BinaryExpression")){
