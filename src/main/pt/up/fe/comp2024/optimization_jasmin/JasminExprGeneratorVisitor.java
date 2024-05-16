@@ -2,6 +2,7 @@ package pt.up.fe.comp2024.optimization_jasmin;
 
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ast.PostorderJmmVisitor;
+import pt.up.fe.comp2024.JavammParser.BooleanContext;
 import pt.up.fe.specs.util.SpecsCheck;
 import pt.up.fe.specs.util.exceptions.NotImplementedException;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
@@ -9,6 +10,7 @@ import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 
 import java.util.Map;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
@@ -23,6 +25,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
     private static final String NL = "\n";
     private static final String TAB = "   ";
+    private final List<String> conditionalOperators = Arrays.asList("&&","||");
+    private final List<String> arithmeticOperators = Arrays.asList("+", "-", "*", "/","<",">","==","!=");
 
     private final Map<String, Integer> currentRegisters;
     private final SymbolTable table;
@@ -48,6 +52,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         // might no longer have the equivalent enums in Kind class.
         addVisit("BinaryExpression", this::visitBinaryExpr); 
         addVisit("IntegerLiteral", this::visitIntegerLiteral);
+        addVisit("BooleanLiteral", this::visitBooleanLiteral);
         addVisit("ThisReferenceExpression",this::visitThisExpr);
         addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("ClassInstantiationExpression",this::visitClassExpr);
@@ -70,6 +75,16 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         } else {
             constInstruction = "ldc ";
         }
+        code.append(constInstruction + value + NL);
+        return null;
+    }
+
+    private Void visitBooleanLiteral(JmmNode booleanLiteral, StringBuilder code) {
+        String valueString = booleanLiteral.get("value");
+        boolean valueBoolean = Boolean.parseBoolean(valueString);
+        int value = 0;
+        if (valueBoolean) value = 1;
+        String constInstruction = "iconst_"; // fodasse
         code.append(constInstruction + value + NL);
         return null;
     }
@@ -188,7 +203,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
                 //we're assuming imports only take as valuable ints
                 //adding a int parameter for each variable
                 for( int i = 0;i < paramNode.getChildren().size(); i++){
-                    code.append("I");
+                    String typeName =getVariableType(paramNode.getChild(i), table).getName();
+                    code.append(typeDictionary.get(typeName));
                 }
             }
 
@@ -287,6 +303,35 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             }
         }
         return null;
+    }
+
+    private Type getVariableType(JmmNode var,SymbolTable table){
+        if(var.getKind().equals("ParenthesisExpression")){
+            var = var.getChild(0);
+        }
+
+        if(var.getKind().equals("BooleanLiteral")){
+            return new Type("boolean",false);
+        }
+        else if(var.getKind().equals("IntegerLiteral")){
+            return new Type("int",false);
+        }
+
+        if(var.getKind().equals("BinaryExpression")){
+            if(arithmeticOperators.contains(var.get("operation"))){
+                return new Type("int",false);
+            }
+            else{
+                return new Type("boolean",false);
+            }
+        }        
+
+
+
+        String varName = var.get("variable");
+        
+
+        return getVariableType(varName, var);
     }
     
     //checks to see if an object is a part of the imports
