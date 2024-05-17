@@ -45,7 +45,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
     public JasminExprGeneratorVisitor(Map<String, Integer> currentRegisters, SymbolTable table) {
         this.currentRegisters = currentRegisters;
-        this.currentComparisonFunction = 0;
+        this.currentComparisonFunction = 1;
 
         this.table = table;
     }
@@ -62,8 +62,10 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("ClassInstantiationExpression",this::visitClassExpr);
         addVisit("FunctionCallExpression",this::visitFunctionExpr);
-        addVisit("Parameter",this::visitParamExpr);
-        addVisit("ParenthesisExpression",this::visitParentheses);
+        addVisit("Parameter",this::doesNothing);
+        addVisit("ParenthesisExpression",this::doesNothing);
+        addVisit("Block",this::doesNothing);
+        addVisit("SimpleExpression",this::doesNothing);
 
     }
 
@@ -186,7 +188,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             code.append("iconst_m1").append(NL).append(NL);
 
             code.append("cmp_").append(this.currentComparisonFunction).append("_end:").append(NL);
-
+            this.currentComparisonFunction++;
         }
 
         return null;
@@ -310,12 +312,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     }
     
     //does nothing
-    private Void visitParamExpr(JmmNode paramExpr, StringBuilder code) {
-        return null;
-    }
-
-    //does nothing
-    private Void visitParentheses(JmmNode parenthesesExpr, StringBuilder code) {
+    private Void doesNothing(JmmNode paramExpr, StringBuilder code) {
         return null;
     }
 

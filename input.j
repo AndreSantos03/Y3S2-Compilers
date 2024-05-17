@@ -11,19 +11,26 @@
 .method public static main([Ljava/lang/String;)V
    .limit stack 99
    .limit locals 99
-   bipush 20
    bipush 10
+   bipush 20
    isub
-   ifgt cmp_0_true
+   iflt cmp_1_true
    iconst_0
-   goto cmp_0_end
+   goto cmp_1_end
    
-   cmp_0_true:
+   cmp_1_true:
    iconst_m1
    
-   cmp_0_end:
-   istore_0
-   iload_0
-   invokestatic io/print(Z)V
+   cmp_1_end:
+   istore_1
+   iload_1
+   ifne if1
+   iconst_0
+   invokestatic io/print(I)V
+   goto endif1
+   if1:
+   iconst_1
+   invokestatic io/print(I)V
+   endif1:
    return
 .end method

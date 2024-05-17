@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
@@ -19,7 +20,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private final int  stackLimit = 99;
     private final int  localsLimit = 99;
-    private int currentConditionalFunction = 0;
+    private int currentConditionalFunction = 1;
 
 
     private final Map<String, String> typeDictionary = new HashMap<String, String>() {{
@@ -64,6 +65,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit("ReturnDeclaration", this::visitReturnStmt);
         addVisit("SimpleExpression",this::visitSimpleStmt);
         addVisit("ArgumentDecl",this::visitArgStmt);
+        addVisit("IfStatement", this::visitIfStmt);
     }
 
 
@@ -141,7 +143,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         currentMethod = methodName;
     
         //set the current register up
-        nextRegister = 0;
+        nextRegister = 1;
 
         // initialize register map and set parameters
         currentRegisters = new HashMap<>();
@@ -149,8 +151,6 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             currentRegisters.put(param.get("argName"), nextRegister);
             nextRegister++;
         }
-
-
 
         exprGenerator = new JasminExprGeneratorVisitor(currentRegisters,table);
 
@@ -268,6 +268,37 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         return code.toString();
     }
 
+
+    private String visitIfStmt(JmmNode ifStmt, Void unused) {
+        var code = new StringBuilder();
+
+        //generate code for the conditional
+        JmmNode conditionalNode = ifStmt.getChild(0);
+        exprGenerator.visit(conditionalNode,code);
+
+        code.append("ifne if").append(this.currentConditionalFunction).append(NL);
+
+        List<JmmNode> blocks = ifStmt.getChildren("Block");
+        JmmNode ifBlock = blocks.get(0);
+        JmmNode elseBlock = blocks.get(1);
+        
+        //generate code for the else
+        exprGenerator.visit(elseBlock,code);
+
+        //conditional jump to the end of the if
+        code.append("goto endif").append(this.currentConditionalFunction).append(NL);
+
+        //conditional jump for the positive
+        code.append("if").append(this.currentConditionalFunction).append(":").append(NL);
+        exprGenerator.visit(ifBlock,code);
+
+
+        //end the ifs
+        code.append("endif").append(this.currentConditionalFunction).append(":").append(NL);
+        
+        this.currentConditionalFunction++;
+        return code.toString();
+    }
     //used mostly for simple function calls, for example a print
     private String visitSimpleStmt(JmmNode simpleStmt, Void unused) {
         var code = new StringBuilder();
