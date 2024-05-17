@@ -26,6 +26,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     private static final String NL = "\n";
     private static final String TAB = "   ";
     private final List<String> conditionalOperators = Arrays.asList("&&","||");
+    private final List<String> comparisonOperators = Arrays.asList("<",">","==","!=");
     private final List<String> arithmeticOperators = Arrays.asList("+", "-", "*", "/","<",">","==","!=");
 
     private final Map<String, Integer> currentRegisters;

@@ -38,7 +38,8 @@ public class Visits extends AnalysisVisitor {
 
 
     private final List<String> conditionalOperators = Arrays.asList("&&","||");
-    private final List<String> arithmeticOperators = Arrays.asList("+", "-", "*", "/","<",">","==","!=");
+    private final List<String> comparisonOperators = Arrays.asList("<",">","==","!=");
+    private final List<String> arithmeticOperators = Arrays.asList("+", "-", "*", "/");
 
     @Override
     public void buildVisitor() {
@@ -223,8 +224,28 @@ public class Visits extends AnalysisVisitor {
 
         //Checks for binaryOps
         if(childNode.getKind().equals("BinaryExpression")){
-            //checks for +, * , ... and sees if its an int
+            System.out.println(currentType.getName());
+            //checks for +, * , ... and returns error if it isnt an int
             if(arithmeticOperators.contains(childNode.get("operation")) && !currentType.getName().equals("int")){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(assignmentExpression),
+                    NodeUtils.getColumn(assignmentExpression),
+                    "Types of assignment don't match!",
+                    null)
+                );
+                return null;
+            }
+
+            //checks for &&, ||, ... and sees if isnt a boolean
+            if(conditionalOperators.contains(childNode.get("operation")) && !currentType.getName().equals("boolean")){
+                //checks to see if its a 1 or 0,
+                if(childNode.hasAttribute("value")){
+                    if(childNode.get("value").equals("0") || childNode.get("value").equals("1")){
+                        return null;
+                    }
+                }
+                //if it isnt a 1 or 0 we return error
                 addReport(Report.newError(
                     Stage.SEMANTIC,
                     NodeUtils.getLine(assignmentExpression),
@@ -234,22 +255,6 @@ public class Visits extends AnalysisVisitor {
                 );
             }
 
-            //checks for &&, ||, ... and sees if its an int
-            if(conditionalOperators.contains(childNode.get("operation")) && !currentType.getName().equals("boolean")){
-                //checks to see if its a 1 or 0
-                if(childNode.hasAttribute("value")){
-                    if(childNode.get("value").equals("0") || childNode.get("value").equals("1")){
-                        return null;
-                    }
-                }
-                addReport(Report.newError(
-                    Stage.SEMANTIC,
-                    NodeUtils.getLine(assignmentExpression),
-                    NodeUtils.getColumn(assignmentExpression),
-                    "Types of assignment don't match!",
-                    null)
-                );
-            }
             return null;
         }
 
@@ -635,6 +640,28 @@ public class Visits extends AnalysisVisitor {
             );
         }
 
+        //ARITHMETIC OPERATIONS AND COMPARISON
+        //they must be between 2 ints, if not then errror
+        if (arithmeticOperators.contains(binaryOp.get("operation")) || comparisonOperators.contains(binaryOp.get("operation"))) {
+
+            if (!leftType.getName().equals("int") || !rightType.getName().equals("int")) {
+
+                String errorMessage;
+                if (!leftType.getName().equals("int")) {
+                    errorMessage = "Left operand '%s' must be int";
+                } else {
+                    errorMessage = "Right operand '%s' must be int";
+                }
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(binaryOp),
+                    NodeUtils.getColumn(binaryOp),
+                    errorMessage,
+                    null)
+                );
+            }
+            return null;
+        }
 
         //CONDITIONAL OPERATIONS
         if (conditionalOperators.contains(binaryOp.get("operation"))) {
@@ -654,48 +681,38 @@ public class Visits extends AnalysisVisitor {
                     null)
                 );
             }
-            return null;//not needed, just saves a few iterations of the
+            return null;
         }
 
 
-        //ARITHMETIC OPERATIONS
-        if (arithmeticOperators.contains(binaryOp.get("operation"))) {
 
-            if (!leftType.getName().equals("int") || !rightType.getName().equals("int")) {
-
-                String errorMessage;
-                if (!leftType.getName().equals("int")) {
-                    errorMessage = "Left operand '%s' must be int";
-                } else {
-                    errorMessage = "Right operand '%s' must be int";
-                }
-                addReport(Report.newError(
-                    Stage.SEMANTIC,
-                    NodeUtils.getLine(binaryOp),
-                    NodeUtils.getColumn(binaryOp),
-                    errorMessage,
-                    null)
-                );
-            }
-
-        }
         return null;
     }
 
     //Check for bool conditionals after While and If
     private Void conditionCheck(JmmNode loopExpr, SymbolTable table){
+
         JmmNode conditionalExpr = loopExpr.getChild(0);
 
-        if( conditionalExpr.getKind().equals("VariableReferenceExpression")&& !getVariableType(conditionalExpr, table).getName().equals("boolean")){
-            addReport(Report.newError(
-                Stage.SEMANTIC,
-                NodeUtils.getLine(loopExpr),
-                NodeUtils.getColumn(loopExpr),
-                "Condition variable must be boolean!",
-                null)
-            );
-            return null;
+
+        //its a variable in the condition
+        if( conditionalExpr.getKind().equals("VariableReferenceExpression")){
+            //the variable isn't a boolean
+            if(!getVariableType(conditionalExpr, table).getName().equals("boolean")){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(loopExpr),
+                    NodeUtils.getColumn(loopExpr),
+                    "Condition variable must be boolean!",
+                    null)
+                );
+            }
+            else{
+                //its a boolean , return
+                return null;
+            }
         }
+
         if(!conditionalOperators.contains(conditionalExpr.get("operation"))){
             addReport(Report.newError(
                 Stage.SEMANTIC,
