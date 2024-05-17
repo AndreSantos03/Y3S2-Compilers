@@ -19,6 +19,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private final int  stackLimit = 99;
     private final int  localsLimit = 99;
+    private int currentConditionalFunction = 0;
+
 
     private final Map<String, String> typeDictionary = new HashMap<String, String>() {{
         put("int", "I");
@@ -137,17 +139,9 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             methodName = "main";
         }
         currentMethod = methodName;
-
-        // set next register that can be used
-        // if method is static, then can start at 0
-        // if method is not static, 0 contains 'this', and must start at 1
-        // for the initial language, there are no static methods
-        if(methodDecl.hasAttribute("isStatic")){
-            nextRegister = 0;
-        }
-        else{
-            nextRegister = 1;
-        }
+    
+        //set the current register up
+        nextRegister = 0;
 
         // initialize register map and set parameters
         currentRegisters = new HashMap<>();

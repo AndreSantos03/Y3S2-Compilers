@@ -31,6 +31,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
     private final Map<String, Integer> currentRegisters;
     private final SymbolTable table;
+    private int currentComparisonFunction;
 
     //keeps track of object registers for when to use aload and iload
     private Set<Integer> objectRegisters = new HashSet<>();
@@ -44,6 +45,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
     public JasminExprGeneratorVisitor(Map<String, Integer> currentRegisters, SymbolTable table) {
         this.currentRegisters = currentRegisters;
+        this.currentComparisonFunction = 0;
+
         this.table = table;
     }
 
@@ -133,26 +136,58 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         // since this is a post-order visitor that automatically visits the children
         // we can assume the value for the operation are already loaded in the stack
 
-        // get the operation
-        var op = switch (binaryExpr.get("operation")) {
-            case "+" -> "iadd";
-            case "-" -> "isub";
-            case "*" -> "imul";
-            case "/" -> "idiv";
-            case "&&" -> "iand";
-            case "||" -> "ior";
+        String operator = binaryExpr.get("operation");
 
-            // case "<" -> "iflt";
-            // case ">" -> "ifgt";
-            // case "<=" -> "ifle";
-            // case ">=" -> "ifge";
-            // case "==" -> "ifeq";
-            // case "!=" -> "ifne";
-            default -> throw new NotImplementedException(binaryExpr.get("operation"));
+        String compOperator = null;
+
+        
+        // get the operation
+        switch (operator) {
+            case "+": 
+                code.append("iadd").append(NL);
+
+            case "-":
+                code.append("isub").append(NL);;
+            case "*" :
+                code.append("imul").append(NL);
+
+                case "/":
+                code.append("idiv").append(NL);
+                break;
+        
+            case "&&":
+                code.append("iand").append(NL);
+                break;
+        
+            case "||":
+                code.append("ior").append(NL);
+                break;
+
+            case "<":
+                compOperator = "iflt";
+                break;
+            case ">":
+                compOperator = "ifgt";
+                break;
+            default:
+                throw new NotImplementedException(operator);
         };
 
-        // apply operation
-        code.append(op).append(NL);
+        //code for executional jumps in comparison
+        if(compOperator != null){
+
+            //we are creating a loop where if the conditional is false we give it 0 and if it's true we give it value 1!
+            code.append("isub").append(NL);  
+            code.append(compOperator).append(" cmp_").append(this.currentComparisonFunction).append("_true").append(NL);
+            code.append("iconst_0").append(NL);
+            code.append("goto cmp_").append(this.currentComparisonFunction).append("_end").append(NL).append(NL);
+
+            code.append("cmp_").append(this.currentComparisonFunction).append("_true:").append(NL);
+            code.append("iconst_m1").append(NL).append(NL);
+
+            code.append("cmp_").append(this.currentComparisonFunction).append("_end:").append(NL);
+
+        }
 
         return null;
     }
