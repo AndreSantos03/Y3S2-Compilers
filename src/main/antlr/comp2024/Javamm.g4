@@ -27,7 +27,7 @@ classDeclaration
     ;
 
 type
-    : type '[' ']' #Array
+    : typeName='int[]' #IntArray
     | typeName='int' #Int
     | typeName='int...' #vararg
     | typeName='int' '...' #vararg

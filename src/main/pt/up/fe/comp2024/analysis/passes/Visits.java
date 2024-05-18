@@ -10,6 +10,7 @@ import java.util.HashSet;
 
 import org.antlr.v4.parse.ANTLRParser.range_return;
 import org.specs.comp.ollir.Field;
+import org.stringtemplate.v4.compiler.CodeGenerator.primary_return;
 import org.stringtemplate.v4.compiler.CodeGenerator.region_return;
 
 import java_cup.runtime.symbol;
@@ -782,6 +783,8 @@ public class Visits extends AnalysisVisitor {
         }
         JmmNode childNode = returnExpr.getChild(0);
 
+
+
         //Literals
         if(childNode.getKind().equals("IntegerLiteral")){
             if( !typeMethod.getName().equals("int")){
@@ -813,7 +816,7 @@ public class Visits extends AnalysisVisitor {
 
         //variable
         if(childNode.getKind().equals("VariableReferenceExpression")){
-
+            System.out.println(table.getLocalVariables(currentMethodString));
             if(!getVariableType(childNode, table).equals(typeMethod)){
                 addReport(Report.newError(
                     Stage.SEMANTIC,
@@ -855,6 +858,7 @@ public class Visits extends AnalysisVisitor {
             //check to see if it's an int access is already done somewhere else
             return null;
         }
+
 
         //methodcall
         String calledMethodName = childNode.get("value");
