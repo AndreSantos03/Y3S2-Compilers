@@ -1,4 +1,4 @@
-.class Arithmetic_less
+.class Simple
 .super java/lang/Object
 .method public <init>()V
    .limit stack 99
@@ -8,29 +8,62 @@
    return
 .end method
 
+.method public add(II)I
+   .limit stack 99
+   .limit locals 99
+   
+   
+   iload_1
+   aload_0
+   invokevirtual Simple/constInstr()I
+   iadd
+   istore_3
+   iload_3
+   ireturn
+.end method
+
 .method public static main([Ljava/lang/String;)V
    .limit stack 99
    .limit locals 99
-   bipush 10
    bipush 20
-   isub
-   iflt cmp_1_true
+   istore_0
+   bipush 10
+   istore_1
+   new Simple
+   dup
+   invokespecial Simple/<init>()V
+   astore_2
+   aload_2
+   iload_0
+   iload_1
+   invokevirtual Simple/add(II)I
+   istore_3
+   iload_3
+   invokestatic io/println(I)V
+   return
+.end method
+
+.method public constInstr()I
+   .limit stack 99
+   .limit locals 99
    iconst_0
-   goto cmp_1_end
-   
-   cmp_1_true:
-   iconst_m1
-   
-   cmp_1_end:
+   istore_1
+   iconst_4
+   istore_1
+   bipush 8
+   istore_1
+   bipush 14
+   istore_1
+   sipush 250
+   istore_1
+   sipush 400
+   istore_1
+   sipush 1000
+   istore_1
+   ldc 100474650
+   istore_1
+   bipush 10
    istore_1
    iload_1
-   ifne if1
-   iconst_0
-   invokestatic io/print(I)V
-   goto endif1
-   if1:
-   iconst_1
-   invokestatic io/print(I)V
-   endif1:
-   return
+   ireturn
 .end method

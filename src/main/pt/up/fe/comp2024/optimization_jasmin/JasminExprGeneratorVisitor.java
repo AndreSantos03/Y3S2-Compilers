@@ -105,6 +105,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     }
 
     private Void visitVarRefExpr(JmmNode varRefExpr, StringBuilder code) {
+        System.out.println(varRefExpr);
         var name = varRefExpr.get("variable");
 
         
@@ -148,13 +149,14 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         switch (operator) {
             case "+": 
                 code.append("iadd").append(NL);
-
+                break;
             case "-":
-                code.append("isub").append(NL);;
+                code.append("isub").append(NL);
+                break;
             case "*" :
                 code.append("imul").append(NL);
-
-                case "/":
+                break;
+            case "/":
                 code.append("idiv").append(NL);
                 break;
         
