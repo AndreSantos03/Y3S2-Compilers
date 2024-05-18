@@ -64,6 +64,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("ClassInstantiationExpression",this::visitClassExpr);
         addVisit("FunctionCallExpression",this::visitFunctionExpr);
+        addVisit("ArrayLengthExpression",this::visitArrayLengthExpr);
         addVisit("NewIntArrayExpression",this::visitNewArrayExpr);
         addVisit("NegationExpression",this::visitNegationExpr);
         addVisit("Parameter",this::doesNothing);
@@ -255,6 +256,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
                 //adding a int parameter for each variable
                 for( int i = 0;i < paramNode.getChildren().size(); i++){
                     String typeName =getVariableType(paramNode.getChild(i), table).getName();
+                    System.out.println(typeName);
                     code.append(typeDictionary.get(typeName));
                 }
             }
@@ -267,6 +269,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
                 String returnType;
                 if(isInImports){
                     if(functionStmt.getParent().getKind().equals("Assignment")){
+                            
                         returnType = getVariableType(functionStmt.getParent().get("variable"), functionStmt).getName();
                     }
                     else{
@@ -316,6 +319,10 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         objectRegisters.add(reg);
         code.append("newarray int").append(NL);
         code.append("astore_").append(reg).append(NL);
+        return null;
+    }
+    private Void visitArrayLengthExpr(JmmNode arrayLengthStmt, StringBuilder code) {
+        code.append("arraylength").append(NL);
         return null;
     }
     
@@ -386,6 +393,10 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             return new Type("String",false);
         }
 
+        else if(var.getKind().equals("ArrayLengthExpression")){
+            return new Type("int",false);
+        }
+
         if(var.getKind().equals("BinaryExpression")){
             if(arithmeticOperators.contains(var.get("operation"))){
                 return new Type("int",false);
@@ -396,10 +407,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         }        
 
 
-
         String varName = var.get("variable");
         
-
         return getVariableType(varName, var);
     }
     

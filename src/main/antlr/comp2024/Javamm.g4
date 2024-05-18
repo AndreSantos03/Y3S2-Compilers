@@ -78,6 +78,7 @@ expression
     | expression '[' index=expression ']' # ArrayAccessExpression
     | value=ID '(' parameter? ')'  # FunctionCallExpression
     | expression '.' value=ID '(' parameter? ')'  # FunctionCallExpression
+    | expression '.' 'length' # ArrayLengthExpression
     | '[' expression (',' expression)* ']' # ArrayInitializationExpression
     | 'this' # ThisReferenceExpression
     | '!' expression   # NegationExpression
