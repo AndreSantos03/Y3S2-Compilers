@@ -1,4 +1,4 @@
-.class BasicMethods
+.class public BasicMethods
 .super Other
 .method public <init>()V
    .limit stack 99
@@ -8,11 +8,12 @@
    return
 .end method
 
-.method public func4()I
+.method public func4()[I
    .limit stack 99
    .limit locals 99
-   iconst_3
-   istore_1
-   iload_1
-   ireturn
+   iconst_1
+   newarray int
+   astore_1
+   aload_1
+   areturn
 .end method

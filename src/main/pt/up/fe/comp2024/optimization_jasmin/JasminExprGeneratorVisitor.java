@@ -35,6 +35,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     private int compFuncCounter;
 
     //keeps track of object registers for when to use aload and iload
+    //it also keeps track of arrays as they're treated as object
     private Set<Integer> objectRegisters = new HashSet<>();
 
     private final Map<String, String> typeDictionary = new HashMap<String, String>() {{
@@ -63,6 +64,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("ClassInstantiationExpression",this::visitClassExpr);
         addVisit("FunctionCallExpression",this::visitFunctionExpr);
+        addVisit("NewIntArrayExpression",this::visitNewArrayExpr);
         addVisit("NegationExpression",this::visitNegationExpr);
         addVisit("Parameter",this::doesNothing);
         addVisit("ParenthesisExpression",this::doesNothing);
@@ -308,6 +310,17 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
         return null;
     }
+    private Void visitNewArrayExpr(JmmNode newArrayStmt, StringBuilder code) {
+        String arrayName = newArrayStmt.getParent().get("variable");
+        var reg = currentRegisters.get(arrayName);
+        objectRegisters.add(reg);
+        code.append("newarray int").append(NL);
+        code.append("astore_").append(reg).append(NL);
+        return null;
+    }
+    
+
+
 
     private Void visitThisExpr(JmmNode thisStmt, StringBuilder code) {
         code.append("aload_0").append(NL);

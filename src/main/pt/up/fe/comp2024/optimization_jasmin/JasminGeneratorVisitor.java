@@ -1,6 +1,7 @@
 package pt.up.fe.comp2024.optimization_jasmin;
 
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
+import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.AJmmVisitor;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.specs.util.SpecsCheck;
@@ -90,7 +91,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         // generate class name
         var className = table.getClassName();
-        code.append(".class ").append(className).append(NL);
+        code.append(".class public ").append(className).append(NL);
 
         String superClassName = table.getSuper();
         
@@ -182,8 +183,12 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
                 parameterString+=typeDictionary.get(param.getType().getName());
             }
         }
+
+        Type methodRetType = table.getReturnType(methodName);
+
         parameterString+=")";
-        parameterString+=typeDictionary.get(table.getReturnType(methodName).getName()); //return type
+        parameterString +=  methodRetType.isArray() ? "[" : "";
+        parameterString+=typeDictionary.get(methodRetType.getName()); //return type
 
 
         code.append("\n.method ").append(publicString).append(staticString).append(methodName).append(parameterString).append(NL);
@@ -250,8 +255,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             exprGenerator.visit(childNode, code);
 
 
-            //Class stores differently, its directly in the generator visitor
-            if(!childNode.getKind().equals("ClassInstantiationExpression")){
+            //Class stores differently, its directly in the generator visitor, same goes for arrays
+            if(!childNode.getKind().equals("ClassInstantiationExpression") && !childNode.getKind().equals("NewIntArrayExpression")){
 
                 code.append("istore_").append(reg).append(NL);
             }    
@@ -274,9 +279,15 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         var code = new StringBuilder();
 
         // generate code that will put the value of the return on the top of the stack
-
         exprGenerator.visit(returnStmt.getChild(0), code);
-        code.append("ireturn").append(NL);
+
+        //if array we use areturn
+        if(table.getReturnType(currentMethod).isArray() == true){
+            code.append("areturn").append(NL);
+        }
+        else{
+            code.append("ireturn").append(NL);
+        }
 
         return code.toString();
     }
