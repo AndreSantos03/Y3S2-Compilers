@@ -63,6 +63,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         addVisit("VariableReferenceExpression", this::visitVarRefExpr);
         addVisit("ClassInstantiationExpression",this::visitClassExpr);
         addVisit("FunctionCallExpression",this::visitFunctionExpr);
+        addVisit("NegationExpression",this::visitNegationExpr);
         addVisit("Parameter",this::doesNothing);
         addVisit("ParenthesisExpression",this::doesNothing);
         addVisit("Block",this::doesNothing);
@@ -105,7 +106,6 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     }
 
     private Void visitVarRefExpr(JmmNode varRefExpr, StringBuilder code) {
-        System.out.println(varRefExpr);
         var name = varRefExpr.get("variable");
 
         
@@ -313,6 +313,16 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         code.append("aload_0").append(NL);
         return null;
     }
+    private Void visitNegationExpr(JmmNode negStmt, StringBuilder code) {
+        JmmNode childNode = negStmt.getChild(0);
+        visit(childNode,code);
+        code.append("ixor").append(NL);
+
+        return null;
+    }
+
+
+    
     
     //does nothing
     private Void doesNothing(JmmNode paramExpr, StringBuilder code) {

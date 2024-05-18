@@ -713,7 +713,10 @@ public class Visits extends AnalysisVisitor {
             }
         }
 
-        if(!conditionalOperators.contains(conditionalExpr.get("operation"))){
+
+        String operator = conditionalExpr.get("operation");
+        System.out.println(!conditionalOperators.contains(operator));
+        if(!conditionalOperators.contains(operator) && !comparisonOperators.contains(operator)){
             addReport(Report.newError(
                 Stage.SEMANTIC,
                 NodeUtils.getLine(loopExpr),

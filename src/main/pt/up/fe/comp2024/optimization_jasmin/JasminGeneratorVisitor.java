@@ -145,7 +145,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         currentMethod = methodName;
     
         //set the current register up
-        if(methodDecl.hasAttribute("isStatic")){
+        if(methodDecl.hasAttribute("isStatic") && !methodName.equals("main")){
             nextRegister = 0;
         }
         else{
