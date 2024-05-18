@@ -287,8 +287,18 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         code.append("ifne if").append(ifFuncCounter).append(NL);
 
         List<JmmNode> blocks = ifStmt.getChildren("Block");
-        JmmNode ifBlock = blocks.get(0);
-        JmmNode elseBlock = blocks.get(1);
+        JmmNode ifBlock;
+        JmmNode elseBlock;
+        if(blocks.size() != 0){
+            ifBlock = blocks.get(0);
+            elseBlock = blocks.get(1);
+        }
+        else{
+            //if there's no block and is there just a simple expression after it
+            ifBlock = ifStmt.getChild(1);
+            elseBlock = ifStmt.getChild(2);
+        }
+
         
         //generate code for the else
         exprGenerator.visit(elseBlock,code);

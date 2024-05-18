@@ -1,28 +1,19 @@
-import ioPlus;
-class SimpleIfElseStat {
+import io;
+
+class SimpleIfElseNot {
 
 
 	public static void main(String[] args) {
-		int a;
-		int b;
 
-		a = 5;
-		b = 10;
-
-        if(a < b){
-          ioPlus.printResult(a);
-        } else {
-           ioPlus.printResult(b);
-        }
-
-		a = 10;
-		b = 8;
-		
-        if(a < b){
-          ioPlus.printResult(a);
-        } else {
-           ioPlus.printResult(b);
-        }
-
+		if(true)
+			io.println(10);
+		else
+			io.println(20);
+			
+		if(false)
+			io.print(100);
+		else
+			io.print(200);			
+			
 	}
 }

@@ -1,4 +1,4 @@
-.class SimpleIfElseStat
+.class SimpleIfElseNot
 .super java/lang/Object
 .method public <init>()V
    .limit stack 99
@@ -11,51 +11,23 @@
 .method public static main([Ljava/lang/String;)V
    .limit stack 99
    .limit locals 99
-   iconst_5
-   istore_1
-   bipush 10
-   istore_2
-   iload_1
-   iload_2
-   isub
-   iflt cmp_1_true
-   iconst_0
-   goto cmp_1_end
-   
-   cmp_1_true:
-   iconst_m1
-   
-   cmp_1_end:
+   iconst_1
    ifne if1
-   iload_2
-   invokestatic ioPlus/printResult(I)V
+   bipush 20
+   invokestatic io/println(I)V
    goto endif1
    if1:
-   iload_1
-   invokestatic ioPlus/printResult(I)V
-   endif1:
    bipush 10
-   istore_1
-   bipush 8
-   istore_2
-   iload_1
-   iload_2
-   isub
-   iflt cmp_2_true
+   invokestatic io/println(I)V
+   endif1:
    iconst_0
-   goto cmp_2_end
-   
-   cmp_2_true:
-   iconst_m1
-   
-   cmp_2_end:
    ifne if2
-   iload_2
-   invokestatic ioPlus/printResult(I)V
+   sipush 200
+   invokestatic io/print(I)V
    goto endif2
    if2:
-   iload_1
-   invokestatic ioPlus/printResult(I)V
+   bipush 100
+   invokestatic io/print(I)V
    endif2:
    return
 .end method

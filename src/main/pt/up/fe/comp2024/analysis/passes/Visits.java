@@ -694,6 +694,18 @@ public class Visits extends AnalysisVisitor {
 
         JmmNode conditionalExpr = loopExpr.getChild(0);
 
+        //its a boolean literal
+        if(conditionalExpr.getKind().equals("BooleanLiteral")){
+            return null;
+        }
+
+        //its 1 or 0
+        if(conditionalExpr.getKind().equals("IntegerLiteral")){
+            String value = conditionalExpr.get("value");
+            if(value == "1" || value == "0"){
+                return null;
+            }
+        }
 
         //its a variable in the condition
         if( conditionalExpr.getKind().equals("VariableReferenceExpression")){
