@@ -1,4 +1,4 @@
-.class SimpleIfElseNot
+.class SimpleWhileStat
 .super java/lang/Object
 .method public <init>()V
    .limit stack 99
@@ -11,23 +11,25 @@
 .method public static main([Ljava/lang/String;)V
    .limit stack 99
    .limit locals 99
-   iconst_1
-   ifne if1
-   bipush 20
-   invokestatic io/println(I)V
-   goto endif1
-   if1:
-   bipush 10
-   invokestatic io/println(I)V
-   endif1:
+   iconst_3
+   istore_1
    iconst_0
-   ifne if2
-   sipush 200
-   invokestatic io/print(I)V
-   goto endif2
-   if2:
-   bipush 100
-   invokestatic io/print(I)V
-   endif2:
+   istore_2
+   whileCond1:
+   iload_2
+   iload_1
+   isub
+   iflt cmp_1_true
+   iconst_0
+   goto cmp_1_end
+   
+   cmp_1_true:
+   iconst_m1
+   
+   cmp_1_end:
+   whileLoop1:
+   iload_2
+   invokestatic ioPlus/printResult(I)V
+   whileEnd1:
    return
 .end method

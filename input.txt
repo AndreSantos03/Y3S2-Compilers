@@ -1,19 +1,18 @@
-import io;
-
-class SimpleIfElseNot {
+import ioPlus;
+class SimpleWhileStat {
 
 
 	public static void main(String[] args) {
+        int a;
+        int i;
 
-		if(true)
-			io.println(10);
-		else
-			io.println(20);
-			
-		if(false)
-			io.print(100);
-		else
-			io.print(200);			
-			
+		a = 3;
+        i = 0;
+		
+        while (i < a) {
+            ioPlus.printResult(i);
+            i = i + 1;
+        }
+
 	}
 }

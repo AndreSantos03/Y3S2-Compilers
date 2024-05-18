@@ -39,6 +39,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     private String currentMethod;
     private int nextRegister;
     private int ifFuncCounter;
+    private int whileFuncCounter;
 
 
     private Map<String, String> classFields = new HashMap<>();
@@ -53,6 +54,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         nextRegister = -1;
         currentRegisters = null;
         ifFuncCounter = 1;
+        whileFuncCounter = 1;
     }
 
 
@@ -65,9 +67,12 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit("MethodDeclaration", this::visitMethodDecl);
         addVisit("Assignment", this::visitAssignStmt);
         addVisit("ReturnDeclaration", this::visitReturnStmt);
-        addVisit("SimpleExpression",this::visitSimpleStmt);
+        addVisit("SimpleExpression",this::visitRestOfCode);
+        addVisit("Block",this::visitRestOfCode);
         addVisit("ArgumentDecl",this::visitArgStmt);
         addVisit("IfStatement", this::visitIfStmt);
+        addVisit("WhileStatement", this::visitWhileStmt);
+
     }
 
 
@@ -317,17 +322,43 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         ifFuncCounter++;
         return code.toString();
     }
-    //used mostly for simple function calls, for example a print
-    private String visitSimpleStmt(JmmNode simpleStmt, Void unused) {
+    private String visitWhileStmt(JmmNode whileStmt, Void unused) {
         var code = new StringBuilder();
 
-        JmmNode childNode = simpleStmt.getChild(0);
-    
-        exprGenerator.visit(childNode, code);
+        JmmNode condition = whileStmt.getChild(0);
+        JmmNode block = whileStmt.getChild(1);
 
+        code.append("whileCond").append(whileFuncCounter).append(":").append(NL);
+
+        //visit expression condition and generate code
+        exprGenerator.visit(condition,code);
+
+        code.append("whileLoop").append(whileFuncCounter).append(":").append(NL);
+
+
+        System.out.println("block");
+        //generate normal generator code for block
+        code.append(visit(block));
+
+        code.append("whileEnd").append(whileFuncCounter).append(":").append(NL);
+
+    
+        whileFuncCounter++;
         return code.toString();
     }
 
+    //used mostly for simple function calls, for example a print
+    private String visitRestOfCode(JmmNode simpleStmt, Void unused) {
+        
+
+        var code = new StringBuilder();
+
+        JmmNode childNode = simpleStmt.getChild(0);
+
+        exprGenerator.visit(childNode, code);
+
+        return code.toString();
+    }    
 
     //we don't need to anything with it
     private String visitArgStmt(JmmNode ArgStmt, Void unused){
