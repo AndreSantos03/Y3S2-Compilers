@@ -314,8 +314,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         return null;
     }
     private Void visitNegationExpr(JmmNode negStmt, StringBuilder code) {
-        JmmNode childNode = negStmt.getChild(0);
-        visit(childNode,code);
+        code.append("iconst_1").append(NL);
         code.append("ixor").append(NL);
 
         return null;
