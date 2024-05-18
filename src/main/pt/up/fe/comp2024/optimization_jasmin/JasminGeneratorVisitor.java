@@ -67,8 +67,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit("MethodDeclaration", this::visitMethodDecl);
         addVisit("Assignment", this::visitAssignStmt);
         addVisit("ReturnDeclaration", this::visitReturnStmt);
-        addVisit("SimpleExpression",this::visitRestOfCode);
-        addVisit("Block",this::visitRestOfCode);
+        addVisit("SimpleExpression",this::visitSimpleStmt);
+        addVisit("Block",this::visitBlockStmt);
         addVisit("ArgumentDecl",this::visitArgStmt);
         addVisit("IfStatement", this::visitIfStmt);
         addVisit("WhileStatement", this::visitWhileStmt);
@@ -328,18 +328,28 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         JmmNode condition = whileStmt.getChild(0);
         JmmNode block = whileStmt.getChild(1);
 
+
         code.append("whileCond").append(whileFuncCounter).append(":").append(NL);
 
         //visit expression condition and generate code
         exprGenerator.visit(condition,code);
 
+
+        //control the flow of the conditional value
+        code.append("ifne whileLoop").append(whileFuncCounter).append(NL);
+        code.append("goto whileEnd").append(whileFuncCounter).append(NL);
+
+
         code.append("whileLoop").append(whileFuncCounter).append(":").append(NL);
 
 
-        System.out.println("block");
         //generate normal generator code for block
         code.append(visit(block));
 
+        //go back to the beggining of the while
+        code.append("goto whileCond").append(whileFuncCounter).append(NL);
+
+        //end code generation
         code.append("whileEnd").append(whileFuncCounter).append(":").append(NL);
 
     
@@ -348,7 +358,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     }
 
     //used mostly for simple function calls, for example a print
-    private String visitRestOfCode(JmmNode simpleStmt, Void unused) {
+    private String visitSimpleStmt(JmmNode simpleStmt, Void unused) {
         
 
         var code = new StringBuilder();
@@ -359,6 +369,19 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         return code.toString();
     }    
+
+    //visit block
+    private String visitBlockStmt(JmmNode blockStmt, Void unused) {
+        var code = new StringBuilder();
+
+        //we are visiting the statements inside the block
+        for(JmmNode child : blockStmt.getChildren()){
+            code.append(visit(child));
+        }
+
+        return code.toString();
+    }
+
 
     //we don't need to anything with it
     private String visitArgStmt(JmmNode ArgStmt, Void unused){

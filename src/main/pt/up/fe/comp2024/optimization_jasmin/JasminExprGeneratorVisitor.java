@@ -46,7 +46,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
     public JasminExprGeneratorVisitor(Map<String, Integer> currentRegisters, SymbolTable table) {
         this.currentRegisters = currentRegisters;
-        compFuncCounter = 1;
+        compFuncCounter = 0;
 
         this.table = table;
     }

@@ -19,17 +19,24 @@
    iload_2
    iload_1
    isub
-   iflt cmp_1_true
+   iflt cmp_0_true
    iconst_0
-   goto cmp_1_end
+   goto cmp_0_end
    
-   cmp_1_true:
+   cmp_0_true:
    iconst_m1
    
-   cmp_1_end:
+   cmp_0_end:
+   ifne whileLoop1
+   goto whileEnd1
    whileLoop1:
    iload_2
    invokestatic ioPlus/printResult(I)V
+   iload_2
+   iconst_1
+   iadd
+   istore_2
+   goto whileCond1
    whileEnd1:
    return
 .end method
