@@ -31,7 +31,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
     private final Map<String, Integer> currentRegisters;
     private final SymbolTable table;
-    private int currentComparisonFunction;
+
+    private int compFuncCounter;
 
     //keeps track of object registers for when to use aload and iload
     private Set<Integer> objectRegisters = new HashSet<>();
@@ -45,7 +46,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
     public JasminExprGeneratorVisitor(Map<String, Integer> currentRegisters, SymbolTable table) {
         this.currentRegisters = currentRegisters;
-        this.currentComparisonFunction = 1;
+        compFuncCounter = 1;
 
         this.table = table;
     }
@@ -180,15 +181,15 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
             //we are creating a loop where if the conditional is false we give it 0 and if it's true we give it value 1!
             code.append("isub").append(NL);  
-            code.append(compOperator).append(" cmp_").append(this.currentComparisonFunction).append("_true").append(NL);
+            code.append(compOperator).append(" cmp_").append(compFuncCounter).append("_true").append(NL);
             code.append("iconst_0").append(NL);
-            code.append("goto cmp_").append(this.currentComparisonFunction).append("_end").append(NL).append(NL);
+            code.append("goto cmp_").append(compFuncCounter).append("_end").append(NL).append(NL);
 
-            code.append("cmp_").append(this.currentComparisonFunction).append("_true:").append(NL);
+            code.append("cmp_").append(compFuncCounter).append("_true:").append(NL);
             code.append("iconst_m1").append(NL).append(NL);
 
-            code.append("cmp_").append(this.currentComparisonFunction).append("_end:").append(NL);
-            this.currentComparisonFunction++;
+            code.append("cmp_").append(compFuncCounter).append("_end:").append(NL);
+            compFuncCounter++;
         }
 
         return null;

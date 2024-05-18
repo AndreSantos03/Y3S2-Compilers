@@ -20,7 +20,6 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private final int  stackLimit = 99;
     private final int  localsLimit = 99;
-    private int currentConditionalFunction = 1;
 
 
     private final Map<String, String> typeDictionary = new HashMap<String, String>() {{
@@ -39,6 +38,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private String currentMethod;
     private int nextRegister;
+    private int ifFuncCounter;
+
 
     private Map<String, String> classFields = new HashMap<>();
     private Map<String,String> methodFields = new HashMap<>();
@@ -51,6 +52,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         currentMethod = null;
         nextRegister = -1;
         currentRegisters = null;
+        ifFuncCounter = 1;
     }
 
 
@@ -276,7 +278,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         JmmNode conditionalNode = ifStmt.getChild(0);
         exprGenerator.visit(conditionalNode,code);
 
-        code.append("ifne if").append(this.currentConditionalFunction).append(NL);
+        code.append("ifne if").append(ifFuncCounter).append(NL);
 
         List<JmmNode> blocks = ifStmt.getChildren("Block");
         JmmNode ifBlock = blocks.get(0);
@@ -286,17 +288,17 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         exprGenerator.visit(elseBlock,code);
 
         //conditional jump to the end of the if
-        code.append("goto endif").append(this.currentConditionalFunction).append(NL);
+        code.append("goto endif").append(ifFuncCounter).append(NL);
 
         //conditional jump for the positive
-        code.append("if").append(this.currentConditionalFunction).append(":").append(NL);
+        code.append("if").append(ifFuncCounter).append(":").append(NL);
         exprGenerator.visit(ifBlock,code);
 
 
         //end the ifs
-        code.append("endif").append(this.currentConditionalFunction).append(":").append(NL);
+        code.append("endif").append(ifFuncCounter).append(":").append(NL);
         
-        this.currentConditionalFunction++;
+        ifFuncCounter++;
         return code.toString();
     }
     //used mostly for simple function calls, for example a print
