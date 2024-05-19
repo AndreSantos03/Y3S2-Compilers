@@ -111,6 +111,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
     private Void visitVarRefExpr(JmmNode varRefExpr, StringBuilder code) {
         var name = varRefExpr.get("variable");
+        Type varType = getVariableType(varRefExpr, table);
 
         
         var reg = currentRegisters.get(name);
@@ -129,8 +130,9 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             }
             return null;
         }
-        //checks to see if its a class
-        if( objectRegisters.contains(reg)){
+
+        //checks to see if its a class or an array
+        if( objectRegisters.contains(reg) || varType.isArray()){
             code.append("aload_" + reg + NL);
         }
         else{
@@ -232,7 +234,6 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         }
 
         Type objectType = getVariableType(objectName, objectNode);
-        System.out.println(functionStmt + "    " + objectType);
 
         String objectTypeString;
         if(objectType != null){
@@ -291,27 +292,34 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         //Calls a class function
         else{
             String objectPath;
-            String returnType;
+            Type returnType;
+
             if(importContains(objectTypeString)){
                 objectPath = getFullImportPath(objectType.getName());
                 if(functionStmt.getParent().getKind().equals("Assignment")){
-                    returnType = getVariableType(functionStmt.getParent().get("variable"), functionStmt).getName();
+                    returnType = getVariableType(functionStmt.getParent().get("variable"), functionStmt);
                 }
                 else{
-                    returnType = "void";
+                    returnType = new Type("void",false);
                 }
             }            
             else{
                 objectPath = table.getClassName();
-                returnType = table.getReturnType(functionName).getName();
+                returnType = table.getReturnType(functionName);
             }
 
             code.append("invokevirtual ").append(objectPath).append("/").append(functionName).append("(");
             //parameters
             for(Symbol param : table.getParameters(functionName)){
-                code.append(typeDictionary.get(param.getType().getName()));
+                Type paramType = param.getType();
+                code.append(paramType.isArray() ? "[" : "");
+
+                code.append(typeDictionary.get(paramType.getName()));
             }
-            code.append(")").append(typeDictionary.get(returnType)).append(NL);
+
+            
+
+            code.append(")").append(typeDictionary.get(returnType.getName())).append(NL);
             
         }
 

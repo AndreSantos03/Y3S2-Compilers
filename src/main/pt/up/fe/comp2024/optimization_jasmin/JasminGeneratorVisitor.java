@@ -85,6 +85,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         var classDecl = program.getChildren("ClassDecl").get(0); //imports are child of program, this makes sure class is always accessed
         SpecsCheck.checkArgument(classDecl.isInstance("ClassDecl"), () -> "Expected a node of type 'ClassDecl', but instead got '" + classDecl.getKind() + "'");
 
+
         return visit(classDecl);
     }
 
@@ -184,7 +185,9 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             parameterString+=typeDictionary.get("String");
         }else{
             for(Symbol param :table.getParameters(methodName)){
-                parameterString+=typeDictionary.get(param.getType().getName());
+                Type paramType = param.getType();
+                parameterString+=paramType.isArray() ? "[" : "";
+                parameterString+=typeDictionary.get(paramType.getName());
             }
         }
 
@@ -226,11 +229,14 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         code.append(".end method\n");
 
+
         // reset information
         exprGenerator = null;
         nextRegister = -1;
         currentRegisters = null;
         currentMethod = null;
+
+
 
         return code.toString();
     }
@@ -293,10 +299,10 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         // generate code that will put the value of the return on the top of the stack
         exprGenerator.visit(returnStmt.getChild(0), code);
 
-        //load onto the stack the return value
-        //as its the last call of the function we dont need to deal with the logic of creating a new value onto currentRegisters
-        code.append("istore ").append(nextRegister).append(NL);
-        code.append("iload ").append(nextRegister).append(NL);
+        // //load onto the stack the return value if a variable is not called
+        // //as its the last call of the function we dont need to deal with the logic of creating a new value onto currentRegisters
+        // code.append("istore ").append(nextRegister).append(NL);
+        // code.append("iload ").append(nextRegister).append(NL);
 
         //if array we use areturn
         if(table.getReturnType(currentMethod).isArray() == true){
