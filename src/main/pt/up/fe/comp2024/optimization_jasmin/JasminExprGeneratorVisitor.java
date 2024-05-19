@@ -67,6 +67,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         addVisit("ArrayLengthExpression",this::visitArrayLengthExpr);
         addVisit("NewIntArrayExpression",this::visitNewArrayExpr);
         addVisit("ArrayAccessExpression", this::visitArrayAccessExpr);
+        addVisit("AssignmentArray",this::AssignmentArray);
         addVisit("NegationExpression",this::visitNegationExpr);
         addVisit("Parameter",this::doesNothing);
         addVisit("ParenthesisExpression",this::doesNothing);
@@ -345,6 +346,10 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         code.append("iaload").append(NL);
         return null;
     }
+
+    private Void AssignmentArray(JmmNode arrayAssignmentStmt, StringBuilder code){
+        return null;
+    }
     
     private Void visitThisExpr(JmmNode thisStmt, StringBuilder code) {
         code.append("aload_0").append(NL);
@@ -366,6 +371,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     }
 
     private Type getVariableType( String var,JmmNode expr){
+        
         JmmNode currentMethod = expr.getAncestor("MethodDeclaration").get();
         String methodName ;
         if(currentMethod.hasAttribute("methodName")){
@@ -396,6 +402,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     }
 
     private Type getVariableType(JmmNode var,SymbolTable table){
+
         if(var.getKind().equals("ParenthesisExpression")){
             var = var.getChild(0);
         }

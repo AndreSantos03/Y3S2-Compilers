@@ -743,7 +743,7 @@ public class Visits extends AnalysisVisitor {
     private Void visitArrayAccess(JmmNode arrayAccessExpression, SymbolTable table){
         JmmNode accessedArray = arrayAccessExpression.getChild(0);
         Type variableType = getVariableType(accessedArray,table);
-        if(!variableType.isArray() && !variableType.getName().equals("int...")){
+        if(!variableType.isArray() && !variableType.getName().equals("int[]")){
             addReport(Report.newError(
                 Stage.SEMANTIC,
                 NodeUtils.getLine(arrayAccessExpression),
@@ -755,7 +755,8 @@ public class Visits extends AnalysisVisitor {
 
         JmmNode indexExpression = arrayAccessExpression.getChild(1);
         Type indexType = getVariableType(indexExpression, table);
-        if(indexType.getName()!="int"){
+
+        if(!indexType.getName().equals("int")){
             addReport(Report.newError(
                 Stage.SEMANTIC,
                 NodeUtils.getLine(arrayAccessExpression),
@@ -915,8 +916,20 @@ public class Visits extends AnalysisVisitor {
         if(var.getKind().equals("ParenthesisExpression")){
             var = var.getChild(0);
         }
-
-        if(var.getKind().equals("BooleanLiteral")){
+        //function
+        if(var.getKind().equals("FunctionCallExpression")){
+            String calledFunction = var.get("value");
+            return table.getReturnType(calledFunction);
+        }
+        //Array access, we assume its int because we're only dealing with int arrays
+        else if(var.getKind().equals("ArrayAccessExpression")){
+            return new Type("int",false);
+        }
+        //ArrayLength, also an int
+        else if(var.getKind().equals("ArrayLengthExpression")){
+            return new Type("int",false);
+        }
+        else if(var.getKind().equals("BooleanLiteral")){
             return new Type("boolean",false);
         }
         else if(var.getKind().equals("IntegerLiteral")){
