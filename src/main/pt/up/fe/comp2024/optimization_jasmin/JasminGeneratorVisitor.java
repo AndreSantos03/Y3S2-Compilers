@@ -259,7 +259,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             //Class stores differently, its directly in the generator visitor, same goes for arrays
             if(!childNode.getKind().equals("ClassInstantiationExpression") && !childNode.getKind().equals("NewIntArrayExpression")){
 
-                code.append("istore_").append(reg).append(NL);
+                code.append("istore ").append(reg).append(NL);
             }    
         }        //Fields
         else{ 

@@ -130,10 +130,10 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         }
         //checks to see if its a class
         if( objectRegisters.contains(reg)){
-            code.append("aload_" + reg + NL);
+            code.append("aload " + reg + NL);
         }
         else{
-            code.append("iload_" + reg + NL);
+            code.append("iload " + reg + NL);
         }
         return null;
     }
@@ -203,15 +203,17 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     private Void visitClassExpr(JmmNode classExpr, StringBuilder code) {
         String className = classExpr.get("classname");
         code.append("new ").append(className).append(NL);
-        code.append("dup").append(NL);
 
         String assignedName = classExpr.getParent().get("variable");
 
         var reg = currentRegisters.get(assignedName);
         objectRegisters.add(reg);
 
-        code.append(String.format("invokespecial %s/<init>()V",className)).append(NL);
+
         code.append("astore_").append(reg).append(NL);
+        code.append("aload_").append(reg).append(NL);
+
+        code.append(String.format("invokespecial %s/<init>()V",className)).append(NL);
 
         return null;
     }
