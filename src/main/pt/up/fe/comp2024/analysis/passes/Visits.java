@@ -225,7 +225,6 @@ public class Visits extends AnalysisVisitor {
 
         //Checks for binaryOps
         if(childNode.getKind().equals("BinaryExpression")){
-            System.out.println(currentType.getName());
             //checks for +, * , ... and returns error if it isnt an int
             if(arithmeticOperators.contains(childNode.get("operation")) && !currentType.getName().equals("int")){
                 addReport(Report.newError(
@@ -728,7 +727,6 @@ public class Visits extends AnalysisVisitor {
 
 
         String operator = conditionalExpr.get("operation");
-        System.out.println(!conditionalOperators.contains(operator));
         if(!conditionalOperators.contains(operator) && !comparisonOperators.contains(operator)){
             addReport(Report.newError(
                 Stage.SEMANTIC,
@@ -816,7 +814,6 @@ public class Visits extends AnalysisVisitor {
 
         //variable
         if(childNode.getKind().equals("VariableReferenceExpression")){
-            System.out.println(table.getLocalVariables(currentMethodString));
             if(!getVariableType(childNode, table).equals(typeMethod)){
                 addReport(Report.newError(
                     Stage.SEMANTIC,

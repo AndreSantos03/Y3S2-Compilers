@@ -118,7 +118,6 @@ public class JmmSymbolTableBuilder {
                     //remove [] for array
                     typeString = typeString.replace("[]", "");
                     Type paramType = new Type(typeString, isArray);
-                    System.out.println(paramType);
                     Symbol symbol = new Symbol(paramType, paramName);
                     parameters.add(symbol);
                 });

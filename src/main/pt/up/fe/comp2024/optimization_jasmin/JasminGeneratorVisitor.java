@@ -39,8 +39,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private String currentMethod;
     private int nextRegister;
-    private int ifFuncCounter;
-    private int whileFuncCounter;
+    private int nextIfFuncCounter;
+    private int nextWhileFuncCounter;
 
 
     private Map<String, String> classFields = new HashMap<>();
@@ -54,8 +54,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         currentMethod = null;
         nextRegister = -1;
         currentRegisters = null;
-        ifFuncCounter = 1;
-        whileFuncCounter = 1;
+        nextIfFuncCounter = 1;
+        nextWhileFuncCounter = 1;
     }
 
 
@@ -165,6 +165,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             currentRegisters.put(param.get("argName"), nextRegister);
             nextRegister++;
         }
+
 
         exprGenerator = new JasminExprGeneratorVisitor(currentRegisters,table);
 
@@ -295,12 +296,23 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private String visitIfStmt(JmmNode ifStmt, Void unused) {
         var code = new StringBuilder();
+        int currentIfCount = nextIfFuncCounter;
+        nextIfFuncCounter++;
 
         //generate code for the conditional
         JmmNode conditionalNode = ifStmt.getChild(0);
         exprGenerator.visit(conditionalNode,code);
 
-        code.append("ifne if").append(ifFuncCounter).append(NL);
+        //store the result of the comparison
+        String varName = "cmp" + nextRegister; //name is irrelevant
+        currentRegisters.put(varName, nextRegister);
+        code.append("istore ").append(nextRegister).append(NL);
+        code.append("iload ").append(nextRegister).append(NL);
+        nextRegister++;
+
+
+
+        code.append("ifne if").append(currentIfCount).append(NL);
 
         List<JmmNode> blocks = ifStmt.getChildren("Block");
         JmmNode ifBlock;
@@ -317,54 +329,57 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         
         //generate code for the else
-        exprGenerator.visit(elseBlock,code);
+        code.append(visit(elseBlock));
 
         //conditional jump to the end of the if
-        code.append("goto endif").append(ifFuncCounter).append(NL);
+        code.append("goto endif").append(currentIfCount).append(NL);
 
         //conditional jump for the positive
-        code.append("if").append(ifFuncCounter).append(":").append(NL);
-        exprGenerator.visit(ifBlock,code);
+        code.append("if").append(currentIfCount).append(":").append(NL);
+        code.append(visit(ifBlock));
 
 
         //end the ifs
-        code.append("endif").append(ifFuncCounter).append(":").append(NL);
-        
-        ifFuncCounter++;
+        code.append("endif").append(currentIfCount).append(":").append(NL);
+
         return code.toString();
     }
+
+
     private String visitWhileStmt(JmmNode whileStmt, Void unused) {
         var code = new StringBuilder();
+        int currentWhileFunc = nextWhileFuncCounter;
+        nextWhileFuncCounter++; 
+
 
         JmmNode condition = whileStmt.getChild(0);
         JmmNode block = whileStmt.getChild(1);
 
 
-        code.append("whileCond").append(whileFuncCounter).append(":").append(NL);
+        code.append("whileCond").append(currentWhileFunc).append(":").append(NL);
 
         //visit expression condition and generate code
         exprGenerator.visit(condition,code);
 
 
         //control the flow of the conditional value
-        code.append("ifne whileLoop").append(whileFuncCounter).append(NL);
-        code.append("goto whileEnd").append(whileFuncCounter).append(NL);
+        code.append("ifne whileLoop").append(currentWhileFunc).append(NL);
+        code.append("goto whileEnd").append(currentWhileFunc).append(NL);
 
 
-        code.append("whileLoop").append(whileFuncCounter).append(":").append(NL);
+        code.append("whileLoop").append(currentWhileFunc).append(":").append(NL);
 
 
         //generate normal generator code for block
         code.append(visit(block));
 
         //go back to the beggining of the while
-        code.append("goto whileCond").append(whileFuncCounter).append(NL);
+        code.append("goto whileCond").append(currentWhileFunc).append(NL);
 
         //end code generation
-        code.append("whileEnd").append(whileFuncCounter).append(":").append(NL);
+        code.append("whileEnd").append(currentWhileFunc).append(":").append(NL);
 
     
-        whileFuncCounter++;
         return code.toString();
     }
 

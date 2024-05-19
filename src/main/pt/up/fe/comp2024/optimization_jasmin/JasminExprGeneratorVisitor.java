@@ -34,6 +34,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
     private int compFuncCounter;
 
+
     //keeps track of object registers for when to use aload and iload
     //it also keeps track of arrays as they're treated as object
     private Set<Integer> objectRegisters = new HashSet<>();
@@ -48,7 +49,6 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     public JasminExprGeneratorVisitor(Map<String, Integer> currentRegisters, SymbolTable table) {
         this.currentRegisters = currentRegisters;
         compFuncCounter = 0;
-
         this.table = table;
     }
 
@@ -256,7 +256,6 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
                 //adding a int parameter for each variable
                 for( int i = 0;i < paramNode.getChildren().size(); i++){
                     String typeName =getVariableType(paramNode.getChild(i), table).getName();
-                    System.out.println(typeName);
                     code.append(typeDictionary.get(typeName));
                 }
             }
