@@ -66,6 +66,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         addVisit("FunctionCallExpression",this::visitFunctionExpr);
         addVisit("ArrayLengthExpression",this::visitArrayLengthExpr);
         addVisit("NewIntArrayExpression",this::visitNewArrayExpr);
+        addVisit("ArrayAccessExpression", this::visitArrayAccessExpr);
         addVisit("NegationExpression",this::visitNegationExpr);
         addVisit("Parameter",this::doesNothing);
         addVisit("ParenthesisExpression",this::doesNothing);
@@ -130,7 +131,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         }
         //checks to see if its a class
         if( objectRegisters.contains(reg)){
-            code.append("aload " + reg + NL);
+            code.append("aload_" + reg + NL);
         }
         else{
             code.append("iload " + reg + NL);
@@ -231,6 +232,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         }
 
         Type objectType = getVariableType(objectName, objectNode);
+        System.out.println(functionStmt + "    " + objectType);
+
         String objectTypeString;
         if(objectType != null){
             objectTypeString = objectType.getName();
@@ -308,8 +311,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             for(Symbol param : table.getParameters(functionName)){
                 code.append(typeDictionary.get(param.getType().getName()));
             }
-            code.append(")").append(typeDictionary.get(returnType));
-            code.append(NL);
+            code.append(")").append(typeDictionary.get(returnType)).append(NL);
+            
         }
 
         return null;
@@ -326,10 +329,15 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         code.append("arraylength").append(NL);
         return null;
     }
+
+
+
     
-
-
-
+    private Void visitArrayAccessExpr(JmmNode arrayAccessStmt, StringBuilder code) {
+        code.append("iaload").append(NL);
+        return null;
+    }
+    
     private Void visitThisExpr(JmmNode thisStmt, StringBuilder code) {
         code.append("aload_0").append(NL);
         return null;
@@ -408,8 +416,16 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         }        
 
 
+        //if its a function call we get the return type of the function
+        if(var.getKind().equals("FunctionCallExpression")){
+            String calledMethod = var.get("value");
+            return table.getReturnType(calledMethod);
+        }
+
+
         String varName = var.get("variable");
         
+        //check on the symbol table
         return getVariableType(varName, var);
     }
     

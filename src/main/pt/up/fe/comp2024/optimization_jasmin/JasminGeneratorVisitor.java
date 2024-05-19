@@ -10,6 +10,9 @@ import pt.up.fe.specs.util.utilities.StringLines;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.fusesource.jansi.AnsiRenderer.Code;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,7 +76,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit("ArgumentDecl",this::visitArgStmt);
         addVisit("IfStatement", this::visitIfStmt);
         addVisit("WhileStatement", this::visitWhileStmt);
-
+        addVisit("ArrayInitializationExpression", this::visitArrayInitializationExpr);
     }
 
 
@@ -238,7 +241,15 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         // store value in top of the stack in destination
         var destName = assignStmt.get("variable");
 
+        JmmNode childNode = assignStmt.getChild(0);
 
+
+        //array initialization is done in normal order, so we use this visitor for it
+        if(childNode.getKind().equals("ArrayInitializationExpression")){   
+            code.append(visit(childNode));
+
+            return code.toString();
+        }
 
 
         //NORMAL VARIABLE ASSIGNMENT
@@ -252,7 +263,6 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
                 currentRegisters.put(destName, reg);
                 nextRegister++;
             }
-            JmmNode childNode = assignStmt.getChild(0);
             exprGenerator.visit(childNode, code);
 
 
@@ -261,7 +271,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
                 code.append("istore ").append(reg).append(NL);
             }    
-        }        //Fields
+        }        
+        //Fields
         else{ 
             //check if there's a field declaration with the same name
             code.append("aload_0").append(NL); //always 0 because it references the this object
@@ -281,6 +292,11 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         // generate code that will put the value of the return on the top of the stack
         exprGenerator.visit(returnStmt.getChild(0), code);
+
+        //load onto the stack the return value
+        //as its the last call of the function we dont need to deal with the logic of creating a new value onto currentRegisters
+        code.append("istore ").append(nextRegister).append(NL);
+        code.append("iload ").append(nextRegister).append(NL);
 
         //if array we use areturn
         if(table.getReturnType(currentMethod).isArray() == true){
@@ -380,6 +396,41 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         code.append("whileEnd").append(currentWhileFunc).append(":").append(NL);
 
     
+        return code.toString();
+    }
+
+    private String visitArrayInitializationExpr(JmmNode arrayInitStmt, Void unused) {
+        var code = new StringBuilder();
+
+        int arrayLenght = arrayInitStmt.getNumChildren();
+        String arrayName = arrayInitStmt.getParent().get("variable");
+
+
+        //allocate register
+        var reg = currentRegisters.get(arrayName);
+        // If no mapping, variable has not been assigned yet, create mapping
+        if (reg == null) {
+            //checks to see if it's a field
+            reg = nextRegister;
+            currentRegisters.put(arrayName, reg);
+            nextRegister++;
+        }
+
+        //initialize and store array
+        code.append("iconst_").append(arrayLenght).append(NL);
+        code.append("newarray int").append(NL);
+        code.append("astore_").append(reg).append(NL);
+
+        //loop through values to be put onto array and generate expressions
+        for(int i =0 ; i < arrayLenght; i++){
+            code.append("aload_").append(reg).append(NL);
+            code.append("iconst_").append(i).append(NL);
+            //generate postorder
+            exprGenerator.visit(arrayInitStmt.getChild(i),code);
+            code.append("iastore").append(NL);
+        }
+
+
         return code.toString();
     }
 
