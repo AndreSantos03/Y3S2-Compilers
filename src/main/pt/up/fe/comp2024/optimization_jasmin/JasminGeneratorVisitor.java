@@ -119,6 +119,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             code.append(typeDictionary.get(field.getType().getName())).append(NL);
         }
 
+
         //default method constructor
         code.append("""
                     .method public <init>()V                                      

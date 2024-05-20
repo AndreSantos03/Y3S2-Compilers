@@ -29,6 +29,9 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     private final List<String> comparisonOperators = Arrays.asList("<",">","==","!=");
     private final List<String> arithmeticOperators = Arrays.asList("+", "-", "*", "/","<",">","==","!=");
 
+    private JasminExprGeneratorVisitor exprGenerator;
+
+
     private final Map<String, Integer> currentRegisters;
     private final SymbolTable table;
 
@@ -51,6 +54,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         this.currentRegisters = currentRegisters;
         compFuncCounter = 0;
         this.table = table;
+        //we will some post order visits
     }
 
     @Override
@@ -134,7 +138,6 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         }
 
 
-        System.out.println(varType.getName());
         //checks to see if its a class or an array
         if( objectRegisters.contains(reg) || varType.isArray()){
             code.append("aload_" + reg + NL);
@@ -229,6 +232,55 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         String functionName = functionStmt.get("value");
         JmmNode objectNode = functionStmt.getChild(0);
         String objectName;
+
+        boolean isVararg = table.getParameters(functionName).stream().anyMatch(param -> param.getType().getName().equals("int..."));
+
+
+        //if its a vararg call, we got to restructure the entire way the code is called
+        if(isVararg){
+            //first off we remove any code that was written before in this visitor
+            code.delete(0, code.length());
+            
+            JmmNode paramNode = functionStmt.getChild(1);
+
+
+
+            //of this, numberParameters - 1 is the number of non vararg arguments we must pass
+            int nonVaragParams = table.getParameters(functionName).size() - 1;
+            int lengthArray = paramNode.getChildren().size() - nonVaragParams;
+
+            //load the this class, we're not going to be importing any vararg function so we can assume its always this
+            code.append("aload_0").append(NL);
+
+            //create array
+            code.append("iconst_").append(lengthArray).append(NL);
+            code.append("newarray int").append(NL);
+
+            exprGenerator = new JasminExprGeneratorVisitor(currentRegisters,table);
+
+            
+            //loop through parameters and load each one onto the array
+            int counter = 0;
+            for(JmmNode param : paramNode.getChildren()){
+                //its a vararg
+                if(counter < lengthArray){
+                    //load value onto array
+                    code.append("dup").append(NL);
+                    code.append("iconst_").append(counter).append(NL);
+                    //visit in postorder the value
+                    exprGenerator.visit(param,code);
+                    code.append("iastore").append(NL);
+                }
+                //normal parameter
+                else{
+                    exprGenerator.visit(param,code);
+                }
+                counter++;
+            }
+        }
+
+
+
         //checks for THIS
         if(objectNode.getKind().equals("ThisReferenceExpression")){
             objectName = table.getClassName();
@@ -340,6 +392,32 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     private Void visitArrayLengthExpr(JmmNode arrayLengthStmt, StringBuilder code) {
         code.append("arraylength").append(NL);
         return null;
+    }
+    
+    //this is only used for expressions so this is different than the one in the normal generator
+    //we don't need to store the array anywhere for example
+    private String visitArrayInitializationExpr(JmmNode arrayInitStmt, Void unused) {
+        var code = new StringBuilder();
+
+        int arrayLenght = arrayInitStmt.getNumChildren();
+
+        //initialize and store array
+        code.append("iconst_").append(arrayLenght).append(NL);
+        code.append("newarray int").append(NL);
+
+
+
+        //loop through values to be put onto array and generate expressions
+        for(int i =0 ; i < arrayLenght; i++){
+            code.append("dup").append(NL);
+            code.append("iconst_").append(i).append(NL);
+            //generate postorder
+            exprGenerator.visit(arrayInitStmt.getChild(i),code);
+            code.append("iastore").append(NL);
+        }
+
+
+        return code.toString();
     }
 
 
