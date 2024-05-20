@@ -1,4 +1,4 @@
-.class public ArrayAsArg
+.class public ArrayVarargs
 .super java/lang/Object
 .method public <init>()V
    .limit stack 99
@@ -8,46 +8,45 @@
    return
 .end method
 
-.method public func([I)I
+.method public static main(Ljava/lang/String;)V
+   .limit stack 99
+   .limit locals 99
+   new ArrayVarargs
+   astore_1
+   aload_1
+   invokespecial ArrayVarargs/<init>()V
+   aload_1
+   invokevirtual ArrayVarargs/bar()I
+   return
+.end method
+
+.method foo([I)I
    .limit stack 99
    .limit locals 99
    
    aload_1
-   arraylength
-   istore 2
-   iload 2
+   iconst_0
+   iaload
    ireturn
 .end method
 
-.method public func2()I
+.method bar()I
    .limit stack 99
    .limit locals 99
-   new ArrayAsArg
-   astore_1
-   aload_1
-   invokespecial ArrayAsArg/<init>()V
+   aload_0
+   iconst_1
    iconst_2
-   newarray int
-   astore_2
-   aload_1
-   aload_2
-   invokevirtual ArrayAsArg/func([I)I
-   istore 3
-   iload 3
+   iconst_3
+   invokevirtual ArrayVarargs/foo([I)I
+   istore 1
+   iload 1
+   invokestatic io/println(I)V
+   aload_0
+   iconst_4
+   invokevirtual ArrayVarargs/foo([I)I
+   istore 1
+   iload 1
+   invokestatic io/println(I)V
+   iload 1
    ireturn
-.end method
-
-.method public static main([Ljava/lang/String;)V
-   .limit stack 99
-   .limit locals 99
-   new ArrayAsArg
-   astore_1
-   aload_1
-   invokespecial ArrayAsArg/<init>()V
-   aload_1
-   invokevirtual ArrayAsArg/func2()I
-   istore 2
-   iload 2
-   invokestatic ioPlus/printResult(I)V
-   return
 .end method

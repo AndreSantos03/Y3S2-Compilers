@@ -29,9 +29,11 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     private final Map<String, String> typeDictionary = new HashMap<String, String>() {{
         put("int", "I");
         put("boolean", "Z");
-        put("String", "[Ljava/lang/String;");
+        put("String", "Ljava/lang/String;");
         put("void", "V");
+        put("int...","I");
     }};
+
 
     private static final String NL = "\n";
     private static final String TAB = "   ";
@@ -77,6 +79,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit("IfStatement", this::visitIfStmt);
         addVisit("WhileStatement", this::visitWhileStmt);
         addVisit("ArrayInitializationExpression", this::visitArrayInitializationExpr);
+        addVisit("AssignmentArray",this::visitArrayAssigExpr);
+
     }
 
 
@@ -436,6 +440,27 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             code.append("iastore").append(NL);
         }
 
+
+        return code.toString();
+    }
+
+    private String visitArrayAssigExpr(JmmNode arrayAssignStmt, Void unused){
+        var code = new StringBuilder();
+
+        String arrayName = arrayAssignStmt.get("variable");
+        JmmNode index = arrayAssignStmt.getChild(0);
+        JmmNode newValue = arrayAssignStmt.getChild(1);
+
+        var reg = currentRegisters.get(arrayName);
+
+        //load array
+        code.append("aload_").append(reg).append(NL);
+        //load the index
+        exprGenerator.visit(index,code);
+        //load the value
+        exprGenerator.visit(newValue,code);
+        //store the value
+        code.append("iastore").append(NL);
 
         return code.toString();
     }

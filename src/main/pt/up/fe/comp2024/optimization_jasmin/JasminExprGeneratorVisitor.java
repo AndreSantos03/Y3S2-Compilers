@@ -44,6 +44,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         put("boolean", "Z");
         put("String", "Ljava/lang/String;");
         put("void", "V");
+        put("int...","I");
     }};
 
     public JasminExprGeneratorVisitor(Map<String, Integer> currentRegisters, SymbolTable table) {
@@ -67,7 +68,6 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         addVisit("ArrayLengthExpression",this::visitArrayLengthExpr);
         addVisit("NewIntArrayExpression",this::visitNewArrayExpr);
         addVisit("ArrayAccessExpression", this::visitArrayAccessExpr);
-        addVisit("AssignmentArray",this::AssignmentArray);
         addVisit("NegationExpression",this::visitNegationExpr);
         addVisit("Parameter",this::doesNothing);
         addVisit("ParenthesisExpression",this::doesNothing);
@@ -111,6 +111,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     }
 
     private Void visitVarRefExpr(JmmNode varRefExpr, StringBuilder code) {
+
         var name = varRefExpr.get("variable");
         Type varType = getVariableType(varRefExpr, table);
 
@@ -132,6 +133,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             return null;
         }
 
+
+        System.out.println(varType.getName());
         //checks to see if its a class or an array
         if( objectRegisters.contains(reg) || varType.isArray()){
             code.append("aload_" + reg + NL);
@@ -195,7 +198,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             code.append("goto cmp_").append(compFuncCounter).append("_end").append(NL).append(NL);
 
             code.append("cmp_").append(compFuncCounter).append("_true:").append(NL);
-            code.append("iconst_m1").append(NL).append(NL);
+            code.append("iconst_m1").append(NL);
 
             code.append("cmp_").append(compFuncCounter).append("_end:").append(NL);
             compFuncCounter++;
@@ -313,7 +316,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             //parameters
             for(Symbol param : table.getParameters(functionName)){
                 Type paramType = param.getType();
-                code.append(paramType.isArray() ? "[" : "");
+                code.append(paramType.isArray() || paramType.getName().equals("[") ? "[" : "");
 
                 code.append(typeDictionary.get(paramType.getName()));
             }
@@ -346,10 +349,6 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         code.append("iaload").append(NL);
         return null;
     }
-
-    private Void AssignmentArray(JmmNode arrayAssignmentStmt, StringBuilder code){
-        return null;
-    }
     
     private Void visitThisExpr(JmmNode thisStmt, StringBuilder code) {
         code.append("aload_0").append(NL);
@@ -371,7 +370,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     }
 
     private Type getVariableType( String var,JmmNode expr){
-        
+
         JmmNode currentMethod = expr.getAncestor("MethodDeclaration").get();
         String methodName ;
         if(currentMethod.hasAttribute("methodName")){
@@ -402,7 +401,6 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     }
 
     private Type getVariableType(JmmNode var,SymbolTable table){
-
         if(var.getKind().equals("ParenthesisExpression")){
             var = var.getChild(0);
         }
@@ -418,6 +416,10 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         }
 
         else if(var.getKind().equals("ArrayLengthExpression")){
+            return new Type("int",false);
+        }
+
+        else if(var.getKind().equals("ArrayAccessExpression")){
             return new Type("int",false);
         }
 

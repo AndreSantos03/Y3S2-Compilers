@@ -86,7 +86,7 @@ public class JmmSymbolTableBuilder {
             if (method.hasAttribute("methodName")) {
                 String methodName = method.get("methodName");
                 String typeString = method.getChild(0).get("typeName");
-                boolean isArray = typeString.endsWith("[]");
+                boolean isArray = typeString.endsWith("[]") || typeString.contains("...");
                 //remove [] for array
                 typeString = typeString.replace("[]", "");
                 Type returnType = new Type(typeString, isArray);
@@ -104,8 +104,8 @@ public class JmmSymbolTableBuilder {
     
 
     private static Map<String, List<Symbol>> buildParams(JmmNode classDecl) {
-        Map<String, List<Symbol>> map = new HashMap<>();
-        classDecl.getChildren("MethodDeclaration").forEach(method -> {
+    Map<String, List<Symbol>> map = new HashMap<>();
+    classDecl.getChildren("MethodDeclaration").forEach(method -> {
             //main can't have parameters so we don't consider it 
             if (method.hasAttribute("methodName")) {
                 String methodName = method.get("methodName");
@@ -114,7 +114,7 @@ public class JmmSymbolTableBuilder {
                     String paramName = argumentNode.get("argName");
                     JmmNode typeNode = argumentNode.getChild(0);
                     String typeString = typeNode.get("typeName");
-                    boolean isArray = typeString.endsWith("[]");
+                    boolean isArray = typeString.endsWith("[]") || typeString.contains("..."); 
                     //remove [] for array
                     typeString = typeString.replace("[]", "");
                     Type paramType = new Type(typeString, isArray);
@@ -196,7 +196,7 @@ public class JmmSymbolTableBuilder {
 
 
                 String typeString = child.getChild(0).get("typeName");
-                boolean isArray = typeString.endsWith("[]");
+                boolean isArray = typeString.endsWith("[]")|| typeString.contains("...");
                 //remove [] for array
                 typeString = typeString.replace("[]", "");
                 Type fieldType = new Type(typeString, isArray);

@@ -743,7 +743,7 @@ public class Visits extends AnalysisVisitor {
     private Void visitArrayAccess(JmmNode arrayAccessExpression, SymbolTable table){
         JmmNode accessedArray = arrayAccessExpression.getChild(0);
         Type variableType = getVariableType(accessedArray,table);
-        if(!variableType.isArray() && !variableType.getName().equals("int[]")){
+        if(!variableType.isArray() && !variableType.getName().equals("int...")){
             addReport(Report.newError(
                 Stage.SEMANTIC,
                 NodeUtils.getLine(arrayAccessExpression),
