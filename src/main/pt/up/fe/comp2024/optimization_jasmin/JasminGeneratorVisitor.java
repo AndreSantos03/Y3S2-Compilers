@@ -29,7 +29,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     private final Map<String, String> typeDictionary = new HashMap<String, String>() {{
         put("int", "I");
         put("boolean", "Z");
-        put("String", "Ljava/lang/String;");
+        put("String", "[Ljava/lang/String;");
         put("void", "V");
         put("int...","I");
     }};
