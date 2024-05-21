@@ -72,6 +72,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         addVisit("ArrayLengthExpression",this::visitArrayLengthExpr);
         addVisit("NewIntArrayExpression",this::visitNewArrayExpr);
         addVisit("ArrayAccessExpression", this::visitArrayAccessExpr);
+        addVisit("ArrayInitializationExpression",this::visitArrayInitializationExpr);
         addVisit("NegationExpression",this::visitNegationExpr);
         addVisit("Parameter",this::doesNothing);
         addVisit("ParenthesisExpression",this::doesNothing);
@@ -394,9 +395,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         return null;
     }
     
-    //this is only used for expressions so this is different than the one in the normal generator
-    //we don't need to store the array anywhere for example
-    private String visitArrayInitializationExpr(JmmNode arrayInitStmt, Void unused) {
+    //this is only used when its called inside a function
+    private Void visitArrayInitializationExpr(JmmNode arrayInitStmt, StringBuilder code) {
         return null;
     }
 
