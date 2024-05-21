@@ -397,27 +397,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     //this is only used for expressions so this is different than the one in the normal generator
     //we don't need to store the array anywhere for example
     private String visitArrayInitializationExpr(JmmNode arrayInitStmt, Void unused) {
-        var code = new StringBuilder();
-
-        int arrayLenght = arrayInitStmt.getNumChildren();
-
-        //initialize and store array
-        code.append("iconst_").append(arrayLenght).append(NL);
-        code.append("newarray int").append(NL);
-
-
-
-        //loop through values to be put onto array and generate expressions
-        for(int i =0 ; i < arrayLenght; i++){
-            code.append("dup").append(NL);
-            code.append("iconst_").append(i).append(NL);
-            //generate postorder
-            exprGenerator.visit(arrayInitStmt.getChild(i),code);
-            code.append("iastore").append(NL);
-        }
-
-
-        return code.toString();
+        return null;
     }
 
 

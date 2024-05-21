@@ -125,8 +125,8 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
                     .method public <init>()V                                      
                     """);
 
-        code.append(TAB).append(String.format(".limit stack %d",stackLimit)).append(NL);
-        code.append(TAB).append(String.format(".limit locals %d",localsLimit)).append(NL);
+        // code.append(TAB).append(String.format(".limit stack %d",stackLimit)).append(NL);
+        // code.append(TAB).append(String.format(".limit locals %d",localsLimit)).append(NL);
         code.append(TAB).append("aload_0").append(NL);
         code.append(TAB).append("invokespecial ");
         if(superClassName == ""){
@@ -151,7 +151,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
     private String visitMethodDecl(JmmNode methodDecl, Void unused) {
 
         int numLocals = 1;
-        int numStack = 0;
+        int numStack = 2;
 
         methodFieldsAndArgs= new HashMap<>();
 
@@ -181,7 +181,6 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             nextRegister++;
             methodFieldsAndArgs.put(argName, methodName);
             numLocals++;
-            System.out.println(param);
         }
 
         for(var locals : methodDecl.getChildren("FieldDeclaration")){
@@ -189,14 +188,38 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             String fieldName = locals.get("variable");
             methodFieldsAndArgs.put(fieldName, typeField);
             numLocals++;
-            System.out.println(locals);
         }
         
 
         //Add onto the varies stuff that stores values
         numLocals += methodDecl.getDescendants("IfStatement").size();
-        
 
+        //Stack value calculation
+        // we always are using 2 as that's standard for everything, only thing that can change that is calling a function
+        //with a higher than 2 number of arguments
+        //only difference is with arguments
+
+        //We check here for the method's argument
+        numStack = Math.max(methodDecl.getDescendants("ArgumentDecl").size() + 1,numStack);
+
+        //we here check for each of the call functions inside the method
+        for(JmmNode funcCall : methodDecl.getDescendants("FunctionCallExpression")){
+            //see if it has parameters
+            if(funcCall.getChildren().size() == 2){
+                JmmNode param = funcCall.getChild(1);
+                numStack = Math.max(param.getNumChildren()  + 2, numStack);
+                System.out.println(numStack);
+            }
+        }
+
+        //we check for arrays
+        for(JmmNode newArray : methodDecl.getDescendants("NewIntArrayExpression")){
+            int numElements = Integer.parseInt(newArray.getChild(0).get("value"));
+            numStack = Math.max(numElements , numStack);
+        }
+        for(JmmNode arrayInitialization : methodDecl.getDescendants("ArrayInitializationExpression")){
+            numStack = Math.max(arrayInitialization.getNumChildren() , numStack);
+        }
 
         exprGenerator = new JasminExprGeneratorVisitor(currentRegisters,table);
 
@@ -228,7 +251,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         code.append("\n.method ").append(publicString).append(staticString).append(methodName).append(parameterString).append(NL);
 
         // Add limits
-        code.append(TAB).append(".limit stack 99").append(NL);
+        code.append(TAB).append(".limit stack ").append(numStack).append(NL);
         code.append(TAB).append(".limit locals ").append(numLocals).append(NL);
 
 
@@ -320,10 +343,6 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         // generate code that will put the value of the return on the top of the stack
         exprGenerator.visit(returnStmt.getChild(0), code);
 
-        // //load onto the stack the return value if a variable is not called
-        // //as its the last call of the function we dont need to deal with the logic of creating a new value onto currentRegisters
-        // code.append("istore ").append(nextRegister).append(NL);
-        // code.append("iload ").append(nextRegister).append(NL);
 
         //if array we use areturn
         if(table.getReturnType(currentMethod).isArray() == true){
