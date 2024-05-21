@@ -553,17 +553,22 @@ public class Visits extends AnalysisVisitor {
 
 
     private Void visitArrayInitialization(JmmNode arrayExpr, SymbolTable table){
-        //checks to see if its being put into an actual array
-        if(!currentType.isArray() && !currentType.getName().equals("int...")){
-            addReport(Report.newError(
-                Stage.SEMANTIC,
-                NodeUtils.getLine(arrayExpr),
-                NodeUtils.getColumn(arrayExpr),
-                "Can't put array values into a simple int!",
-                null)
-            );
-            return null;
+
+
+        if(arrayExpr.getParent().getKind().equals("Assignment")){
+            //checks to see if its being put into an actual array, we only check this on assignments
+            if(!currentType.isArray() && !currentType.getName().equals("int...")){
+                addReport(Report.newError(
+                    Stage.SEMANTIC,
+                    NodeUtils.getLine(arrayExpr),
+                    NodeUtils.getColumn(arrayExpr),
+                    "Can't put array values into a simple int!",
+                    null)
+                );
+                return null;
+            }
         }
+
 
         //Checks if all the instances being put into the array are int
         for (JmmNode child : arrayExpr.getChildren()) {
