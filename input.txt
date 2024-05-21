@@ -1,24 +1,19 @@
-import io;
+import ioPlus;
+class SimpleControlFlow {
 
-class VarargsAndArrayInit {
 
-    public static void main(String[] args) {
-        VarargsAndArrayInit a;
-        a = new VarargsAndArrayInit();
+	public static void main(String[] args) {
+		int a;
+		int b;
 
-        io.print(a.bar());
-    }
+		a = 2;
+		b = 3;
 
-    int foo(int[] ar) {
-        return 2;
-    }
+        if(b < a){
+          ioPlus.printResult(a);
+        } else {
+           ioPlus.printResult(b);
+        }
 
-    int bar() {
-        int res;
-
-        res = this.foo([1, 2, 3]);
-
-        return res;
-    }
-
+	}
 }

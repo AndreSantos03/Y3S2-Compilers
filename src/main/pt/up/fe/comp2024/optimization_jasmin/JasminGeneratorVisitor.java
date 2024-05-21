@@ -49,7 +49,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
 
     private Map<String, String> classFields = new HashMap<>();
-    private Map<String,String> methodFields = new HashMap<>();
+    private Map<String,String> methodFieldsAndArgs;
 
     private Map<String, Integer> currentRegisters;
 
@@ -150,6 +150,11 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private String visitMethodDecl(JmmNode methodDecl, Void unused) {
 
+        int numLocals = 1;
+        int numStack = 0;
+
+        methodFieldsAndArgs= new HashMap<>();
+
         String methodName;
         if(methodDecl.hasAttribute("methodName")){
             methodName = methodDecl.get("methodName");
@@ -171,9 +176,26 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         // initialize register map and set parameters
         currentRegisters = new HashMap<>();
         for (var param : methodDecl.getChildren("ArgumentDecl")) {
-            currentRegisters.put(param.get("argName"), nextRegister);
+            String argName = param.get("argName");
+            currentRegisters.put(argName, nextRegister);
             nextRegister++;
+            methodFieldsAndArgs.put(argName, methodName);
+            numLocals++;
+            System.out.println(param);
         }
+
+        for(var locals : methodDecl.getChildren("FieldDeclaration")){
+            String typeField = locals.getChild(0).get("typeName");
+            String fieldName = locals.get("variable");
+            methodFieldsAndArgs.put(fieldName, typeField);
+            numLocals++;
+            System.out.println(locals);
+        }
+        
+
+        //Add onto the varies stuff that stores values
+        numLocals += methodDecl.getDescendants("IfStatement").size();
+        
 
 
         exprGenerator = new JasminExprGeneratorVisitor(currentRegisters,table);
@@ -207,18 +229,12 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         // Add limits
         code.append(TAB).append(".limit stack 99").append(NL);
-        code.append(TAB).append(".limit locals 99").append(NL);
+        code.append(TAB).append(".limit locals ").append(numLocals).append(NL);
 
 
         // Get code for statement, split into lines and insert the necessary indentation
         for(var stmt :  methodDecl.getChildren()){    
 
-            //Adding to the list of methods locals
-            if(stmt.getKind().equals("FieldDeclaration")){
-                String typeField = stmt.getChild(0).get("typeName");
-                String fieldName = stmt.get("variable");
-                methodFields.put(fieldName, typeField);
-            }
             //ignore the type child of the method and the field declare
             if(stmt.getKind() !="type" && !stmt.hasAttribute("typeName") && !stmt.getKind().equals("FieldDeclaration")){
                 var instCode = StringLines.getLines(visit(stmt)).stream()
@@ -264,7 +280,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
 
         //NORMAL VARIABLE ASSIGNMENT
-        if(methodFields.containsKey(destName)){        
+        if(methodFieldsAndArgs.containsKey(destName)){        
             // get register
             var reg = currentRegisters.get(destName);
             // If no mapping, variable has not been assigned yet, create mapping
