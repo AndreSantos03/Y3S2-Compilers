@@ -1,4 +1,4 @@
-.class public ArrayVarargs
+.class public LocalLimits
 .super java/lang/Object
 .method public <init>()V
    aload_0
@@ -6,59 +6,27 @@
    return
 .end method
 
-.method public static main([Ljava/lang/String;)V
-   .limit stack 2
-   .limit locals 2
-   new ArrayVarargs
-   astore_1
-   aload_1
-   invokespecial ArrayVarargs/<init>()V
-   aload_1
-   invokevirtual ArrayVarargs/bar()I
-   return
-.end method
-
-.method foo([I)I
-   .limit stack 2
-   .limit locals 2
+.method public func(II)I
+   .limit stack 6
+   .limit locals 5
    
-   aload_1
-   iconst_0
-   iaload
-   ireturn
-.end method
-
-.method bar()I
-   .limit stack 5
-   .limit locals 2
+   
+   iload 2
+   bipush 10
    iconst_3
-   newarray int
-   dup
-   iconst_0
-   iconst_1
-   iastore
-   dup
-   iconst_1
-   iconst_2
-   iastore
-   dup
-   iconst_2
+   aload_0
    iconst_3
-   iastore
-   invokevirtual ArrayVarargs/foo([I)I
-   istore 1
-   iload 1
-   invokestatic io/println(I)V
-   iconst_1
-   newarray int
-   dup
-   iconst_0
    iconst_4
-   iastore
-   invokevirtual ArrayVarargs/foo([I)I
+   invokevirtual LocalLimits/func(II)I
+   iadd
+   imul
+   iadd
    istore 1
-   iload 1
-   invokestatic io/println(I)V
-   iload 1
+   aload_0
+   iconst_3
+   iconst_4
+   invokevirtual LocalLimits/func(II)I
+   istore 3
+   iconst_1
    ireturn
 .end method

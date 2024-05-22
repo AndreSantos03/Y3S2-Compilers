@@ -1,28 +1,10 @@
-import io;
+class LocalLimits{
 
-class ArrayVarargs {
-
-    public static void main(String[] args) {
-        ArrayVarargs a;
-        a = new ArrayVarargs();
-
-        a.bar();
+    public int func(int a, int b){
+       int j;
+	   
+       a = b + 10 * (3 + this.func(3,4));
+       j = this.func(3,4);
+       return 1;
     }
-
-    int foo(int... a) {
-        return a[0];
-    }
-
-    int bar() {
-        int res;
-
-        res = this.foo(1, 2, 3);
-        io.println(res);
-
-        res = this.foo(4);
-        io.println(res);
-
-        return res;
-    }
-
 }

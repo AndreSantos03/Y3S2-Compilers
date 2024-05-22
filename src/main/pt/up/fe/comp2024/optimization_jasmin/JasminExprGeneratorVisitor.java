@@ -38,7 +38,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     private final SymbolTable table;
 
     private int compFuncCounter;
-
+    private int currentArgumentArray;
 
     //keeps track of object registers for when to use aload and iload
     //it also keeps track of arrays as they're treated as object
@@ -242,6 +242,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
         //if its a vararg call, we got to restructure the entire way the code is called
         if(isVararg){
+            currentArgumentArray = currentRegisters.size() + 1;
 
             code.setLength(0);
             
@@ -249,6 +250,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
             exprGenerator = new JasminExprGeneratorVisitor(currentRegisters,table);
 
+            //we load this class
+            code.append("aload_0").append(NL);
 
             //of this, numberParameters - 1 is the number of non vararg arguments we must pass
             int nonVaragParams = table.getParameters(functionName).size() - 1;
@@ -264,20 +267,27 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
             int lengthArray = paramNode.getChildren().size() - nonVaragParams;
 
+
+
             //create array
-            // code.append("aload_0").append(NL);
             code.append("iconst_").append(lengthArray).append(NL);
             code.append("newarray int").append(NL);
+            code.append("astore_").append(currentArgumentArray).append(NL);
 
 
             
             //loop through the vararg arguments
-            for(int  i = 0; i < paramNode.getNumChildren();i ++){
-                code.append("dup").append(NL);
-                code.append("iconst_").append(i).append(NL);
-                exprGenerator.visit(paramNode.getChild(i + nonVaragParams),code);
+            for(int  i = nonVaragParams; i < paramNode.getNumChildren();i ++){
+                code.append("aload_").append(currentArgumentArray).append(NL);
+                code.append("iconst_").append(i - nonVaragParams).append(NL);
+                System.out.println(paramNode.getNumChildren());
+                exprGenerator.visit(paramNode.getChild(i),code);
                 code.append("iastore").append(NL);
             }
+            //load the varargs
+            code.append("aload_").append(currentArgumentArray).append(NL);
+
+
 
         }
 
@@ -423,18 +433,21 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
 
         //initialize array
-        // code.append("aload_0").append(NL);
         code.append("iconst_").append(sizeArray).append(NL);
-        code.append("newarray int").append(NL);
-
-
+        code.append("newarray int").append(NL);    
+        code.append("astore_").append(currentArgumentArray).append(NL);
         //load values onto array
         for(int  i  = 0; i < sizeArray ; i++ ){
-            code.append("dup").append(NL);
+            code.append("aload_").append(currentArgumentArray).append(NL);
             code.append("iconst_").append(i).append(NL);
             code.append(arrayValues.get(i)).append(NL);
             code.append("iastore").append(NL);
         }       
+
+        code.append("aload_").append(currentArgumentArray).append(NL);
+
+        currentArgumentArray++;
+
 
         return null;
     }
