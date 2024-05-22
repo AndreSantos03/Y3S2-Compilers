@@ -324,7 +324,6 @@ public class Visits extends AnalysisVisitor {
     //given to us by teachers
     private Void visitVarRefExpr(JmmNode varRefExpr, SymbolTable table) {
 
-        System.out.println(varRefExpr);
 
         SpecsCheck.checkNotNull(currentMethodString, () -> "Expected current method to be set");
 
@@ -456,7 +455,7 @@ public class Visits extends AnalysisVisitor {
             }
         }
 
-  
+
 
 
 
@@ -465,8 +464,9 @@ public class Visits extends AnalysisVisitor {
             return null;
         }
 
+
         // we can assume its in the super class and we assume it works
-        if(table.getSuper() != null){
+        if(!table.getSuper().equals("")){
             return null;
         }
 
