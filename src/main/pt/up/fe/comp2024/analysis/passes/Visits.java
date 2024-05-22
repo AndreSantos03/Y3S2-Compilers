@@ -324,12 +324,13 @@ public class Visits extends AnalysisVisitor {
     //given to us by teachers
     private Void visitVarRefExpr(JmmNode varRefExpr, SymbolTable table) {
 
+        System.out.println(varRefExpr);
+
         SpecsCheck.checkNotNull(currentMethodString, () -> "Expected current method to be set");
 
         // Check if exists a parameter or variable declaration with the same name as the variable reference
         var varRefName = varRefExpr.get("variable");
 
-        // //checks to see if field is called from static method
 
         //ignores if it's called from a function, it just means its whatever the function is calling
         if(varRefExpr.getParent().getKind().equals("FunctionCallExpression")){
@@ -387,7 +388,7 @@ public class Visits extends AnalysisVisitor {
                 null)
         );
 
-        throw new RuntimeException(message);
+        return null;
     }
     private Void visitThisCall(JmmNode thisExpr, SymbolTable table) {
         if(currentMethod.hasAttribute("isStatic")){
@@ -776,6 +777,8 @@ public class Visits extends AnalysisVisitor {
 
     private Void visitReturnDecl(JmmNode returnExpr,SymbolTable table){
         Type typeMethod= table.getReturnType(currentMethodString);
+
+
         if(typeMethod.getName().equals("void")){
             addReport(Report.newError(
                 Stage.SEMANTIC,
@@ -820,7 +823,12 @@ public class Visits extends AnalysisVisitor {
 
         //variable
         if(childNode.getKind().equals("VariableReferenceExpression")){
-            if(!getVariableType(childNode, table).equals(typeMethod)){
+            Type variableType = getVariableType(childNode, table);
+            if(variableType == null){
+                return null;
+            }
+
+            if(!variableType.equals(typeMethod)){
                 addReport(Report.newError(
                     Stage.SEMANTIC,
                     NodeUtils.getLine(returnExpr),
