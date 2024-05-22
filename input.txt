@@ -1,12 +1,24 @@
-import ioPlus;
-class ConditionArgsFuncCall {
+import io;
 
-    public int func(int[] b){
-        return b[2];
+class VarargsAndArrayInit {
+
+    public static void main(String[] args) {
+        VarargsAndArrayInit a;
+        a = new VarargsAndArrayInit();
+
+        io.print(a.bar());
     }
 
-	public static void main(String[] args) {
-        int a;
-        a = func([1,2,3,4,5]);
-	}
+    int foo(int[] ar) {
+        return 3;
+    }
+
+    int bar() {
+        int res;
+
+        res = this.foo([1, 2, 3]);
+
+        return res;
+    }
+
 }

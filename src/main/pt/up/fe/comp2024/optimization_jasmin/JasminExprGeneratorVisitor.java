@@ -8,6 +8,8 @@ import pt.up.fe.specs.util.exceptions.NotImplementedException;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.Type;
+import java.util.ArrayList;
+
 
 import java.util.Map;
 import java.util.Arrays;
@@ -397,6 +399,40 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     
     //this is only used when its called inside a function
     private Void visitArrayInitializationExpr(JmmNode arrayInitStmt, StringBuilder code) {
+        int sizeArray = arrayInitStmt.getNumChildren();
+    
+        //get the last sizeArray line of codes and get them onto an array
+        String[] allLines = code.toString().split("\n");
+        int allLinesSize = allLines.length;
+        List<String> arrayValues = new ArrayList<>();
+        for(int i = 0; i < sizeArray;i++){
+            arrayValues.add(allLines[allLinesSize - sizeArray + i]);
+        }
+        
+        // Remove the last sizeArray lines from the StringBuilder
+        int removeStartIndex = code.lastIndexOf("\n", code.length() - 1);
+        for (int i = 0; i < sizeArray; i++) {
+            removeStartIndex = code.lastIndexOf("\n", removeStartIndex - 1);
+        }
+
+        if (removeStartIndex >= 0) {
+            code.delete(removeStartIndex, code.length());
+        }
+
+        //initialize array
+        code.append(NL);
+        code.append("iconst_").append(sizeArray).append(NL);
+        code.append("newarray int").append(NL);
+
+
+        //load values onto array
+        for(int  i  = 0; i < sizeArray ; i++ ){
+            code.append("dup").append(NL);
+            code.append("iconst_").append(i).append(NL);
+            code.append(arrayValues.get(i)).append(NL);
+            code.append("iastore").append(NL);
+        }
+
         return null;
     }
 

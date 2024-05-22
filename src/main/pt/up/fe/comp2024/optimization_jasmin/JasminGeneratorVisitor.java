@@ -208,7 +208,6 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             if(funcCall.getChildren().size() == 2){
                 JmmNode param = funcCall.getChild(1);
                 numStack = Math.max(param.getNumChildren()  + 2, numStack);
-                System.out.println(numStack);
             }
         }
 
@@ -218,7 +217,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             numStack = Math.max(numElements , numStack);
         }
         for(JmmNode arrayInitialization : methodDecl.getDescendants("ArrayInitializationExpression")){
-            numStack = Math.max(arrayInitialization.getNumChildren() , numStack);
+            numStack = Math.max(arrayInitialization.getNumChildren() * 2 , numStack);
         }
 
         exprGenerator = new JasminExprGeneratorVisitor(currentRegisters,table);
