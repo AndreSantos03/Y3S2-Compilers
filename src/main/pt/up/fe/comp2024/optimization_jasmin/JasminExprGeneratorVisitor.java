@@ -242,7 +242,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
         //if its a vararg call, we got to restructure the entire way the code is called
         if(isVararg){
-            currentArgumentArray = currentRegisters.size() + 1;
+            currentArgumentArray = 1;
 
             code.setLength(0);
             

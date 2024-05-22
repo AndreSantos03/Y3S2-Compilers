@@ -1,10 +1,24 @@
-class LocalLimits{
+import io;
 
-    public int func(int a, int b){
-       int j;
-	   
-       a = b + 10 * (3 + this.func(3,4));
-       j = this.func(3,4);
-       return 1;
+class VarargsAndArrayInit {
+
+    public static void main(String[] args) {
+        VarargsAndArrayInit a;
+        a = new VarargsAndArrayInit();
+
+        io.print(a.bar());
     }
+
+    int foo(int[] ar, int... a) {
+        return ar.length + a.length;
+    }
+
+    int bar() {
+        int res;
+
+        res = this.foo([1, 2, 3], 4, 5, 6, 7, 8);
+
+        return res;
+    }
+
 }

@@ -279,8 +279,6 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         currentRegisters = null;
         currentMethod = null;
 
-
-
         return code.toString();
     }
 
