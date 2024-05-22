@@ -31,15 +31,31 @@
 .method bar()I
    .limit stack 5
    .limit locals 2
-   aload_0
+   iconst_3
+   newarray int
+   dup
+   iconst_0
+   iconst_1
+   iastore
+   dup
    iconst_1
    iconst_2
+   iastore
+   dup
+   iconst_2
    iconst_3
+   iastore
+   invokevirtual ArrayVarargs/foo([I)I
    istore 1
    iload 1
    invokestatic io/println(I)V
-   aload_0
+   iconst_1
+   newarray int
+   dup
+   iconst_0
    iconst_4
+   iastore
+   invokevirtual ArrayVarargs/foo([I)I
    istore 1
    iload 1
    invokestatic io/println(I)V
