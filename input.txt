@@ -1,22 +1,26 @@
 import io;
 
-class VarargsAndArrayInit {
+class ArrayVarargs {
 
     public static void main(String[] args) {
-        VarargsAndArrayInit a;
-        a = new VarargsAndArrayInit();
+        ArrayVarargs a;
+        a = new ArrayVarargs();
 
-        io.print(a.bar());
+        a.bar();
     }
 
-    int foo(int[] ar) {
-        return 3;
+    int foo(int... a) {
+        return a[0];
     }
 
     int bar() {
         int res;
 
-        res = this.foo([1, 2, 3]);
+        res = this.foo(1, 2, 3);
+        io.println(res);
+
+        res = this.foo(4);
+        io.println(res);
 
         return res;
     }

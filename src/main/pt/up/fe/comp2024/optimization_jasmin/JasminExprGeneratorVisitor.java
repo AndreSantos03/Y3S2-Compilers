@@ -241,48 +241,53 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
 
         //if its a vararg call, we got to restructure the entire way the code is called
         if(isVararg){
-            //first off we remove any code that was written before in this visitor
-            code.delete(0, code.length());
+            StringBuilder newCode = new StringBuilder();
+
             
             JmmNode paramNode = functionStmt.getChild(1);
+
+            exprGenerator = new JasminExprGeneratorVisitor(currentRegisters,table);
 
 
 
             //of this, numberParameters - 1 is the number of non vararg arguments we must pass
             int nonVaragParams = table.getParameters(functionName).size() - 1;
-            int lengthArray = paramNode.getChildren().size() - nonVaragParams;
+
+
+            //generate code for the non vararg arguments
+            for(int i = 0 ; i  < nonVaragParams; i++){
+
+                exprGenerator.visit(paramNode.getChild(i),newCode);
+  
+            }
+
+
+
 
             //load the this class, we're not going to be importing any vararg function so we can assume its always this
-            code.append("aload_0").append(NL);
+            newCode.append("aload_0").append(NL);
+
+            int lengthArray = paramNode.getChildren().size() - nonVaragParams;
 
             //create array
-            code.append("iconst_").append(lengthArray).append(NL);
-            code.append("newarray int").append(NL);
+            newCode.append("iconst_").append(lengthArray).append(NL);
+            newCode.append("newarray int").append(NL);
 
-            exprGenerator = new JasminExprGeneratorVisitor(currentRegisters,table);
 
             
-            //loop through parameters and load each one onto the array
-            int counter = 0;
-            for(JmmNode param : paramNode.getChildren()){
-                //its a vararg
-                if(counter < lengthArray){
-                    //load value onto array
-                    code.append("dup").append(NL);
-                    code.append("iconst_").append(counter).append(NL);
-                    //visit in postorder the value
-                    exprGenerator.visit(param,code);
-                    code.append("iastore").append(NL);
-                }
-                //normal parameter
-                else{
-                    exprGenerator.visit(param,code);
-                }
-                counter++;
+            //loop through the vararg arguments
+            for(int  i = nonVaragParams; i < paramNode.getNumChildren();i ++){
+                newCode.append("dup").append(NL);
+                newCode.append("iconst_").append(i).append(NL);
+                exprGenerator.visit(paramNode.getChild(i),newCode);
+                newCode.append("iastore").append(NL);
             }
+
+            code = newCode;
+
         }
 
-
+        System.out.println(code);
 
         //checks for THIS
         if(objectNode.getKind().equals("ThisReferenceExpression")){
@@ -382,6 +387,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             
         }
 
+        System.out.println(code);
         return null;
     }
     private Void visitNewArrayExpr(JmmNode newArrayStmt, StringBuilder code) {
@@ -399,6 +405,8 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     
     //this is only used when its called inside a function
     private Void visitArrayInitializationExpr(JmmNode arrayInitStmt, StringBuilder code) {
+
+
         int sizeArray = arrayInitStmt.getNumChildren();
     
         //get the last sizeArray line of codes and get them onto an array
@@ -418,6 +426,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         if (removeStartIndex >= 0) {
             code.delete(removeStartIndex, code.length());
         }
+
 
         //initialize array
         code.append(NL);
