@@ -164,6 +164,13 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         // get the operation
         switch (operator) {
             case "+": 
+                //check for iinc
+                if(binaryExpr.hasAttribute("iinc")){
+                    String var = binaryExpr.get("iinc");
+                    int reg = currentRegisters.get(var);
+                    code.append("iinc ").append(reg).append(" 1").append(NL);
+                    break;
+                }
                 code.append("iadd").append(NL);
                 break;
             case "-":

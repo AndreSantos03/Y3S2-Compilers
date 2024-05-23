@@ -27,6 +27,8 @@ public class Launcher {
 
         Map<String, String> config = CompilerConfig.parseArgs(args);
 
+
+
         var inputFile = CompilerConfig.getInputFile(config).orElseThrow();
         if (!inputFile.isFile()) {
             throw new RuntimeException("Option '-i' expects a path to an existing input file, got '" + args[0] + "'.");
@@ -61,7 +63,23 @@ public class Launcher {
 
         // Code generation stage
         AstToJasminImpl jasminGen = new AstToJasminImpl();
-        JasminResult jasminResult = jasminGen.toJasmin(semanticsResult);
+
+        JasminResult jasminResult;
+
+        if(config.get("optimize").equals("true")){
+            JmmSemanticsResult optimizedResult =  jasminGen.optimize(semanticsResult);
+            //print Optimized Tree
+            System.out.println(optimizedResult.getRootNode().toTree());
+    
+    
+            jasminResult = jasminGen.toJasmin(optimizedResult);
+        }
+        else{
+            jasminResult = jasminGen.toJasmin(semanticsResult);
+
+        }
+
+
         TestUtils.noErrors(jasminResult.getReports());
         
         // Print Jasmin code
