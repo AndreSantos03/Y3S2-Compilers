@@ -210,6 +210,7 @@ public class Visits extends AnalysisVisitor {
                 }
                 //we reach our current node
                 if(child == assignmentExpression){
+
                     addReport(Report.newError(
                         Stage.SEMANTIC,
                         NodeUtils.getLine(assignmentExpression),
@@ -354,16 +355,15 @@ public class Visits extends AnalysisVisitor {
         if (table.getLocalVariables(currentMethodString).stream()
                 .anyMatch(varDecl -> varDecl.getName().equals(varRefName))) {
 
-            //check to see its defined before where its being used
-            for(JmmNode childNode : currentMethod.getDescendants()){
-
-                if(childNode.getKind().equals("FieldDeclaration")){
+            //check to see if its undefined
+            for(JmmNode childNode : currentMethod.getChildren()){
+                //we are checking the child nodes until we reach the one where our current node is the children
+                if(childNode.getKind().equals("Assignment")){
                     if(childNode.get("variable").equals(varRefName)){
                         return null;
                     }
                 }
-                //we reach the use of the var without it being defined
-                if(childNode == varRefExpr){
+                if(childNode.getChildren("VariableReferenceExpression").contains(varRefExpr)){
 
                     addReport(Report.newError(
                         Stage.SEMANTIC,
