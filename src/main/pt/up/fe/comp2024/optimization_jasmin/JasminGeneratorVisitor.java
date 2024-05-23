@@ -318,7 +318,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
             if(!childNode.getKind().equals("ClassInstantiationExpression") && !childNode.getKind().equals("NewIntArrayExpression")){
                 //if its a iinc we don't need to store the variable
                 if(!assignStmt.hasAttribute("iinc")){
-                    code.append("istore ").append(reg).append(NL);
+                    code.append("istore").append(reg > 3 ? " " : "_").append(reg).append(NL);
                 }
             }    
         }        

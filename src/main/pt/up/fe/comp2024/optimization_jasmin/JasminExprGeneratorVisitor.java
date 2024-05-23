@@ -146,7 +146,7 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
             code.append("aload_" + reg + NL);
         }
         else{
-            code.append("iload " + reg + NL);
+            code.append("iload").append(reg > 3 ? " " : "_").append(reg).append(NL);
         }
         return null;
     }

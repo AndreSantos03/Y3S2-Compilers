@@ -1,4 +1,4 @@
-.class public LocalLimits
+.class public InstSelection_store_1
 .super java/lang/Object
 .method public <init>()V
    aload_0
@@ -6,27 +6,12 @@
    return
 .end method
 
-.method public func(II)I
-   .limit stack 4
-   .limit locals 4
+.method public foo(I)I
+   .limit stack 2
+   .limit locals 2
    
-   
-   iload 2
-   bipush 10
-   iconst_3
-   aload_0
-   iconst_3
-   iconst_4
-   invokevirtual LocalLimits/func(II)I
-   iadd
-   imul
-   iadd
+   iconst_2
    istore 1
-   aload_0
-   iconst_3
-   iconst_4
-   invokevirtual LocalLimits/func(II)I
-   istore 3
-   iconst_1
+   iconst_0
    ireturn
 .end method
