@@ -1,4 +1,4 @@
-.class public IncompatibleArguments
+.class public AssumeArguments
 .super java/lang/Object
 .method public <init>()V
    aload_0
@@ -12,27 +12,19 @@
    return
 .end method
 
-.method public foo(I)I
-   .limit stack 2
-   .limit locals 2
-   
-   iload 1
-   iconst_1
-   iadd
-   ireturn
-.end method
-
 .method public bar()I
    .limit stack 3
-   .limit locals 3
-   new IncompatibleArguments
+   .limit locals 4
+   new A
    astore_1
    aload_1
-   invokespecial IncompatibleArguments/<init>()V
+   invokespecial A/<init>()V
    iconst_1
    istore 2
    aload_1
    iload 2
-   invokevirtual IncompatibleArguments/foo(I)I
+   invokevirtual A/foo()I
+   istore 3
+   iload 3
    ireturn
 .end method

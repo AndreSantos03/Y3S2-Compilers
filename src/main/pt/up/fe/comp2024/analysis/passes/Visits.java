@@ -325,6 +325,7 @@ public class Visits extends AnalysisVisitor {
     private Void visitVarRefExpr(JmmNode varRefExpr, SymbolTable table) {
 
 
+
         SpecsCheck.checkNotNull(currentMethodString, () -> "Expected current method to be set");
 
         // Check if exists a parameter or variable declaration with the same name as the variable reference
@@ -435,6 +436,7 @@ public class Visits extends AnalysisVisitor {
                     Type baseObjectType = getVariableType(base, table);
 
 
+
                     //checks to see if the caller is defined
                     if(baseObjectType == null){
                         addReport(Report.newError(
@@ -446,6 +448,11 @@ public class Visits extends AnalysisVisitor {
                         );
                         return null;
                     }
+
+                    //checks if it's an imported class, if it is we assume it works
+                    if(importObjects.contains( baseObjectType.getName())){
+                        return null;
+                    }
         
                     //chceks to see if its an extension of a imported class
                     if(baseObjectType.getName().equals(table.getClassName()) && importObjects.contains(table.getSuper())){
@@ -454,7 +461,6 @@ public class Visits extends AnalysisVisitor {
                 }
             }
         }
-
 
 
 
@@ -725,10 +731,7 @@ public class Visits extends AnalysisVisitor {
                     null)
                 );
             }
-            else{
-                //its a boolean , return
-                return null;
-            }
+            return null;
         }
 
 
