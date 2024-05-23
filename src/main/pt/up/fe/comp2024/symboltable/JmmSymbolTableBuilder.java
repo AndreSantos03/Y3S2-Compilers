@@ -86,9 +86,11 @@ public class JmmSymbolTableBuilder {
             if (method.hasAttribute("methodName")) {
                 String methodName = method.get("methodName");
                 String typeString = method.getChild(0).get("typeName");
-                boolean isArray = typeString.endsWith("[]") || typeString.contains("...");
-                //remove [] for array
-                typeString = typeString.replace("[]", "");
+                Boolean isArray = method.getChild(0).getKind().equals("IntArray") || method.getChild(0).getKind().equals("Vararg");
+ 
+                if(method.getChild(0).getKind().equals("Vararg")){
+                    typeString+="...";
+                }
                 Type returnType = new Type(typeString, isArray);
                 map.put(methodName, returnType);
             }
@@ -114,9 +116,10 @@ public class JmmSymbolTableBuilder {
                     String paramName = argumentNode.get("argName");
                     JmmNode typeNode = argumentNode.getChild(0);
                     String typeString = typeNode.get("typeName");
-                    boolean isArray = typeString.endsWith("[]") || typeString.contains("..."); 
-                    //remove [] for array
-                    typeString = typeString.replace("[]", "");
+                    Boolean isArray = argumentNode.getChild(0).getKind().equals("IntArray") || argumentNode.getChild(0).getKind().equals("Vararg");
+                    if(argumentNode.getChild(0).getKind().equals("Vararg")){
+                        typeString+="...";
+                    }
                     Type paramType = new Type(typeString, isArray);
                     Symbol symbol = new Symbol(paramType, paramName);
                     parameters.add(symbol);
@@ -174,11 +177,11 @@ public class JmmSymbolTableBuilder {
 
         methodDecl.getChildren("FieldDeclaration").forEach(fieldDec -> {
             String varName = fieldDec.get("variable");
-
+            Boolean isArray = fieldDec.getChild(0).getKind().equals("IntArray") ||fieldDec.getChild(0).getKind().equals("Vararg");
             String typeString = fieldDec.getChild(0).get("typeName");
-            boolean isArray = typeString.endsWith("[]");
-            //remove [] for array
-            typeString = typeString.replace("[]", "");
+            if(fieldDec.getChild(0).getKind().equals("Vararg")){
+                typeString+="...";
+            }
             Type localType = new Type(typeString, isArray);
             Symbol symbol = new Symbol(localType, varName);
             locals.add(symbol);
@@ -189,16 +192,17 @@ public class JmmSymbolTableBuilder {
     }
     private static List<Symbol> buildFields(JmmNode classDecl) {
         List<Symbol> fields = new ArrayList<>();
-
+        
         classDecl.getChildren().forEach(child -> {
             if (child.getKind().equals("FieldDeclaration")) {
                 String fieldName = child.get("variable");
 
 
                 String typeString = child.getChild(0).get("typeName");
-                boolean isArray = typeString.endsWith("[]")|| typeString.contains("...");
-                //remove [] for array
-                typeString = typeString.replace("[]", "");
+                Boolean isArray = child.getChild(0).getKind().equals("IntArray") || child.getChild(0).getKind().equals("Vararg");
+                if(child.getChild(0).getKind().equals("Vararg")){
+                    typeString+="...";
+                }
                 Type fieldType = new Type(typeString, isArray);
                 Symbol symbol = new Symbol(fieldType, fieldName);
                 fields.add(symbol);

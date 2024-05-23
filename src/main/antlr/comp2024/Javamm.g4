@@ -27,9 +27,8 @@ classDeclaration
     ;
 
 type
-    : typeName='int[]' #IntArray
+    : typeName='int' '[' ']' #IntArray
     | typeName='int' #Int
-    | typeName='int...' #vararg
     | typeName='int' '...' #vararg
     | typeName='boolean' #boolean
     | typeName='String' #string
