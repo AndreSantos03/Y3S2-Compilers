@@ -8,6 +8,9 @@ import pt.up.fe.specs.util.exceptions.NotImplementedException;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.Type;
+
+import static pt.up.fe.comp2024.ast.Kind.valueOf;
+
 import java.util.ArrayList;
 
 
@@ -84,8 +87,15 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
     }
 
     private Void visitIntegerLiteral(JmmNode integerLiteral, StringBuilder code) {
+
         String valueString = integerLiteral.get("value");
         int value = Integer.parseInt(valueString);
+
+        //test to see if we can perform an iinc
+        if(integerLiteral.getParent().getKind().equals("BinaryExpression") && value >= -128 && value <= 127){
+            return null;
+        }
+
         String constInstruction;
         if (value >= -1 && value <= 5) {
             constInstruction = "iconst_";
@@ -163,7 +173,22 @@ public class JasminExprGeneratorVisitor extends PostorderJmmVisitor<StringBuilde
         
         // get the operation
         switch (operator) {
-            case "+": 
+            case "+":
+                boolean iinc = false;
+                int iincValue = 0;
+                // see if we optimize with an int with an inc
+                for(JmmNode vars : binaryExpr.getChildren()){
+                    if(vars.getKind().equals("IntegerLiteral")){
+                        iinc = true;
+                        iincValue = Integer.parseInt(vars.get("value"));
+                    }
+                }
+                if(iinc){
+                    int firstRegiser = code.charAt(code.length() - 2) - '0';//get where the value is saved in the stack
+                    code.append("iinc ").append(firstRegiser).append(" ").append(iincValue).append(NL);
+                    break;
+                }
+
                 code.append("iadd").append(NL);
                 break;
             case "-":
