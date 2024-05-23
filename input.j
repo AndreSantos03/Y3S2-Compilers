@@ -1,30 +1,49 @@
-.class public AssumeArguments
+.class public MethodsAndFields
 .super java/lang/Object
+.field private field1 I
+.field private field2 Z
+.field private field3 null
 .method public <init>()V
    aload_0
    invokespecial java/lang/Object/<init>()V
    return
 .end method
 
+.method public getField1()I
+   .limit stack 2
+   .limit locals 1
+   aload_0
+   getfield MethodsAndFields/field1 I
+   ireturn
+.end method
+
+.method public getField2()Z
+   .limit stack 2
+   .limit locals 1
+   aload_0
+   getfield MethodsAndFields/field2 Z
+   ireturn
+.end method
+
+.method public getField3()null
+   .limit stack 2
+   .limit locals 1
+   aload_0
+   getfield MethodsAndFields/field3 null
+   ireturn
+.end method
+
+.method public all(IZnull)[I
+   .limit stack 4
+   .limit locals 5
+   
+   
+   
+   areturn
+.end method
+
 .method public static main([Ljava/lang/String;)V
    .limit stack 2
    .limit locals 1
    return
-.end method
-
-.method public bar()I
-   .limit stack 3
-   .limit locals 4
-   new A
-   astore_1
-   aload_1
-   invokespecial A/<init>()V
-   iconst_1
-   istore 2
-   aload_1
-   iload 2
-   invokevirtual A/foo()I
-   istore 3
-   iload 3
-   ireturn
 .end method
