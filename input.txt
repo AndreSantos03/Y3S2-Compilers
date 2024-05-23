@@ -1,24 +1,22 @@
-import io;
+import ioPlus;
+class ConditionArgsFuncCall {
 
-class VarargsAndArrayInit {
-
-    public static void main(String[] args) {
-        VarargsAndArrayInit a;
-        a = new VarargsAndArrayInit();
-
-        io.print(a.bar());
+    public int func(boolean a, boolean b, boolean c, boolean d){
+        ioPlus.printResult(10);
+        return 1;
     }
 
-    int foo(int[] ar, int... a) {
-        return ar.length + a.length;
-    }
-
-    int bar() {
-        int res;
-
-        res = this.foo([1, 2, 3], 4, 5, 6, 7, 8);
-
-        return res;
-    }
-
+	public static void main(String[] args) {
+        int a;
+        int b;
+        boolean i;
+        boolean j;
+        ConditionArgsFuncCall d;
+        d = new ConditionArgsFuncCall();
+        a = 10;
+        b = 5;
+        i = true;
+        j = false;
+		a = d.func(a < b, i && j , a < b && i, !i);
+	}
 }

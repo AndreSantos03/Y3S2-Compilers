@@ -405,9 +405,8 @@ public class Visits extends AnalysisVisitor {
 
 
     private Void visitFunctionCall(JmmNode functionCallExpr, SymbolTable table){
-
         String calledMethodName = functionCallExpr.get("value");
-
+        System.err.println(functionCallExpr);
 
         //checks if the call is from an imported class, assumes everything is well
         if(importObjects.contains(calledMethodName)){
@@ -516,7 +515,12 @@ public class Visits extends AnalysisVisitor {
             //checks for normal ones;
             int counter = 0;
             for(JmmNode parameter: functionCallExpr.getChildren("Parameter").get(0).getChildren()){
+                System.out.println(parameter);
                 Type type = getVariableType(parameter, table);
+                System.out.println(type); 
+                if(argumentsMethod.get(counter).getType().getName().equals("int...")){
+                    return null;
+                }
                 if(!type.equals(argumentsMethod.get(counter).getType())){
                     addReport(Report.newError(
                         Stage.SEMANTIC,
@@ -941,6 +945,9 @@ public class Visits extends AnalysisVisitor {
         else if(var.getKind().equals("ArrayAccessExpression")){
             return new Type("int",false);
         }
+        else if(var.getKind().equals("ArrayInitializationExpression")){
+            return new Type("int",true);
+        }
         //ArrayLength, also an int
         else if(var.getKind().equals("ArrayLengthExpression")){
             return new Type("int",false);
@@ -960,6 +967,11 @@ public class Visits extends AnalysisVisitor {
                 return new Type("boolean",false);
             }
         }        
+        
+        if(var.getKind().equals("NegationExpression")){
+            return new Type("boolean",false);
+        }      
+        
 
 
 
