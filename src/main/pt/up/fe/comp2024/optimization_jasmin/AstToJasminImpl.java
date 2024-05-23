@@ -24,16 +24,20 @@ public class AstToJasminImpl implements AstToJasmin {
 
         //IINC
         for(JmmNode bOp : root.getDescendants("BinaryExpression")){
-            System.out.println(bOp);
-
+            
             if(bOp.get("operation").equals("+")){
+                JmmNode assignNode = bOp.getParent();
                 JmmNode intNode = bOp.getChild(1);
                 JmmNode varNode = bOp.getChild(0);
-                if(intNode.getKind().equals("IntegerLiteral") || varNode.getKind().equals("VariableReferenceExpression")){
+                if(intNode.getKind().equals("IntegerLiteral") && varNode.getKind().equals("VariableReferenceExpression") 
+                && assignNode.getKind().equals("Assignment")
+                ){
                     String var = varNode.get("variable");
                     if(intNode.get("value").equals("1")){
                         bOp.removeChild(intNode);
+                        bOp.removeChild(varNode);
                         bOp.put("iinc", var);
+                        assignNode.put("iinc","true");
                     }
                 }
             }

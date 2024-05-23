@@ -299,6 +299,7 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         }
 
 
+
         //NORMAL VARIABLE ASSIGNMENT
         if(methodFieldsAndArgs.containsKey(destName)){        
             // get register
@@ -315,8 +316,10 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
 
             //Class stores differently, its directly in the generator visitor, same goes for arrays
             if(!childNode.getKind().equals("ClassInstantiationExpression") && !childNode.getKind().equals("NewIntArrayExpression")){
-
-                code.append("istore ").append(reg).append(NL);
+                //if its a iinc we don't need to store the variable
+                if(!assignStmt.hasAttribute("iinc")){
+                    code.append("istore ").append(reg).append(NL);
+                }
             }    
         }        
         //Fields
