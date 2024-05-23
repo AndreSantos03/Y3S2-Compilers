@@ -41,8 +41,8 @@ fieldDeclaration
     ;
 
 methodDeclaration
-    :(isPublic='public')? isStatic='static' 'void' 'main' '(' 'String' '[' ']' 'args' ')' '{'(fieldDeclaration | statement )* '}'
-    |(isPublic='public')? (isStatic='static')? type methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration | statement )* returnDeclaration? '}' 
+    :(isPublic='public')? isStatic='static' 'void' 'main' '(' 'String' '[' ']' 'args' ')' '{'(fieldDeclaration)* ( statement )* '}'
+    |(isPublic='public')? (isStatic='static')? type methodName=ID '(' (argument)? (',' argument)* ')' '{'(fieldDeclaration)* ( statement )* returnDeclaration? '}' 
     ;
 
 
