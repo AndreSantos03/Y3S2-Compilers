@@ -1,6 +1,10 @@
-class InstSelection_store_1 {
-	public int foo(int a) {
-		a = 2;
-		return 0;		
+import io;
+
+class InstSelection_iinc {
+	public static void main(String[] args) {
+		int i;
+		i = 2;
+		i = i+1;
+		io.println(i);
 	}
 }

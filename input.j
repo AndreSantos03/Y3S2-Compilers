@@ -1,4 +1,4 @@
-.class public InstSelection_store_1
+.class public InstSelection_iinc
 .super java/lang/Object
 .method public <init>()V
    aload_0
@@ -6,12 +6,13 @@
    return
 .end method
 
-.method public foo(I)I
-   .limit stack 2
+.method public static main([Ljava/lang/String;)V
+   .limit stack 3
    .limit locals 2
-   
    iconst_2
-   istore 1
-   iconst_0
-   ireturn
+   istore_1
+   iinc 1 1
+   iload_1
+   invokestatic io/println(I)V
+   return
 .end method
