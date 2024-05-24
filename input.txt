@@ -5,6 +5,5 @@ class InstSelection_iinc {
 		int i;
 		i = 2;
 		i = i+1;
-		io.println(i);
 	}
 }

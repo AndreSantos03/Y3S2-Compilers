@@ -29,29 +29,28 @@ public class AstToJasminImpl implements AstToJasmin {
     public JmmSemanticsResult optimize(JmmSemanticsResult semanticsResult) {
         JmmNode root = semanticsResult.getRootNode();
 
-        if(CompilerConfig.getOptimize(semanticsResult.getConfig())){
-            //IINC
-            for(JmmNode bOp : root.getDescendants("BinaryExpression")){
-    
-                if(bOp.get("operation").equals("+")){
-                    JmmNode assignNode = bOp.getParent();
-                    JmmNode intNode = bOp.getChild(1);
-                    JmmNode varNode = bOp.getChild(0);
-                    if(intNode.getKind().equals("IntegerLiteral") && varNode.getKind().equals("VariableReferenceExpression") 
-                    && assignNode.getKind().equals("Assignment")
-                    ){
-                        String var = varNode.get("variable");
-                        if(intNode.get("value").equals("1")){
-                            bOp.removeChild(intNode);
-                            bOp.removeChild(varNode);
-                            bOp.put("iinc", var);
-                            assignNode.put("iinc","true");
-                        }
+        //this optimization doesn't need -o
+        //IINC
+        for(JmmNode bOp : root.getDescendants("BinaryExpression")){
+
+            if(bOp.get("operation").equals("+")){
+                JmmNode assignNode = bOp.getParent();
+                JmmNode intNode = bOp.getChild(1);
+                JmmNode varNode = bOp.getChild(0);
+                if(intNode.getKind().equals("IntegerLiteral") && varNode.getKind().equals("VariableReferenceExpression") 
+                && assignNode.getKind().equals("Assignment")
+                ){
+                    String var = varNode.get("variable");
+                    if(intNode.get("value").equals("1")){
+                        bOp.removeChild(intNode);
+                        bOp.removeChild(varNode);
+                        bOp.put("iinc", var);
+                        assignNode.put("iinc","true");
                     }
                 }
             }
-
-
+        }
+        if(CompilerConfig.getOptimize(semanticsResult.getConfig())){
             //Constant Prop
             boolean wasUpdated = true;
             while(wasUpdated == true){
