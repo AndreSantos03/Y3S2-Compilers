@@ -54,3 +54,28 @@ Percentage of work: **40%**
 
 Self-Assessment: **16/20**
   
+## How to Run
+
+1. **Install Dependencies:**
+   - Make sure you have Gradle installed on your system.
+
+2. **Build the Project:**
+   - Navigate to the project directory and run the following command to build the project and install the distribution:
+     ```bash
+     gradle installDist
+     ```
+
+3. **Prepare the Input File:**
+   - Write the Jmm code you want to compile into a file named `input.txt`.
+
+4. **Run the Compiler:**
+   - To compile the code without optimizations, use the following command:
+     ```bash
+     ./jmm input.txt
+     ```
+   - To compile the code with optimizations, use the following command:
+     ```bash
+     ./jmm input.txt -o
+     ```
+
+By following these steps, you can compile your Jmm code and generate optimized bytecode as needed.
